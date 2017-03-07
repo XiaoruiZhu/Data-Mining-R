@@ -17,7 +17,7 @@ $$\begin{array}
 subject to & (1-\alpha)|\beta|_1+\alpha|\beta|^2\le t
 \end{array}$$
 
-Note that when solving the above problem without the constraint we have a familiar least square regression model. When the constraint is added, depending on how large $t$ is, some of the "unimportant" predictor variables will become 0 and are forced out of the model. Lasso is a special case of Elastic net when $\alpha = 0$.
+Note that when solving the above problem without the constraint we have a familiar least square regression model. When the constraint is added, depending on how large $t$ is, some of the "unimportant" predictor variables will become 0 and are forced out of the model. Lasso is a special case of Elastic net when \\(\alpha = 0\\).
 
 Two of the most important tuning parameters are $t$ and $\alpha$ in the above equation. 
 
