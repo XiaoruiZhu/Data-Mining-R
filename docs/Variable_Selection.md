@@ -1,6 +1,9 @@
 ---
 layout: default
 title: Advanced Variable Selection Techniques
+output: 
+  html_document:
+    theme: journal
 ---
 
 # Lasso and Elastic net 
