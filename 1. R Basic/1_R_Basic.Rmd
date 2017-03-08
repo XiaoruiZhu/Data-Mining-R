@@ -1,7 +1,11 @@
 ---
 title: "Introduction"
 output:
-  html_document: default
+  html_document: 
+    fig_caption: yes
+    number_sections: yes
+    theme: readable
+    toc: yes
   html_notebook:
     toc: yes
   md_document:
