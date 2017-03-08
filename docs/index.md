@@ -11,6 +11,25 @@ Feng Mai, PhD
 
 ### R Basic
 
-[Lecture 5: Advanced Variable Selection Techniques](VS.html)
+[R Basic](lecture/1_R_Basic.html)
 
 ### Explore and describe dataset
+
+[R Basic](1_R_Basic.html)
+
+### Linear Regression, Prediction and Variables Seleciton
+
+### Logistic Regression
+
+### Tree Models
+
+### GAM, Neural Network, LDA and SVM
+
+### Unsupervised Learning
+
+### Other Topics 1: Text Mining
+
+### Other Topics 2: Advanced Variable Selection
+
+[Advanced Variable Selection Techniques](VS.html)
+
