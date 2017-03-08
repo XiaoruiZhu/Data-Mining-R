@@ -127,7 +127,7 @@ cv_lasso_fit$lambda.min
 ```
 
 ```
-## [1] 0.03073584
+## [1] 0.019303
 ```
 
 Given a selected _s_ you can use _predict()_ this way to get prediction:

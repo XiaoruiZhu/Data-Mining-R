@@ -2,6 +2,7 @@
 title: "Advanced Variable Selection Techniques"
 output:
   html_document:
+    theme: readable
     fig_caption: yes
     keep_md: yes
     number_sections: yes
