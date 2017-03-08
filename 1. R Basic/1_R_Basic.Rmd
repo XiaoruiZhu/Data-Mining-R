@@ -1,11 +1,11 @@
 ---
 title: "Introduction"
-output: 
+output:
+  html_document: default
+  html_notebook:
+    toc: yes
   md_document:
     variant: markdown_github
-  html_notebook: 
-    toc: yes
-  html_document: default
   pdf_document: default
 ---
 
