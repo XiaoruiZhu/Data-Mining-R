@@ -1,9 +1,21 @@
-Explore Iris Dataset
-========================================================
+---
+title: "Exploratory Analysis"
+output: 
+  html_document: 
+    theme: readable
+    fig_caption: yes
+    number_sections: yes
+    toc: yes
+  html_notebook: 
+    fig_caption: yes
+    number_sections: yes
+    toc: yes
+---
 
+# Explore Iris Dataset
 
-Iris dataset - Introduction
---------------
+## Iris dataset - Introduction
+
 The dataset consists of 50 samples from each of three species of Iris flowers (Iris setosa, Iris virginicaand Iris versicolor). Four features(variables) were measured from each sample, they are the **length** and the **width** of sepal and petal, in centimeters. It is introduced by Sir Ronald Fisher in 1936.
 
 ### 3 Species
@@ -12,8 +24,7 @@ The dataset consists of 50 samples from each of three species of Iris flowers (I
 ### Flower Parts
 ![](pic/parts.png)
 
-Explore the *iris* Dataset with R
-------------------------------------
+## Explore the *iris* Dataset with R
 
 ### Load Data
 The *iris* flower data set is included in R. It is a data frame with 150 cases (rows) and 5 variables (columns) named Sepal.Length, Sepal.Width, Petal.Length, Petal.Width, and Species.
@@ -191,21 +202,22 @@ parcoord(iris[,1:4],col=iris$Species)
 ```
 
 
-Chernoff faces of the first 20 obs
-```{r, eval=FALSE}
-install.packages("aplpack")
-```
-```{r, results='hide', warning=FALSE}
-library(aplpack)
-```
+<!-- Chernoff faces of the first 20 obs -->
+<!-- ```{r, eval=FALSE} -->
+<!-- install.packages("aplpack") -->
+<!-- # if you're using Apple MAC and have problem to use "aplpack" package and the error is due to "tcltk" package is not valid. Please refer to this post http://planspace.org/2013/01/17/fix-r-tcltk-dependency-problem-on-mac/ -->
+<!-- ``` -->
+<!-- ```{r, results='hide', warning=FALSE} -->
+<!-- # library(aplpack) -->
+<!-- ``` -->
 
-```{r}
-faces(iris[1:20,1:4],main="Faces for Iris Data",label=iris$Species[1:20])
-```
+<!-- ```{r} -->
+<!-- faces(iris[1:20,1:4],main="Faces for Iris Data",label=iris$Species[1:20]) -->
+<!-- ``` -->
 
 
-### Cluster Analysis
-#### K-means clustering
+## Cluster Analysis
+### K-means clustering
 K-means clustering with 5 clusters, the 'fpc' package provides the 'plotcluster' function. You need to run `install.packages('fpc')` to install it first.
 
 ```{r, eval=FALSE}
@@ -229,7 +241,7 @@ kmeans_result = kmeans(iris[,1:4], 3)
 plotcluster(iris[,1:4], kmeans_result$cluster)
 ```
 
-#### Hierarchical clustering
+### Hierarchical clustering
 ```{r}
 hc_result = hclust(dist(iris[,1:4]))
 plot(hc_result)

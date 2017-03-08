@@ -15,7 +15,7 @@ Feng Mai, PhD
 
 ### Explore and describe dataset
 
-[R Basic](1_R_Basic.html)
+[Explore and describe dataset](lecture/2_ExploratoryAnalyses.html)
 
 ### Linear Regression, Prediction and Variables Seleciton
 
