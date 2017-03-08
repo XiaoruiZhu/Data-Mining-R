@@ -11,6 +11,6 @@ Feng Mai, PhD
 
 ### R Basic
 
-[Lecture 1: R Basic](R_Basic)
+[Lecture 5: Advanced Variable Selection Techniques](VS.html)
 
 ### Explore and describe dataset
