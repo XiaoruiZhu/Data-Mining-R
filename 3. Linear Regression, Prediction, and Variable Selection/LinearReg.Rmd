@@ -1,13 +1,26 @@
-Regression and Variable Selection
-========================================================
+---
+title: "Regression and Variable Selection"
+output: 
+  html_document: 
+    theme: readable
+    fig_caption: yes
+    number_sections: yes
+    toc: yes
+  html_notebook: 
+    fig_caption: yes
+    number_sections: yes
+    toc: yes
+---
 
+# Objective
 The objective of this case is to get you started with regression model building, variable selection, and model evaluation in R.
 
 Code in this file is not the only correct way to do things, however it is important for you to understand what each statement does. You will have to modify the code accordingly for your homework. 
 
-Boston Housing Data
--------
-### Load Data
+
+# Boston Housing Data
+
+## Load Data
 ```{r}
 library(MASS)
 data(Boston); #this data is in MASS package
@@ -15,24 +28,7 @@ colnames(Boston)
 ```
 The original data are 506 observations on 14 variables, medv being the response variable $y$:
 
-Variable |Description
----------|-----
-crim | per capita crime rate by town
-zn	 |proportion of residential land zoned for lots over 25,000 sq.ft
-indus	| proportion of non-retail business acres per town
-chas	| Charles River dummy variable (= 1 if tract bounds river; 0 otherwise)
-nox	| nitric oxides concentration (parts per 10 million)
-rm	| average number of rooms per dwelling
-age	| proportion of owner-occupied units built prior to 1940
-dis	| weighted distances to five Boston employment centres
-rad	| index of accessibility to radial highways
-tax	| full-value property-tax rate per USD 10,000
-ptratio	| pupil-teacher ratio by town
-black	|1000(B - 0.63)^2 where B is the proportion of blacks by town
-lstat	| percentage of lower status of the population
-medv	| median value of owner-occupied homes in USD 1000's
-
-### Sampling (Split Dataset Randomly)
+## Sampling (Split Dataset Randomly)
 Next we sample 90% of the original data and use it as the training set. The remaining 10% is used as test set. The regression model will be built on the training set and future performance of your model will be evaluated with the test set.
 
 ```{r}
@@ -41,7 +37,7 @@ Boston_train = Boston[sample_index,]
 Boston_test = Boston[-sample_index,]
 ```
 
-### (Optional) Standardization
+## (Optional) Standardization
 If we want our results to be invariant to the units and the parameter estimates $\beta_i$ to be comparible, we can standardize the variables. Essentially we are replacing the original values with their z-score.
 
 1st Way: create new variables manually.
@@ -54,7 +50,6 @@ This does the same thing.
 Boston$sd.crim = scale(Boston$crim); 
 ```
 
-
 2nd way: If you have a lot of variables to standardize then the above is not very pleasing to do. You can use a loop like this. It standardizes every varables other than the last one which is $y$.
 
 ```{r}
@@ -65,8 +60,8 @@ for (i in 1:(ncol(Boston_train)-1)){
 
 The technique is not as important in linear regression because it will only affect the interpretation but not the model estimation and inference. 
 
-Model Building
-------------------
+# Model Building
+
 You task is to build a best model with training data. You can refer to the regression and variable selection code on the slides for more detailed description of linear regression.
 
 The following model includes all $x$ varables in the model
@@ -83,7 +78,7 @@ summary(model_1)
 
 But, is this the model you want to use?
 
-### (Optional) Interaction terms in model
+## (Optional) Interaction terms in model
 If you suspect the effect of one predictor x1 on the response y depends on the value of another predictor x2, you can add interaction terms in model. To specify interaction in the model, you put : between two variables with interaction effect. For example
 ```{r, eval=FALSE}
 lm(medv~crim+zn+crim:zn, data=Boston_train)
@@ -92,9 +87,9 @@ lm(medv~crim*zn, data=Boston_train)
 ```
 For now we will not investigate the interactions of variables.
 
-Evaluating Model Fitness 
-------------
-### In-sample model evaluation (train error)
+# Evaluating Model Fitness 
+
+## In-sample model evaluation (train error)
 MSE of the regression, which is the square of 'Residual standard error' in the above summary. It is the sum of squared residuals(SSE) divided by degrees of freedom (n-p-1). In some textbooks the sum of squred residuals(SSE) is called residual sum of squares(RSS). MSE of the regression should be the unbiased estimator for variance of $\epsilon$, the error term in the regression model.
 
 ```{r}
@@ -121,7 +116,7 @@ BIC(model_1)
 
 BIC, AIC, and Adjusted $R^2$ have complexity penalty in the definition, thus when comparing across different models they are better indicators on how well the model will perform on future data.
 
-### Out-of-sample prediction (test error)
+## Out-of-sample prediction (test error)
 To evaluate how the model performs on future data, we use predict() to get the predicted values from the test set.
 ```{r, eval=FALSE}
 #pi is a vector that contains predicted values for test set.
@@ -159,9 +154,10 @@ model_1$fitted.values
 ```
 
 
-Variable Selection
-------------------------
-### Compare Model Fit Manually
+
+# Variable Selection
+
+## Compare Model Fit Manually
 ```{r eval=FALSE}
 model_1 = lm(medv~., data = Boston_train)
 model_2 = lm(medv~crim+zn, data = Boston_train)
@@ -171,7 +167,7 @@ AIC(model_1)
 AIC(model_2)
 ```
 
-### Best Subset Regression
+## Best Subset Regression
 The 'leaps' package provides procedures for best subset regression.
 ```{r eval=FALSE}
 install.packages('leaps')
@@ -193,7 +189,7 @@ What is the problem with best subset regression? If there are n independent vari
 
 <img src="http://science.slc.edu/~jmarshall/courses/2002/spring/cs50/BigO/running-times.gif" height="300px" />
 
-### Forward/Backward/Stepwise Regression Using AIC
+## Forward/Backward/Stepwise Regression Using AIC
 To perform the Forward/Backward/Stepwise Regression in R, we need to define the starting points:
 ```{r}
 nullmodel=lm(medv~1, data=Boston_train)
@@ -201,16 +197,17 @@ fullmodel=lm(medv~., data=Boston_train)
 ```
 nullmodel is the model with no varaible in it, while fullmodel is the model with every variable in it.
 
-#### Backward Elimination
+### Backward Elimination
 ```{r}
 model.step = step(fullmodel,direction='backward')
 ```
 
-#### Forward Selection
+### Forward Selection
 ```{r}
 model.step = step(nullmodel, scope=list(lower=nullmodel, upper=fullmodel), direction='forward')
 ```
-#### Stepwise Selection (Output Omitted)
+
+### Stepwise Selection (Output Omitted)
 ```{r, eval=FALSE}
 model.step=step(nullmodel, scope=list(lower=nullmodel, upper=fullmodel), direction='both')
 ```
@@ -226,8 +223,8 @@ AIC(model_1)
 
 
 
-Cross Validation
------------------
+# Cross Validation
+
 Cross validation is an alternative approach to training/testing split. For k-fold cross validation, the dataset is divided into k parts. Each part serves as the test set in each iteration and the rest serve as training set. The out-of-sample performance measures from the k iterations are averaged.
 
 Note
@@ -238,17 +235,19 @@ Note
 
 3. The default measure of performance is the Mean Squared Error (MSE). If we want to use another measure we need to define a cost function.
 
-### 5-fold Cross Validation
+## 5-fold Cross Validation
 ```{r}
 library(boot)
 model_2 = glm(medv~indus + rm, data = Boston)
 cv.glm(data = Boston, glmfit = model_2, K = 5)$delta[2]
 ```
-### LOOCV (Leave-one-out Cross Validation)
+
+## LOOCV (Leave-one-out Cross Validation)
 ```{r}
 cv.glm(data = Boston, glmfit = model_2, K = nrow(Boston))$delta[2]
 ```
-### 5-fold Cross Validation Using MAE
+
+## 5-fold Cross Validation Using MAE
 Here we need to define a MAE cost function. The function takes 2 input vectors, pi =  predicted values, r = actual values.
 
 ```{r}
@@ -280,8 +279,8 @@ cv.lm(df=Boston, form.lm = model_2, m=3)
 
 
 
-Diagnostic Plots
------------------
+# Diagnostic Plots
+
 The diagnostic plots are not as important when regression is used in predictive (supervised) data mining as when it is used in economics. However it is still good to know:
 
 1. What the diagnostic plots should look like when no assumption is violated?
