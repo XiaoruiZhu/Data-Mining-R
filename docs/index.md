@@ -19,7 +19,11 @@ Feng Mai, PhD
 
 ### Linear Regression, Prediction and Variables Seleciton
 
+[Linear Regression](lecture/3_LinearReg.html)
+
 ### Logistic Regression
+
+[Logistic Regression](lecture/4_LogisticReg.html)
 
 ### Tree Models
 
