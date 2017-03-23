@@ -27,13 +27,20 @@ Feng Mai, PhD
 
 ### Tree Models
 
+[Regression tree and classification tree](lecture/5_Tree.html)
+
 ### GAM, Neural Network, LDA and SVM
+
+[GAM, Neural Network, LDA and SVM](lecture/6_SupervisedLearning.html)
 
 ### Unsupervised Learning
 
+[Unsupervised Learning](lecture/7_UnsupervisedLearning.html)
+
 ### Other Topics 1: Text Mining
+
 
 ### Other Topics 2: Advanced Variable Selection
 
-[Advanced Variable Selection Techniques](VS.html)
+[Advanced Variable Selection Techniques](lecture/VS.html)
 
