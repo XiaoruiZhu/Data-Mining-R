@@ -1,13 +1,11 @@
 ---
 title: "Advanced Variable Selection Techniques"
-output:
-  html_document:
+output: 
+  html_document: 
     theme: readable
     fig_caption: yes
-    keep_md: yes
     number_sections: yes
     toc: yes
-  html_notebook: default
 ---
 
 ```{r setup, include=FALSE}
@@ -92,3 +90,5 @@ Boston.insample.prediction = predict(lasso_fit, as.matrix(Boston[, -c(which(coln
 [1]: Tibshirani, R. (1996). Regression shrinkage and selection via the lasso. Journal of the Royal Statistical Society. Series B (Methodological), 267-288.
 [2]: Zou, H., & Hastie, T. (2005). Regularization and variable selection via the elastic net. Journal of the Royal Statistical Society: Series B (Statistical Methodology), 67(2), 301-320.  
 [3]: http://www.stanford.edu/~hastie/TALKS/enet_talk.pdf "Regularization and Variable Selection via the Elastic Net"
+
+[go to top](#header)
