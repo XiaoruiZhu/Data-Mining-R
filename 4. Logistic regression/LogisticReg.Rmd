@@ -35,6 +35,8 @@ The training dataset has 63 variables, 4500 obs.
 colnames(credit.train)
 ```
 
+[go to top](#header)
+
 # Logistic Regression
 
 Let's build a logistic regression model based on all X variables. Note id is excluded from the model.
@@ -58,6 +60,7 @@ Or you can try model selection with BIC:
 credit.glm.step <- step(credit.glm0, k=log(nrow(credit.train))) 
 ```
 
+[go to top](#header)
 
 # Prediction and Cross Validation Using Logistic Regression
 
@@ -198,6 +201,7 @@ cv.result = cv.glm(credit.data, credit.glm3 , cost1, 10)
 cv.result$delta
 ```
 
+[go to top](#header)
 
 # Search for optimal cut-off probability
 
@@ -249,6 +253,7 @@ plot(result, ylab="CV Cost")
 result[which.min(result[,2]),]
 ```
 
+[go to top](#header)
 
 # Starter code for German credit scoring
 
@@ -265,3 +270,4 @@ colnames(german_credit)=c("chk_acct","duration","credit_his","purpose","amount",
 german_credit$response = german_credit$response - 1
 ```
 
+[go to top](#header)
