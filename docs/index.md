@@ -7,7 +7,7 @@ Shaonan Tian, PhD
 Chaojiang Wu, PhD  
 Feng Mai, PhD
 
-## Lab Notes
+## Lecture and Lab Notes
 
 ### R Basic
 
