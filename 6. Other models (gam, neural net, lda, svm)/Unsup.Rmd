@@ -133,7 +133,7 @@ roc.plot(credit.test$Y == '1', prob.glm0.outsample)$roc.vol
 ```
 
 
-<a href="#top">Back to top</a>
+[go to top](#content)
 
 # Generalized Additive Models (GAM)
 There are two common implementations of GAMs in R.  The older version (originally made for S-PLUS) is available as the 'gam' package by Hastie and Tibshirani.  The newer version that we will use below is the 'mgcv' package from Simon Wood.  The basic modeling procedure for both packages is similar (the function is gam for both; be wary of having both libraries loaded at the same time), but the behind-the-scenes computational approaches differ, as do the arguments for optimization and the model output.  Expect the results to be slightly different when used with the same model structure on the same dataset.
@@ -225,7 +225,7 @@ Cost associated with misclassification is
 creditcost(credit.test$Y, pred.gam.out)
 ```
 
-<a href="#top">Back to top</a>
+[go to top](#content)
 
 
 # Discriminant Analysis
@@ -251,7 +251,7 @@ table(credit.test$Y,pred.lda.out,dnn=c("Obs","Pred"))
 mean(ifelse(credit.test$Y != pred.lda.out, 1, 0))
 creditcost(credit.test$Y, pred.lda.out)
 ```
-<a href="#top">Back to top</a>
+[go to top](#content)
 
 
 # Neural Networks Models
@@ -286,7 +286,7 @@ creditcost(credit.test$Y, pred.nnet)
 ```
 
 
-<a href="#top">Back to top</a>
+[go to top](#content)
 
 # Support Vector Machine (SVM)
 
@@ -313,7 +313,7 @@ creditcost(credit.test$Y, pred.svm)
 credit.svm = svm(Y ~ ., data = credit.train, cost = 1, gamma = 1/length(credit.train), probability= TRUE)
 prob.svm = predict(credit.svm, credit.test)
 
-<a href="#top">Back to top</a>
+[go to top](#content)
 
 # Performance Comparisons
 At last, after fitting several models, you may want to compare their in-sample and out-of-sample performances. The performance measures are illustrated in previous sections. In your report, you may want to put them in some table format. Note that not all measures are applicable. For example, I didn't find AIC/BIC or deviance for LDA models and Neural Network models. For tree models, *tree* package can give you mean residual deviance but not with *rpart* package. If you find either one of them, I would be interested to know.
@@ -347,7 +347,7 @@ table(iris.test$Species, predict(iris.svm, iris.test), dnn=c("Observed","Predict
 ```
 
 
-<a href="#top">Back to top</a>
+[go to top](#content)
 
 # Starter code for German credit scoring
 Refer to http://archive.ics.uci.edu/ml/datasets/Statlog+(German+Credit+Data)) for variable description. Notice that "It is worse to class a customer as good when they are bad (weight = 5), than it is to class a customer as bad when they are good (weight = 1)." Define your cost function accordingly!
@@ -361,4 +361,4 @@ library(caret) #this package contains the german data with its numeric format
 data(GermanCredit)
 ```
 
-<a href="#top">Back to top</a>
+[go to top](#content)
