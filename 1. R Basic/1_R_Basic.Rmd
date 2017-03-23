@@ -22,6 +22,7 @@ output:
 2. Learn basic commands and data types in R
 3. Get started with Rattle
 
+[go to top](#header)
 
 ## Before You Start: Install R, RStudio
 
@@ -53,6 +54,7 @@ http://www.youtube.com/watch?v=SJ9sVyqWJn8&hd=1
 *Install R Studio:*
 http://www.youtube.com/watch?v=6aTRbo7kdGk&hd=1
 
+[go to top](#header)
 
 ## R Basics
 
@@ -288,10 +290,9 @@ abs_val(-5)
   * Stackoverflow (a more friendly place): http://stackoverflow.com/questions/tagged/r
   * R Help Mailing List: http://r.789695.n4.nabble.com/R-help-f789696.html
 
+[go to top](#header)
 
-
-Install Rattle
--------------
+## Install Rattle
 ### Rattle: "A Graphical User Interface for Data Mining using R". 
 With Rattle you can presents statistical and visual summaries of data, transforms data into forms that can be readily modelled, builds both unsupervised and supervised models from the data, presents the performance of models graphically, and scores new datasets.[1]
 
@@ -314,10 +315,10 @@ rattle()
 ```
 When using Rattle, it will ask you to install many packages along the way, you will have to keep hitting the Yes button.
 
-
-
 Note:
 Part of this handout is built upon Clarkson University's R Tutorial [2] and Dr.Yan Yu's slides.
 
 [1]: http://rattle.togaware.com/ "Rattle Official Website"
 [2]: http://www.cyclismo.org/tutorial/R/
+
+[go to top](#header)

@@ -24,6 +24,8 @@ The dataset consists of 50 samples from each of three species of Iris flowers (I
 ### Flower Parts
 ![](pic/parts.png)
 
+[go to top](#header)
+
 ## Explore the *iris* Dataset with R
 
 ### Load Data
@@ -215,6 +217,7 @@ parcoord(iris[,1:4],col=iris$Species)
 <!-- faces(iris[1:20,1:4],main="Faces for Iris Data",label=iris$Species[1:20]) -->
 <!-- ``` -->
 
+[go to top](#header)
 
 ## Cluster Analysis
 ### K-means clustering
@@ -251,3 +254,4 @@ rect.hclust(hc_result, k=3)
 
 3 things happened in the first line. First dist(iris[, 1:4]) calculates the distance matrix between observations (how similar the observations are from each other judging from the 4 numerical variables). Then hclust takes the distance matrix as input and gives a hierarchical cluster solution. At last the solution is assigned to the variable hc_result. In hierarchical clustering you do not need to give the number of how many clusters you want, it depends on how you cut the dendrogram. 
 
+[go to top](#header)
