@@ -46,8 +46,6 @@ creditcost <- function(observed, predicted){
 }
 ```
 
-[go to top](#content)
-
 [go to top](#header)
 
 # Generalized Linear Models (Logistic Regression)
@@ -97,67 +95,67 @@ coef(lasso_fit, s = 0.02)
 
 ```
 ## 61 x 1 sparse Matrix of class "dgCMatrix"
-##                         1
-## (Intercept) -2.4006774039
-## X2           .           
-## X3          -0.0004954468
-## X4           .           
-## X5           .           
-## X6           .           
-## X7           .           
-## X8          -0.3649979120
-## X10_2        .           
-## X11_2       -0.3173478501
-## X12_2        .           
-## X13_2        .           
-## X14_2        .           
-## X15_2        .           
-## X15_3        .           
-## X15_4        .           
-## X15_5        .           
-## X15_6        .           
-## X16_2        .           
-## X16_3        .           
-## X16_4        .           
-## X16_5        .           
-## X16_6        .           
-## X17_2        .           
-## X17_3        .           
-## X17_4        .           
-## X17_5        .           
-## X17_6       -0.1539984157
-## X18_2        .           
-## X18_3        .           
-## X18_4        .           
-## X18_5        .           
-## X18_6        .           
-## X18_7        .           
-## X19_2        .           
-## X19_3        .           
-## X19_4        .           
-## X19_5        .           
-## X19_6        .           
-## X19_7        .           
-## X19_8        .           
-## X19_9        .           
-## X19_10       .           
-## X20_2        .           
-## X20_3        .           
-## X20_4        .           
-## X21_2        .           
-## X21_3        .           
-## X22_2        .           
-## X22_3        .           
-## X22_4        .           
-## X22_5        .           
-## X22_6        .           
-## X22_7        .           
-## X22_8        .           
-## X22_9        0.0368584600
-## X22_10       .           
-## X22_11       .           
-## X23_2        .           
-## X23_3        .           
+##                        1
+## (Intercept) -2.512491467
+## X2           .          
+## X3          -0.001295199
+## X4           .          
+## X5           .          
+## X6           .          
+## X7           .          
+## X8          -0.303457904
+## X10_2        .          
+## X11_2       -0.302369562
+## X12_2        .          
+## X13_2        .          
+## X14_2        .          
+## X15_2        .          
+## X15_3        .          
+## X15_4        .          
+## X15_5        .          
+## X15_6        .          
+## X16_2        .          
+## X16_3        .          
+## X16_4        .          
+## X16_5        .          
+## X16_6        .          
+## X17_2        .          
+## X17_3        .          
+## X17_4        .          
+## X17_5        .          
+## X17_6       -0.084723561
+## X18_2        .          
+## X18_3        .          
+## X18_4        .          
+## X18_5        .          
+## X18_6        .          
+## X18_7        .          
+## X19_2        .          
+## X19_3        .          
+## X19_4        .          
+## X19_5        .          
+## X19_6        .          
+## X19_7        .          
+## X19_8        .          
+## X19_9        .          
+## X19_10       .          
+## X20_2        .          
+## X20_3        .          
+## X20_4        .          
+## X21_2        .          
+## X21_3        .          
+## X22_2        .          
+## X22_3        .          
+## X22_4        .          
+## X22_5        .          
+## X22_6        .          
+## X22_7        .          
+## X22_8        .          
+## X22_9        0.071368131
+## X22_10       .          
+## X22_11       .          
+## X23_2        .          
+## X23_3        .          
 ## X24_2        .
 ```
 The _s_ parameter determines how many variables are included and you can use cross-validation to choose it.
@@ -178,8 +176,8 @@ table(credit.test$Y, predicted.glm0.outsample, dnn=c("Observed","Predicted"))
 ```
 ##         Predicted
 ## Observed   0   1
-##        0 458  21
-##        1  13   8
+##        0 448  16
+##        1  25  11
 ```
 
 ```r
@@ -187,7 +185,7 @@ mean(ifelse(credit.test$Y != predicted.glm0.outsample, 1, 0))
 ```
 
 ```
-## [1] 0.068
+## [1] 0.082
 ```
 
 ```r
@@ -195,7 +193,7 @@ creditcost(credit.test$Y, predicted.glm0.outsample)
 ```
 
 ```
-## [1] 0.302
+## [1] 0.532
 ```
 
 ## ROC Curve
@@ -224,11 +222,11 @@ roc.plot(credit.test$Y == '1', prob.glm0.outsample)$roc.vol
 
 ```
 ##      Model      Area     p.value binorm.area
-## 1 Model  1 0.7499751 5.23667e-05          NA
+## 1 Model  1 0.7716116 2.78187e-08          NA
 ```
 
 
-[go to top](#content)
+[go to top](#header)
 
 # Generalized Additive Models (GAM)
 There are two common implementations of GAMs in R.  The older version (originally made for S-PLUS) is available as the 'gam' package by Hastie and Tibshirani.  The newer version that we will use below is the 'mgcv' package from Simon Wood.  The basic modeling procedure for both packages is similar (the function is gam for both; be wary of having both libraries loaded at the same time), but the behind-the-scenes computational approaches differ, as do the arguments for optimization and the model output.  Expect the results to be slightly different when used with the same model structure on the same dataset.
@@ -271,77 +269,77 @@ summary(credit.gam)
 ## 
 ## Parametric coefficients:
 ##              Estimate Std. Error z value Pr(>|z|)    
-## (Intercept) -3.259851   0.706293  -4.615 3.92e-06 ***
-## X6           0.189718   0.111526   1.701 0.088923 .  
-## X7          -0.395167   0.209876  -1.883 0.059720 .  
-## X8          -2.232661   0.323823  -6.895 5.40e-12 ***
-## X10_2       -0.148535   0.166798  -0.891 0.373193    
-## X11_2       -0.849085   0.151739  -5.596 2.20e-08 ***
-## X12_2       -0.391557   0.196724  -1.990 0.046548 *  
-## X13_2        0.274092   0.155030   1.768 0.077063 .  
-## X14_2       -0.332574   0.274907  -1.210 0.226368    
-## X15_2        0.528172   0.241074   2.191 0.028458 *  
-## X15_3        0.318171   0.292292   1.089 0.276358    
-## X15_4        0.939822   0.313871   2.994 0.002751 ** 
-## X15_5        0.363209   0.413932   0.877 0.380237    
-## X15_6        0.961851   0.270165   3.560 0.000371 ***
-## X16_2        0.392018   0.277758   1.411 0.158137    
-## X16_3       -0.163450   0.275350  -0.594 0.552774    
-## X16_4        0.190612   0.340711   0.559 0.575851    
-## X16_5       -0.186785   0.275632  -0.678 0.497987    
-## X16_6        0.005692   0.289422   0.020 0.984309    
-## X17_2       -0.138409   0.246428  -0.562 0.574347    
-## X17_3       -1.205564   0.308616  -3.906 9.37e-05 ***
-## X17_4       -0.526409   0.267809  -1.966 0.049343 *  
-## X17_5        0.634423   0.434426   1.460 0.144188    
-## X17_6       -1.221469   0.170437  -7.167 7.68e-13 ***
-## X18_2        0.237973   0.326842   0.728 0.466554    
-## X18_3        0.391805   0.263097   1.489 0.136434    
-## X18_4        0.949243   0.250562   3.788 0.000152 ***
-## X18_5        0.721707   0.231907   3.112 0.001858 ** 
-## X18_6        0.504715   0.285813   1.766 0.077414 .  
-## X18_7        0.641482   0.301705   2.126 0.033488 *  
-## X19_2        0.532568   0.363186   1.466 0.142545    
-## X19_3        0.755817   0.304370   2.483 0.013020 *  
-## X19_4        0.267754   0.517134   0.518 0.604622    
-## X19_5        0.448019   0.410796   1.091 0.275444    
-## X19_6        0.503218   0.455281   1.105 0.269033    
-## X19_7        0.833717   0.427486   1.950 0.051143 .  
-## X19_8       -1.126569   0.788034  -1.430 0.152833    
-## X19_9        1.017405   0.553268   1.839 0.065930 .  
-## X19_10       0.626899   0.340439   1.841 0.065556 .  
-## X20_2       -0.079962   0.359088  -0.223 0.823784    
-## X20_3       -0.039428   0.261811  -0.151 0.880295    
-## X20_4        0.097672   0.178572   0.547 0.584406    
-## X21_2        0.328361   0.414588   0.792 0.428351    
-## X21_3        0.384482   0.218406   1.760 0.078340 .  
-## X22_2       -0.390847   0.383858  -1.018 0.308579    
-## X22_3       -0.036274   0.337103  -0.108 0.914310    
-## X22_4       -0.078850   0.427094  -0.185 0.853527    
-## X22_5       -0.007528   0.407408  -0.018 0.985258    
-## X22_6       -0.142981   0.579117  -0.247 0.804990    
-## X22_7        0.036922   0.365531   0.101 0.919542    
-## X22_8        0.041494   0.348514   0.119 0.905227    
-## X22_9        0.560387   0.307692   1.821 0.068568 .  
-## X22_10      -1.518568   1.076838  -1.410 0.158478    
-## X22_11       0.269611   0.333377   0.809 0.418673    
-## X23_2        0.082703   0.205589   0.402 0.687483    
-## X23_3       -0.179126   0.221942  -0.807 0.419617    
-## X24_2        0.476307   0.295453   1.612 0.106935    
+## (Intercept) -3.183557   0.713558  -4.462 8.14e-06 ***
+## X6           0.103710   0.116930   0.887 0.375114    
+## X7          -0.209606   0.210390  -0.996 0.319117    
+## X8          -2.202585   0.333699  -6.601 4.10e-11 ***
+## X10_2       -0.307876   0.171197  -1.798 0.072118 .  
+## X11_2       -0.858492   0.154535  -5.555 2.77e-08 ***
+## X12_2       -0.413956   0.200196  -2.068 0.038663 *  
+## X13_2        0.387852   0.160433   2.418 0.015626 *  
+## X14_2       -0.303220   0.278516  -1.089 0.276288    
+## X15_2        0.488843   0.247266   1.977 0.048043 *  
+## X15_3        0.128547   0.308363   0.417 0.676774    
+## X15_4        0.916111   0.323064   2.836 0.004573 ** 
+## X15_5        0.331345   0.422977   0.783 0.433414    
+## X15_6        0.912236   0.275359   3.313 0.000923 ***
+## X16_2        0.321787   0.283330   1.136 0.256069    
+## X16_3       -0.123986   0.281573  -0.440 0.659696    
+## X16_4        0.061037   0.352287   0.173 0.862448    
+## X16_5       -0.213205   0.281160  -0.758 0.448269    
+## X16_6        0.041987   0.293077   0.143 0.886083    
+## X17_2        0.028249   0.250164   0.113 0.910093    
+## X17_3       -1.024206   0.318188  -3.219 0.001287 ** 
+## X17_4       -0.253920   0.265515  -0.956 0.338906    
+## X17_5        0.545569   0.446527   1.222 0.221781    
+## X17_6       -1.089472   0.176643  -6.168 6.93e-10 ***
+## X18_2        0.065193   0.333031   0.196 0.844802    
+## X18_3        0.257164   0.271752   0.946 0.343985    
+## X18_4        0.907811   0.252095   3.601 0.000317 ***
+## X18_5        0.662137   0.231691   2.858 0.004265 ** 
+## X18_6        0.337858   0.296741   1.139 0.254887    
+## X18_7        0.729751   0.294591   2.477 0.013243 *  
+## X19_2        0.321444   0.358833   0.896 0.370357    
+## X19_3        0.569584   0.295136   1.930 0.053619 .  
+## X19_4       -0.050133   0.540735  -0.093 0.926132    
+## X19_5        0.303066   0.414748   0.731 0.464949    
+## X19_6        0.256510   0.459841   0.558 0.576966    
+## X19_7        0.677716   0.425012   1.595 0.110806    
+## X19_8       -0.878569   0.669711  -1.312 0.189567    
+## X19_9        0.722999   0.573512   1.261 0.207434    
+## X19_10       0.411087   0.334039   1.231 0.218452    
+## X20_2        0.074218   0.352701   0.210 0.833335    
+## X20_3       -0.033756   0.271390  -0.124 0.901012    
+## X20_4        0.172185   0.185326   0.929 0.352841    
+## X21_2        0.076154   0.463064   0.164 0.869372    
+## X21_3        0.448564   0.226326   1.982 0.047486 *  
+## X22_2       -0.396750   0.400785  -0.990 0.322206    
+## X22_3       -0.016324   0.352309  -0.046 0.963044    
+## X22_4       -0.050392   0.462748  -0.109 0.913283    
+## X22_5        0.138700   0.416319   0.333 0.739016    
+## X22_6        0.003221   0.591985   0.005 0.995659    
+## X22_7        0.259034   0.367953   0.704 0.481442    
+## X22_8        0.132105   0.361873   0.365 0.715068    
+## X22_9        0.643945   0.320363   2.010 0.044426 *  
+## X22_10      -1.341837   1.080827  -1.241 0.214424    
+## X22_11       0.327776   0.347026   0.945 0.344900    
+## X23_2        0.018241   0.214709   0.085 0.932296    
+## X23_3       -0.139796   0.223964  -0.624 0.532503    
+## X24_2        0.347800   0.315535   1.102 0.270350    
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
 ## Approximate significance of smooth terms:
 ##         edf Ref.df Chi.sq  p-value    
-## s(X2) 1.001  1.002  0.634    0.427    
-## s(X3) 1.002  1.003 21.184 4.23e-06 ***
-## s(X4) 1.953  2.448  1.515    0.446    
-## s(X5) 2.957  3.687  7.117    0.126    
+## s(X2) 1.001  1.002  0.178   0.6738    
+## s(X3) 1.000  1.000 20.897 4.85e-06 ***
+## s(X4) 1.579  1.961  0.902   0.6020    
+## s(X5) 3.169  3.944  7.732   0.0949 .  
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
-## R-sq.(adj) =  0.117   Deviance explained = 18.8%
-## UBRE = -0.59428  Scale est. = 1         n = 4500
+## R-sq.(adj) =  0.109   Deviance explained = 18.6%
+## UBRE = -0.60823  Scale est. = 1         n = 4500
 ```
 
 ```r
@@ -357,7 +355,7 @@ AIC(credit.gam)
 ```
 
 ```
-## [1] 1825.722
+## [1] 1762.965
 ```
 
 ```r
@@ -365,7 +363,7 @@ BIC(credit.gam)
 ```
 
 ```
-## [1] 2235.518
+## [1] 2171.719
 ```
 
 ```r
@@ -373,7 +371,7 @@ credit.gam$deviance
 ```
 
 ```
-## [1] 1697.897
+## [1] 1635.466
 ```
 
 ## In-sample fit performance
@@ -390,8 +388,8 @@ table(credit.train$Y,pred.gam.in,dnn=c("Observed","Predicted"))
 ```
 ##         Predicted
 ## Observed    0    1
-##        0 3352  869
-##        1   99  180
+##        0 3405  831
+##        1  100  164
 ```
 
 Likewise, misclassification rate is another thing you can check:
@@ -402,7 +400,7 @@ mean(ifelse(credit.train$Y != pred.gam.in, 1, 0))
 ```
 
 ```
-## [1] 0.2151111
+## [1] 0.2068889
 ```
 
 Training model AIC and BIC:
@@ -412,7 +410,7 @@ AIC(credit.gam)
 ```
 
 ```
-## [1] 1825.722
+## [1] 1762.965
 ```
 
 ```r
@@ -420,7 +418,7 @@ BIC(credit.gam)
 ```
 
 ```
-## [1] 2235.518
+## [1] 2171.719
 ```
 
 ## Search for optimal cut-off probability
@@ -460,7 +458,7 @@ result.gam[index.min,2] #min cost
 
 ```
 ##           
-## 0.4124444
+## 0.3931111
 ```
 
 ```r
@@ -469,7 +467,7 @@ result.gam[index.min,1] #optimal cutoff probability
 
 ```
 ## searchgrid 
-##       0.09
+##       0.14
 ```
 
 ## Out-of-sample fit performance
@@ -484,8 +482,8 @@ table(credit.test$Y,pred.gam.out,dnn=c("Observed","Predicted"))
 ```
 ##         Predicted
 ## Observed   0   1
-##        0 403  76
-##        1  11  10
+##        0 430  34
+##        1  23  13
 ```
 mis-classifciation rate is
 
@@ -494,7 +492,7 @@ mean(ifelse(credit.test$Y != pred.gam.out, 1, 0))
 ```
 
 ```
-## [1] 0.174
+## [1] 0.114
 ```
 Cost associated with misclassification is
 
@@ -503,10 +501,10 @@ creditcost(credit.test$Y, pred.gam.out)
 ```
 
 ```
-## [1] 0.372
+## [1] 0.528
 ```
 
-[go to top](#content)
+[go to top](#header)
 
 
 # Discriminant Analysis
@@ -526,8 +524,8 @@ table(credit.train$Y,pred.lda.in,dnn=c("Obs","Pred"))
 ```
 ##    Pred
 ## Obs    0    1
-##   0 3864  357
-##   1  165  114
+##   0 3917  319
+##   1  153  111
 ```
 
 ```r
@@ -535,7 +533,7 @@ mean(ifelse(credit.train$Y != pred.lda.in, 1, 0))
 ```
 
 ```
-## [1] 0.116
+## [1] 0.1048889
 ```
 
 ## Out-of-sample
@@ -550,8 +548,8 @@ table(credit.test$Y,pred.lda.out,dnn=c("Obs","Pred"))
 ```
 ##    Pred
 ## Obs   0   1
-##   0 423  56
-##   1  12   9
+##   0 415  49
+##   1  21  15
 ```
 
 ```r
@@ -559,7 +557,7 @@ mean(ifelse(credit.test$Y != pred.lda.out, 1, 0))
 ```
 
 ```
-## [1] 0.136
+## [1] 0.14
 ```
 
 ```r
@@ -567,9 +565,9 @@ creditcost(credit.test$Y, pred.lda.out)
 ```
 
 ```
-## [1] 0.352
+## [1] 0.518
 ```
-[go to top](#content)
+[go to top](#header)
 
 
 # Neural Networks Models
@@ -599,8 +597,8 @@ credit.nnet <- nnet(Y~., data=credit.train, size=1, maxit=500)
 
 ```
 ## # weights:  63
-## initial  value 4416.814570 
-## final  value 1045.959727 
+## initial  value 4671.965577 
+## final  value 1004.773218 
 ## converged
 ```
 
@@ -615,8 +613,8 @@ table(credit.test$Y,pred.nnet, dnn=c("Observed","Predicted"))
 ```
 ##         Predicted
 ## Observed   0
-##        0 479
-##        1  21
+##        0 464
+##        1  36
 ```
 
 ```r
@@ -624,7 +622,7 @@ mean(ifelse(credit.test$Y != pred.nnet, 1, 0))
 ```
 
 ```
-## [1] 0.042
+## [1] 0.072
 ```
 
 ```r
@@ -632,11 +630,11 @@ creditcost(credit.test$Y, pred.nnet)
 ```
 
 ```
-## [1] 0.42
+## [1] 0.72
 ```
 
 
-[go to top](#content)
+[go to top](#header)
 
 # Support Vector Machine (SVM)
 
@@ -663,8 +661,8 @@ table(credit.test$Y,pred.svm,dnn=c("Obs","Pred"))
 ```
 ##    Pred
 ## Obs   0   1
-##   0 403  76
-##   1  11  10
+##   0 400  64
+##   1  24  12
 ```
 
 ```r
@@ -672,7 +670,7 @@ mean(ifelse(credit.test$Y != pred.svm, 1, 0))
 ```
 
 ```
-## [1] 0.174
+## [1] 0.176
 ```
 
 ```r
@@ -680,13 +678,13 @@ creditcost(credit.test$Y, pred.svm)
 ```
 
 ```
-## [1] 0.372
+## [1] 0.608
 ```
 
 credit.svm = svm(Y ~ ., data = credit.train, cost = 1, gamma = 1/length(credit.train), probability= TRUE)
 prob.svm = predict(credit.svm, credit.test)
 
-[go to top](#content)
+[go to top](#header)
 
 # Performance Comparisons
 At last, after fitting several models, you may want to compare their in-sample and out-of-sample performances. The performance measures are illustrated in previous sections. In your report, you may want to put them in some table format. Note that not all measures are applicable. For example, I didn't find AIC/BIC or deviance for LDA models and Neural Network models. For tree models, *tree* package can give you mean residual deviance but not with *rpart* package. If you find either one of them, I would be interested to know.
@@ -723,13 +721,13 @@ table(iris.test$Species, predict(iris.svm, iris.test), dnn=c("Observed","Predict
 ```
 ##             Predicted
 ## Observed     setosa versicolor virginica
-##   setosa         10          0         0
-##   versicolor      0         10         0
-##   virginica       0          0        10
+##   setosa          7          0         0
+##   versicolor      0         12         2
+##   virginica       0          2         7
 ```
 
 
-[go to top](#content)
+[go to top](#header)
 
 # Starter code for German credit scoring
 Refer to http://archive.ics.uci.edu/ml/datasets/Statlog+(German+Credit+Data)) for variable description. Notice that "It is worse to class a customer as good when they are bad (weight = 5), than it is to class a customer as bad when they are good (weight = 1)." Define your cost function accordingly!
@@ -745,4 +743,4 @@ library(caret) #this package contains the german data with its numeric format
 data(GermanCredit)
 ```
 
-[go to top](#content)
+[go to top](#header)
