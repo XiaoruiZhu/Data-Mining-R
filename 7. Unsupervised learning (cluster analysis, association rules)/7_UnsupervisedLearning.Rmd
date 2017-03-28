@@ -325,13 +325,13 @@ data(iris)
 For problem 2 Cincinnati Zoo data, use the following code to load the transaction data for association rules mining. *as()* function coerce the dataset into transaction data type for association rules mining.
 
 ```{r, eval=FALSE}
-TransFood <- read.csv('http://homepages.uc.edu/~maifg/DataMining/data/food_4_association.csv')
+TransFood <- read.csv('https://xiaoruizhu.github.io/Data-Mining-R/data/food_4_association.csv')
 TransFood <- TransFood[, -1]
 TransFood <- as(as.matrix(TransFood), "transactions")
 ```
 Load the data for clustering:
 ```{r, eval=FALSE}
-Food_by_month <- read.csv('http://homepages.uc.edu/~maifg/DataMining/data/qry_Food_by_Month.csv')
+Food_by_month <- read.csv('https://xiaoruizhu.github.io/Data-Mining-R/data/qry_Food_by_Month.csv')
 ```
 
 [go to top](#header)
