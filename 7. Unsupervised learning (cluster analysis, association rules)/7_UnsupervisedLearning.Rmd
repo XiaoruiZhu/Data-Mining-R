@@ -33,6 +33,10 @@ This tutorial illustrates the implentations of clustering and association rule m
 
 We use the seeds data set to demonstrate cluster analysis in R. The examined group comprised kernels belonging to three different varieties of wheat: Kama, Rosa and Canadian, 70 elements each. A description of the dataset can be viewed at (https://archive.ics.uci.edu/ml/datasets/seeds)
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE, message = FALSE, error = FALSE)
+```
+
 ```{r}
 seed = read.table('http://archive.ics.uci.edu/ml/machine-learning-databases/00236/seeds_dataset.txt', header=F)
 seed = seed[,1:7]
@@ -192,8 +196,10 @@ plot(mclust_result)
 
 Association Rules is a popular and well researched method for discovering
 interesting relations between variables in large databases. *arules* package in R provides a basic infrastructure for creating and manipulating input data sets and for analyzing the resulting itemsets and rules. 
-* For an introduction to arules and additional case studies see (http://cran.r-project.org/web/packages/arules/vignettes/arules.pdf)
-* For the reference manual for the package see (http://cran.r-project.org/web/packages/arules/arules.pdf))
+
+- For an introduction to arules and additional case studies see (http://cran.r-project.org/web/packages/arules/vignettes/arules.pdf)
+
+- For the reference manual for the package see (http://cran.r-project.org/web/packages/arules/arules.pdf))
 
 The Groceries data set contains 1 month (30 days) of real-world point-of-sale transaction data from a typical local grocery outlet. The data set contains 9835 transactions and the items are aggregated to 169 categories.
 ```{r}
@@ -232,25 +238,19 @@ basket_rules <- apriori(Groceries,parameter = list(sup = 0.003, conf = 0.5,targe
 summary(basket_rules)
 ```
 Recall from class:
-* **Support**: The support of an itemset X or $latex supp(X)$ is defined as the proportion of
-transactions in the data set which contain the itemset. In the zoo data, the support for the rules is relatively low, with a maximum support of no more than 3%. 
-* **Confidence**: The confidence of a rule is defined as $latex conf( X\Rightarrow Y) = supp( X \cup Y )/supp(X)$. For example, the
-rule {milk, bread} $latex \Rightarrow$ {butter} has a confidence of 0.5,
-which means that for 50% of the transactions containing milk and bread the rule is correct.
-Confidence can be interpreted as an estimate of the conditional probability P(Y |X), the probability of
-finding the RHS of the rule in transactions under the condition that these transactions also
-contain the LHS. Association rules are required to satisfy both a minimum support and a minimum confidence
-constraint at the same time.
 
-* **Lift**: Lift is a popular measure of to filter or rank found rules. The lift of a rule is defined as $latex lift(X \Rightarrow Y ) = supp(X \cup Y )/(supp(X)supp(Y ))$. Lift can be interpreted as the deviation of the support of the whole rule from the support expected
-under independence given the supports of the LHS and the RHS. Greater lift values indicate
-stronger associations.
+- **Support**: The support of an itemset X or $latex supp(X)$ is defined as the proportion of transactions in the data set which contain the itemset. In the zoo data, the support for the rules is relatively low, with a maximum support of no more than 3%. 
+
+- **Confidence**: The confidence of a rule is defined as $conf( X\Rightarrow Y) = supp( X \cup Y )/supp(X)$. For example, the rule {milk, bread} $\Rightarrow$ {butter} has a confidence of 0.5, which means that for 50% of the transactions containing milk and bread the rule is correct. Confidence can be interpreted as an estimate of the conditional probability P(Y |X), the probability of finding the RHS of the rule in transactions under the condition that these transactions also contain the LHS. Association rules are required to satisfy both a minimum support and a minimum confidence constraint at the same time.
+
+- **Lift**: Lift is a popular measure of to filter or rank found rules. The lift of a rule is defined as $lift(X \Rightarrow Y ) = supp(X \cup Y )/(supp(X)supp(Y ))$. Lift can be interpreted as the deviation of the support of the whole rule from the support expected under independence given the supports of the LHS and the RHS. Greater lift values indicate stronger associations.
+
 ```{r}
 # Check the generated rules using inspect
 inspect(head(basket_rules))
 ```
 
-As typical for association rule mining, the number of rules found is huge. To analyze these rules, for example, subset() can be used to produce separate subsets of rules. Now find the subset of rules that has 4 or more length (lhs+rhs).
+As typical for association rule mining, the number of rules found is huge. To analyze these rules, for example, *subset()* can be used to produce separate subsets of rules. Now find the subset of rules that has 4 or more length (lhs+rhs).
 ```{r}
 #Basket rules of size greater than 4
 inspect(subset(basket_rules, size(basket_rules)>4))
@@ -316,13 +316,13 @@ plot(basket_rules, method="grouped")
 
 <a id="case4"></a>
 
-For problem 1 simply use the Iris dataset in R. When doing cluster analysis for Iris you'll want to ignore the Species variable.
+For problem 1 Iris data, simply use the Iris dataset in R. When doing cluster analysis for Iris you'll want to ignore the Species variable.
 
 ```{r, eval=FALSE}
 data(iris)
 ```
 
-For problem 2, use the following code to load the transaction data for association rules mining. *as()* function coerce the dataset into transaction data type for association rules mining.
+For problem 2 Cincinnati Zoo data, use the following code to load the transaction data for association rules mining. *as()* function coerce the dataset into transaction data type for association rules mining.
 
 ```{r, eval=FALSE}
 TransFood <- read.csv('http://homepages.uc.edu/~maifg/DataMining/data/food_4_association.csv')
