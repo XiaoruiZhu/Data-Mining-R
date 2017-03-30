@@ -76,11 +76,12 @@ prp(boston.rpart,digits = 4, extra = 1)
 
 The in-sample and out-of-sample prediction for regression tree is also similar to *lm* and *glm* models.
 
-In-sample prediction
+- In-sample prediction
 ```{r}
 boston.train.pred.tree = predict(boston.rpart)
 ```
-Out-of-sample prediction
+
+- Out-of-sample prediction
 ```{r}
 boston.test.pred.tree = predict(boston.rpart,boston.test)
 ```
@@ -111,6 +112,7 @@ credit.rpart <- rpart(formula = Y ~ . -id, data = credit.train, method = "class"
 ```
 
 Note the following important differences from the regression tree:
+
 * The method = "class" is required if the response is not declared as factors.
 
 * The parms argument, which is a list. The most import element is the loss matrix. The diagonal elements are 0, and off-diagonal elements tells you the loss(cost) of classifying something wrong. For binary classification, the numbers in c() specify the cost in this sequence: c(0, False Negative, False Positive, 0).
