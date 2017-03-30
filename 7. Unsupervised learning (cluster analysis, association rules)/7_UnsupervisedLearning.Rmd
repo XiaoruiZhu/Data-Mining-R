@@ -197,9 +197,9 @@ plot(mclust_result)
 Association Rules is a popular and well researched method for discovering
 interesting relations between variables in large databases. *arules* package in R provides a basic infrastructure for creating and manipulating input data sets and for analyzing the resulting itemsets and rules. 
 
-- For an introduction to arules and additional case studies see (http://cran.r-project.org/web/packages/arules/vignettes/arules.pdf)
+- For an introduction to arules and additional case studies see [Introduction to arules](http://cran.r-project.org/web/packages/arules/vignettes/arules.pdf)
 
-- For the reference manual for the package see (http://cran.r-project.org/web/packages/arules/arules.pdf))
+- For the reference manual for the package see [arules package manual](http://cran.r-project.org/web/packages/arules/arules.pdf))
 
 The Groceries data set contains 1 month (30 days) of real-world point-of-sale transaction data from a typical local grocery outlet. The data set contains 9835 transactions and the items are aggregated to 169 categories.
 ```{r}
@@ -215,14 +215,16 @@ summary(Groceries)
 We see that the data set contains transaction IDs. This additional information can be used for analyzing the data
 set. 
 
-To find the very long transactions we can use the *size()* and select very long transactions (containing more than 25 items).
+To find the very long transactions we can use the *size()* and select very long transactions (containing more than 30 items).
+
 ```{r}
 #
-x = Groceries[size(Groceries) > 25]
+x = Groceries[size(Groceries) > 30]
 inspect(x)
 ```
 
 To see which items are important in the data set we can use the *itemFrequencyPlot()*. To reduce the number of items, we only plot the item frequency for items with a support greater than 10%. The label size is reduced with the parameter *cex.names*.
+
 ```{r}
 #
 itemFrequencyPlot(Groceries, support = 0.1, cex.names=0.8)
