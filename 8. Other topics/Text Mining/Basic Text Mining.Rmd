@@ -99,8 +99,8 @@ pos_words = read.table("positive-words.txt", header = F, stringsAsFactors = F)[,
 
 As simple indicators, we create two variables (neg, pos) that contain the number of positive and negative words in each document
 ```{r}
-reviews$neg = sapply(review_corpus, tm_term_score, neg_words)
-reviews$pos = sapply(review_corpus, tm_term_score, pos_words)
+reviews$neg = tm_term_score(DocumentTermMatrix(review_corpus), neg_words)
+reviews$pos = tm_term_score(DocumentTermMatrix(review_corpus), pos_words)
 ```
 
 Let's remove the actual texual content for statistical model building
