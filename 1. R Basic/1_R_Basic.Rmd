@@ -13,17 +13,7 @@ output:
   pdf_document: default
 ---
 
-# Introduction to R
-
-
-## Outline of this lab
-
-1. Install R and RStudio
-2. Learn basic commands and data types in R
-3. Get started with Rattle
-
-[go to top](#header)
-
+# Introduction to R and R Studio
 ## Before You Start: Install R, RStudio
 
 **R**
@@ -56,9 +46,33 @@ http://www.youtube.com/watch?v=6aTRbo7kdGk&hd=1
 
 [go to top](#header)
 
-## R Basics
+## Some tips
+- Powerful Statistical language: R
 
-### Assignment
+Without a doubt, R is nibbling other programming languages that popularly used by data scientists or statisticians. Recently, most of statisticians use R to analyze data, fit models, do research. Moreover, a lot of practitioners also tend to use R due to its free, open source and active community full of great researchers. Researchers and many other soft engineers help R community to be organicaly developed. All those cooperations are helping R to become one of the greatest statistical programming language in the world. R Studio, REvolution, GGplot2, Shiny App etc. are a few great tools in this community which play big role to make this language great. 
+
+For people who want to study frontier statistical methodologies, R helps them to be able to focus on the implementation of statistical methods. One can easily implement new estimation method or algorithms for simulation or comparison purpose, meanwhile, one can easily develop R packages for the methods or models they proposed, which can be used by practionor, maybe right after the method is published. This cannot happen before when statistician know few about software developing and engineers also care less about statistical theories. However, by learning a few of simple R package developing knowledge, one can develop statistical package for their new methods so that people in industry can quickly apply research fruits to accelare their business or improve their decision making, just as simple as clicking button in SPSS. On the other side, practitioners can also develop package for their own projects, which makes their intellectual property reproducible for further using (they don't necessarily need to publish their package to the public). Although open source may face some issues like unfrequent maintanance or security, it makes the flow of knowledge seamless.
+
+- Extreme Stong IDE: R Studio
+
+R Studio is a very active community to enrich functions of R. There are several great features I want to emphisis and recommend. 
+
+1. R Markdown or R Notebook
+
+Markdown is an elegant syntax for writers, no matter he or she is a novelist or even in social science or nature science fields, which need more sophisticated notations or graphical and numerical results. Its simple syntax allows writers to be able to focus on the essential part of knowledge sharing: the content and idea itself. One doesn't need to know much about a lot of tedious things like: formating, writing math formula and perfectly positioning statistical results. As long as smooth writing process leads to fluent communication with readers, the advantage of Markdown language is obvious. 
+
+Here is Markdown Basics: http://rmarkdown.rstudio.com/authoring_basics.html And many other tutorials are available in the same website.  
+
+New version of R studio provides R Notebook feature that is only available in version 1.0 or higher of RStudio. It is easy to test and iterate when writing article with code.
+
+2. Shiny Web App
+
+
+
+[go to top](#header)
+
+# R Basic Commands
+## Assignment
 You can assign numbers and lists of numbers (vector) to a variable. Assignment is specified with the "<-" or "=" symbol. There are some subtle differences between them but most of the time they are equivalent. I highly suggest you to use "<-" when you want to do assignment, but use "=" in the argument of function(May explain later). 
 
 Here we define two variables $x = 10$ and $y = 5$, then we calculate the result of $x+y$.
@@ -76,7 +90,7 @@ z = c(3,5,7,9)
 
 In RStudio, you can view every variable you defined, along with other objects such as imported datasets in the *Workspace* panel.
 
-### Basic Calculation
+## Basic Calculation
 
 You can use R as an over-qualified calculator. Try the following commands. You need to have $x, y, z$ defined first.
 
@@ -113,7 +127,7 @@ summary(z)
 ```
 
 
-### Data Types in R: Vectors, matrices, data frames
+## Data Types in R: Vectors, matrices, data frames
 
 * __Vector__ is a list of numbers (or strings), $z$ is a vector with $[3,5,7,9]$
 
@@ -206,7 +220,7 @@ cars$dist[1:2]
 In the next lab we will see other ways to select data from data frames. 
 
 
-### Regression Model and the Data Type __List__
+## Regression Model and the Data Type __List__
 ```{r}
 # Load car dataset that comes with R
 data(cars)
@@ -227,14 +241,14 @@ reg$coeffcients
 
 If you have done object oriented programming before, the list "reg" is actually an object that belongs to class "lm". The element names such as "coeffcients" are fields of the "lm" class.
 
-### Basic Plotting
+## Basic Plotting
 
 ```{r fig.align="center"}
 plot(cars)
 ```
 
 
-### Probability Distributions
+## Probability Distributions
 Types of distributions: norm, binom, beta, cauchy, chisq, exp, f, gamma, geom, hyper, lnorm, logis, nbinom, t, unif, weibull, wilcox
 
 Four prefixes:
@@ -255,7 +269,7 @@ rnorm(10)
 rnorm(n=10,mean=100,sd=20)
 ```
 
-### Functions
+## Functions
 * Most of R consists of functions
 * The arguments can either be input in the right order, or using argument names
 * In RStudio, pressing tab after function name gives help about arguments
@@ -276,13 +290,13 @@ abs_val = function(x){
 abs_val(-5)
 ```
 
-### Organizing your computations
+## Organizing your computations
 1. R has a "current directory" (Working Directory). To set Working Directory in RStudio: Session -> Set Working Directory.
 2. Your objects (loaded datasets, variables, functions, etc.) are contained in your "current workspace", which can be saved any time. In Rstudio: Session -> Load Workspace/Save Workspace As.
 3. Keep it tidy! Keep separate projects (code, data files) in separate workspaces/directories.
 
 
-### Help
+## Help
 1. Use _help(mean)_ or _?mean_  to find help documents for the function _mean_.
 2. In Rstudio, pressing tab after a function name gives help about the arguments
 3. A google search will probably answer most of your questions.
@@ -292,8 +306,11 @@ abs_val(-5)
 
 [go to top](#header)
 
+# Get started with Rattle
 ## Install Rattle
+
 ### Rattle: "A Graphical User Interface for Data Mining using R". 
+
 With Rattle you can presents statistical and visual summaries of data, transforms data into forms that can be readily modelled, builds both unsupervised and supervised models from the data, presents the performance of models graphically, and scores new datasets.[1]
 
 Basically, *R* is a command line language, *RStudio* offers a pleasant development enviroment for you to write code and manage projects, and *Rattle* is a package in R that allows you to do Data Mining tasks in a graphical interface. 
@@ -306,8 +323,7 @@ install.packages("rattle")
 
 Alternatively, you can use the *Install Packages* in RStudio.
 
-
-### Starting Rattle
+## Starting Rattle
 To start Rattle, first load the Rattle package (after you install it), and use _rattle()_ command to launch it.
 ```{r, eval=FALSE}
 library(rattle)
