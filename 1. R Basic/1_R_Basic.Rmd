@@ -67,6 +67,13 @@ New version of R studio provides R Notebook feature that is only available in ve
 
 2. Shiny Web App
 
+Shiny Web App provide a very important pipeline for statisticians and data scientists to interact with audience or customers. With this simple and user friendly tool, those who are playing with data can directly interpret what they've found to those who are interested in. This process was used to be complicated and need professionals in software developing or web developing. The Shiny App, however, simplify the process and provide a simle way to display statistical results or interactive application. Therefore, this is a nice tool that worthy to learn so that one can smoothly tranfer his or her idea into real product. 
+
+And it is easy to learn as learning how to use a package in R. Here is the tutorial: https://shiny.rstudio.com/tutorial/
+
+3. Hypothesis test and p-value
+
+This a simple example of hypothesis test and why Statistically speaking, this is the paradigm of frequentist. There is an example which will make this clear. If some day, one girl saw her boyfriend is dating with her roommate. So she wants to test whether her boyfriend cheat and is going to find evidence to support her guessing, which means she will find data to prove her boyfriedn and roommate have close relationship (reject they don’t). Then she can put H0 as “boyfriend doesn’t cheat” (common sense) and H1 as “boyfriend do cheat” (interests). Now, if this girl tried her best to find all evidences(data), but the evidences don’t imply her boyfriend has cheated, which in statistics, fails to reject H0. Okay, right now, the girl would say: “I cannot accept you don’t cheat yet, I just cannot find evidence to prove you’ve cheated”. LOL. The point is hypotheses test is trying to reject something rather to accept something, which is very intuitive idea. We cannot find evidence to show we are not real doesn’t mean we can accept we are truly real. 
 
 
 [go to top](#header)
