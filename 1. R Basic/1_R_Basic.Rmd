@@ -6,7 +6,7 @@ output:
     number_sections: yes
     theme: readable
     toc: yes
-    code_folding: hide
+    code_folding: show
   html_notebook:
     toc: yes
   md_document:
