@@ -157,7 +157,7 @@ table(iris1$Species, iris1$Sepal.Length.Cate)
 
 ### Exercise
 
-* Download the customer data [here](CustomerData.csv), and read into R.
+* Download the customer data [here](data/CustomerData.csv), and read into R.
 * How many rows and columns of the dataset?
 * Print first few rows the dataset.
 * Obtain the summary statistics (Min, Median, Max, Mean and Std.) for *Age*, *EducationYears*, *HHIncome*, and *CreditDebt*.
