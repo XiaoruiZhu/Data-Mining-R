@@ -374,7 +374,7 @@ class(mydf)
 
 - Read external data file (.txt and .csv files)
 
-Use the _read.table_ or _read.csv_ function to import comma/space/tab delimited text files. You can also use the Import Dataset Wizard in RStudio. Package “readxl” allows you to read xls/xlsx files. First, download the storks datasets ( [storks.cvs](storks.csv) and [storks.txt](stork.txt) files) and save them into your Working Directory.
+Use the _read.table_ or _read.csv_ function to import comma/space/tab delimited text files. You can also use the Import Dataset Wizard in RStudio. Package “readxl” allows you to read xls/xlsx files. First, download the storks datasets ( [storks.cvs](data/storks.csv) and [storks.txt](data/stork.txt) files) and save them into your Working Directory.
 
 ```{r, eval=FALSE}
 mydata_csv <- read.csv("storks.csv", header=TRUE)
@@ -470,7 +470,7 @@ If you have done object oriented programming before, the list "reg" is actually 
 > 2. Re-order the vector from largest to smallest, and make it a new vector.
 > 3. Convert the vector to a 3*3 matrix ordered by column. What is the sum of first column? What is the number in column 2 row 3? What is the column sum?
 > 
-> 4. Download the CustomerData to your working directory. Load it to R.
+> 4. Download the [CustomerData](data/CustomerData.csv) to your working directory. Load it to R.
 >   - How many rows and columns are there?
 >   - Extract all variable names.
 >   - What is the average “Debt to Income Ratio”?
