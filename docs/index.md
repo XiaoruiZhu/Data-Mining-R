@@ -11,31 +11,31 @@ Contributors:
 
 ## Lecture and Lab Notes
 
-### R Basic
+### Lab 1. Introduction to R
 
-[R Basic](lecture/1_R_Basic.html)
+[Introduction to R](lecture/1_IntroR.html)
 
-### Explore and describe dataset
+### Lab 2. Explore and describe dataset
 
 [Explore and describe dataset](lecture/2_ExploratoryAnalyses.html)
 
-### Linear Regression, Prediction and Variables Seleciton
+### Lab 3. Linear Regression, Prediction and Variables Seleciton
 
 [Linear Regression](lecture/3_LinearReg.html)
 
-### Logistic Regression
+### Lab 4. Logistic Regression
 
 [Logistic Regression](lecture/4_LogisticReg.html)
 
-### Tree Models
+### Lab 5. Tree Models
 
 [Regression tree and classification tree](lecture/5_Tree.html)
 
-### GAM, Neural Network, LDA and SVM
+### Lab 6. GAM, Neural Network, LDA and SVM
 
 [GAM, Neural Network, LDA and SVM](lecture/6_SupervisedLearning.html)
 
-### Unsupervised Learning
+### Lab 7. Unsupervised Learning
 
 [Unsupervised Learning](lecture/7_UnsupervisedLearning.html)
 
