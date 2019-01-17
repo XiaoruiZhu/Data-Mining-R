@@ -12,6 +12,8 @@ output:
   md_document:
     variant: markdown_github
   pdf_document: default
+editor_options: 
+  chunk_output_type: console
 ---
 
 # Introduction to R and R Studio
@@ -374,7 +376,7 @@ class(mydf)
 
 - Read external data file (.txt and .csv files)
 
-Use the _read.table_ or _read.csv_ function to import comma/space/tab delimited text files. You can also use the Import Dataset Wizard in RStudio. Package “readxl” allows you to read xls/xlsx files. First, download the storks datasets ( [storks.cvs](data/storks.csv) and [storks.txt](data/stork.txt) files) and save them into your Working Directory.
+Use the _read.table_ or _read.csv_ function to import comma/space/tab delimited text files. You can also use the Import Dataset Wizard in RStudio. Package “readxl” allows you to read xls/xlsx files. First, download the storks datasets ( [storks.cvs](data/storks.csv) and [storks.txt](data/storks.txt) files) and save them into your Working Directory.
 
 ```{r, eval=FALSE}
 mydata_csv <- read.csv("storks.csv", header=TRUE)
@@ -387,6 +389,7 @@ mydata_txt <- read.table("storks.txt", header=TRUE, sep = "\t")
 #Load cars dataset that comes with R (50 obs, 2 variables)
 data(cars)
 ```
+
 - Summary of a dataset
 ```{r, eval=FALSE}
 #Dimension 
@@ -475,6 +478,12 @@ If you have done object oriented programming before, the list "reg" is actually 
 >   - Extract all variable names.
 >   - What is the average “Debt to Income Ratio”?
 >   - What is the proportion of “Married” customers?
+
+```{r echo=FALSE, eval=FALSE}
+Cus <- read.csv(file = "data/CustomerData.csv")
+dim(Cus); names(Cus); mean(Cus$DebtToIncomeRatio)
+mean(Cus$MaritalStatus=="Married")
+```
 
 ## Basic Plotting
 
@@ -565,6 +574,31 @@ x
 > 
 > 1. Do you think $1+1/2^2+1/3^2+...+1/n^2$ converges or diverges as $n\rightarrow \infty$? Use R to verify your answer.
 > 2. Fibonacci sequence: 1, 1, 2, 3, 5, 8, 13,… What is the next number? What is the 50th number? Creat a vector of first 30 Fibonacci numbers.
+> 3. Write a function that can either calculate the summation of the serie in Question 1 or generate and print Fibonacci sequence in Question 2. 
+
+```{r echo=FALSE, eval=FALSE}
+Task <- function(Seq=c("Q1", "Fib"), n) {
+  x <- 1
+  if (Seq=="Q1") {
+    for(i in 2:n){
+      x <- x + (1/i)^2
+    }
+  } else if (Seq=="Fib") {
+    x_0 <- 0; cat(x)
+    for (i in 1:(n-1)) {
+      x <- x_0 + x 
+      x_0 <- x - x_0
+      cat(",", x)
+    }
+    cat("\nThe ", n, "-th Fibonacci number is:", x, "\n", sep = "")
+  }
+  return(x)
+}
+Task(Seq = "Fib", 10)
+Task(Seq = "Q1", 100)
+Task(Seq = "Q1", 10000)
+```
+
 
 [go to top](#header)
 

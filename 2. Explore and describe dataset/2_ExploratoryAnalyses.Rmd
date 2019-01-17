@@ -7,6 +7,7 @@ output:
     number_sections: yes
     toc: yes
     code_folding: show
+    df_print: paged
   html_notebook: 
     fig_caption: yes
     number_sections: yes
@@ -55,6 +56,7 @@ First, load iris data to the current workspace
  
 ```{r}
 data(iris)
+iris
 ```
 
 ### What is in the dataset?
@@ -484,7 +486,7 @@ Try to obtain *iris_newvar* WITHOUT using `mutate()` function. (You may need mul
 
 Recall the customer dataset we in previous exercise.
 ```{r}
-customer<- read.csv("CustomerData.csv")
+customer <- read.csv("data/CustomerData.csv")
 ```
 
 ```{r}
