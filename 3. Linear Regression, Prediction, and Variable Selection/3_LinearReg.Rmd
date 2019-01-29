@@ -10,15 +10,18 @@ output:
     fig_caption: yes
     number_sections: yes
     toc: yes
+editor_options: 
+  chunk_output_type: console
 ---
 
 # Objective
 The objective of this case is to get you started with regression model building, variable selection, and model evaluation in R.
 
-Code in this file is not the only correct way to do things, however it is important for you to understand what each statement does. You will have to modify the code accordingly for your homework. 
+We use Boston Housing Data as an illustrative example in this lab. We learn basic linear regression and analysis with R. Code in this file is not the only correct way to do things, however it is important for you to understand what each statement does. You will have to modify the code accordingly for your homework. 
 
 
 # Boston Housing Data
+Boston housing data is a built-in dataset in `MASS` package, so you do not need to download externally. Package `MASS` comes with R when you installed R, so no need to use `install.packages(MASS)` to download and install, but you do need to load this package.
 
 ## Load Data
 ```{r}
@@ -26,35 +29,54 @@ library(MASS)
 data(Boston); #this data is in MASS package
 colnames(Boston) 
 ```
+You can find details of the dataset from help document.
+```{r eval=FALSE}
+?Boston
+```
 The original data are 506 observations on 14 variables, medv being the response variable $y$:
 
-## Sampling (Split Dataset Randomly)
+## EDA
+
+We have introduced many EDA techniques in lab 2. We will briefly go through some of them here.
+```{r}
+dim(Boston) 
+names(Boston)
+str(Boston)
+summary(Boston)
+```
+
+
+We skip the Exploratory Data Analysis (EDA) in this notes, but you should not omit it in your HW and Cases. EDA is very important and always the first analysis to do before any modeling.
+
+## Preparation 
+### Splitting data to training and testing samples 
+
 Next we sample 90% of the original data and use it as the training set. The remaining 10% is used as test set. The regression model will be built on the training set and future performance of your model will be evaluated with the test set.
 
 ```{r}
-sample_index = sample(nrow(Boston),nrow(Boston)*0.90)
-Boston_train = Boston[sample_index,]
-Boston_test = Boston[-sample_index,]
+sample_index <- sample(nrow(Boston),nrow(Boston)*0.90)
+Boston_train <- Boston[sample_index,]
+Boston_test <- Boston[-sample_index,]
 ```
 
-## (Optional) Standardization
+### (Optional) Standardization
 If we want our results to be invariant to the units and the parameter estimates $\beta_i$ to be comparible, we can standardize the variables. Essentially we are replacing the original values with their z-score.
 
 1st Way: create new variables manually.
 ```{r, eval=FALSE}
-Boston$sd.crim = (Boston$crim-mean(Boston$crim))/sd(Boston$crim); 
+Boston$sd.crim <- (Boston$crim-mean(Boston$crim))/sd(Boston$crim); 
 ```
 
 This does the same thing.
 ```{r,eval=FALSE}
-Boston$sd.crim = scale(Boston$crim); 
+Boston$sd.crim <- scale(Boston$crim); 
 ```
 
 2nd way: If you have a lot of variables to standardize then the above is not very pleasing to do. You can use a loop like this. It standardizes every varables other than the last one which is $y$.
 
 ```{r}
 for (i in 1:(ncol(Boston_train)-1)){
-  Boston_train[,i] = scale(Boston_train[,i])
+  Boston_train[,i] <- scale(Boston_train[,i])
 }
 ```
 
@@ -68,13 +90,13 @@ You task is to build a best model with training data. You can refer to the regre
 
 The following model includes all $x$ varables in the model
 ```{r, eval=FALSE}
-model_1 = lm(medv~crim+zn+chas+nox+rm+dis+rad+tax+ptratio+black+lstat, data=Boston_train)
+model_1 <- lm(medv~crim+zn+chas+nox+rm+dis+rad+tax+ptratio+black+lstat, data=Boston_train)
 ```
 
 To include all variables in the model, you can write the statement this simpler way.
 
 ```{r}
-model_1 = lm(medv~., data=Boston_train)
+model_1 <- lm(medv~., data=Boston_train)
 summary(model_1)
 ```
 
@@ -89,15 +111,17 @@ lm(medv~crim*zn, data=Boston_train)
 ```
 For now we will not investigate the interactions of variables.
 
-[go to top](#header)
+# Model Assessment 
 
-# Evaluating Model Fitness 
+Suppose that everything in model diagnostics is okay. In other words, the model we have built is fairly a valid model. Then we need to evaluate the model performance in terms of different metrics.
+
+Commonly used metrics include **MSE, (adjusted) $R^2$, AIC, BIC** for in-sample performance, and **MSPE** for out-of-sample performance. 
 
 ## In-sample model evaluation (train error)
 MSE of the regression, which is the square of 'Residual standard error' in the above summary. It is the sum of squared residuals(SSE) divided by degrees of freedom (n-p-1). In some textbooks the sum of squred residuals(SSE) is called residual sum of squares(RSS). MSE of the regression should be the unbiased estimator for variance of $\epsilon$, the error term in the regression model.
 
 ```{r}
-model_summary = summary(model_1)
+model_summary <- summary(model_1)
 (model_summary$sigma)^2
 ```
 
@@ -124,19 +148,19 @@ BIC, AIC, and Adjusted $R^2$ have complexity penalty in the definition, thus whe
 To evaluate how the model performs on future data, we use predict() to get the predicted values from the test set.
 ```{r, eval=FALSE}
 #pi is a vector that contains predicted values for test set.
-pi = predict(object = model_1, newdata = Boston_test)
+pi <- predict(object = model_1, newdata = Boston_test)
 ```
 Just as any other function, you can write the above statement the following way as long as the arguments are in the right order.
 
 ```{r, echo=FALSE}
-subset = sample(nrow(Boston),nrow(Boston)*0.90)
-Boston_train = Boston[subset,]
-Boston_test = Boston[-subset,]
-model_1 = lm(medv~., data=Boston_train)
+subset <- sample(nrow(Boston),nrow(Boston)*0.90)
+Boston_train <- Boston[subset,]
+Boston_test <- Boston[-subset,]
+model_1 <- lm(medv~., data=Boston_train)
 ```
 
 ```{r, eval=TRUE}
-pi = predict(model_1, Boston_test)
+pi <- predict(model_1, Boston_test)
 ```
 
 The most common measure is the Mean Squared Error (MSE): average of the squared differences between the predicted and actual values
@@ -157,19 +181,76 @@ Which is the same as
 model_1$fitted.values
 ```
 
+## Cross-validation
+
+Instead of fitting a model on a pre-specified 90% training sample and evaluate the MSPE on the hold-out 10% testing sample, it is more reliable to use cross-validation for out-of-sample performance evaluation. For k-fold cross-validation, the dataset is divided into k parts (equal sample size). Each part serves as the testing sample in and the rest (k-1 together) serves as training sample. This training/testing procedure is iteratively performed k times. The CV score is usually the average of the metric of out-of-sample performance across k iterations.
+
+Note
+
+1. We use the **entire** dataset for cross validation
+
+2. We need to use `glm()` instead of `lm()` to fit the model (if we want to use cv.glm function in boot package)
+
+3. The default cost is the Mean Squared Prediction Error (MSPE). If we want to use another measure we need to define a cost function.
+
+10-fold Cross Validation
+```{r}
+library(boot)
+model.glm1 = glm(medv~., data = Boston)
+cv.glm(data = Boston, glmfit = model.glm1, K = 10)$delta[2]
+```
+
+Comparing with model 2
+```{r}
+model.glm2 = glm(medv~. -indus -age, data = Boston)
+cv.glm(data = Boston, glmfit = model.glm2, K = 10)$delta[2]
+```
+
+LOOCV (Leave-one-out Cross Validation)
+```{r, eval=FALSE}
+cv.glm(data = Boston, glmfit = model.glm1, K = nrow(Boston))$delta[2]
+```
+
+Now we define a MAD cost function as the CV score. The function takes 2 input vectors, pi =  predicted values, r = actual values.
+```{r}
+MAD_cost = function(pi, r){
+  return(mean(abs(pi-r)))
+}
+cv.glm(data = Boston, glmfit = model.glm1, cost = MAD_cost, K = 10)$delta[2]
+```
+
+> **Exercise**: 
+> Do 10-fold cross-validation for all candidate models, and compare the CV score in terms of MSE and MAE. 
+
+
+## Robust Linear Regression
+
+The traditional linear regression uses ordinary least square for the estimation, but we know that OLS is very sensitive to outliers, meaning that the estimation results can be severely affected by outliers. As an alternative, robust estimation can be used deal with this issue. Most robust estimator is called M-estimator (here is a good tutorial for [introduction](http://www.statisticalconsultants.co.nz/blog/m-estimators.html)).
+
+In `MASS` package, function `rlm()` is designed for robust linear regression.
+```{r}
+lm_rob= rlm(medv~., data = Boston_train)
+pred_rob= predict(lm_rob, newdata = Boston_test)
+mspe_rob= mean((pred_rob-Boston_test$medv)^2)
+mspe_rob
+```
+
 [go to top](#header)
 
 # Variable Selection
 
 ## Compare Model Fit Manually
 ```{r eval=FALSE}
-model_1 = lm(medv~., data = Boston_train)
-model_2 = lm(medv~crim+zn, data = Boston_train)
+model_1 <- lm(medv~., data = Boston_train)
+model_2 <- lm(medv~crim+zn, data = Boston_train)
 summary(model_1)
 summary(model_2)
-AIC(model_1)
-AIC(model_2)
+AIC(model_1); BIC(model_1)
+AIC(model_2); BIC(model_2)
 ```
+
+> **Exercise**: 
+> Compare MSE, $R^2$, and MSPE of these three models.
 
 ## Best Subset Regression
 The 'leaps' package provides procedures for best subset regression.
@@ -182,16 +263,17 @@ library(leaps)
 Which subset of variables should you include in order to minimize BIC?
 ```{r}
 #regsubsets only takes data frame as input
-subset_result = regsubsets(medv~.,data=Boston_train, nbest=2, nvmax = 14)
+subset_result <- regsubsets(medv~.,data=Boston_train, nbest=2, nvmax = 14)
 summary(subset_result)
 plot(subset_result, scale="bic")
 ```
+
 Each row represents a model. Black indicates that a variable is included in the model, while white indicates that it is not. 
-The scale = "" can be "Cp", "adjr2", "r2" or "bic".
+The argument `scale = ""` can be "Cp", "adjr2", "r2" or "bic".
 
 What is the problem with best subset regression? If there are n independent variables, the number of possible nonempty subsets is 2^n - 1. If you try a best subset regression with more than 50 variables, you might need to wait for your entire life to get the result.
 
-<img src="http://science.slc.edu/~jmarshall/courses/2002/spring/cs50/BigO/running-times.gif" height="300px" />
+<!-- <img src="http://science.slc.edu/~jmarshall/courses/2002/spring/cs50/BigO/running-times.gif" height="300px" /> -->
 
 ## Forward/Backward/Stepwise Regression Using AIC
 To perform the Forward/Backward/Stepwise Regression in R, we need to define the starting points:
@@ -203,17 +285,17 @@ nullmodel is the model with no varaible in it, while fullmodel is the model with
 
 ### Backward Elimination
 ```{r}
-model.step = step(fullmodel,direction='backward')
+model_step_b <- step(fullmodel,direction='backward')
 ```
 
 ### Forward Selection
 ```{r}
-model.step = step(nullmodel, scope=list(lower=nullmodel, upper=fullmodel), direction='forward')
+model_step_f <- step(nullmodel, scope=list(lower=nullmodel, upper=fullmodel), direction='forward')
 ```
 
 ### Stepwise Selection (Output Omitted)
 ```{r, eval=FALSE}
-model.step=step(nullmodel, scope=list(lower=nullmodel, upper=fullmodel), direction='both')
+model_step_s <- step(nullmodel, scope=list(lower=nullmodel, upper=fullmodel), direction='both')
 ```
 
 One caution when comparing fit statistics using AIC, the definition varies by program/procedure.
@@ -222,8 +304,197 @@ extractAIC(model_1)
 AIC(model_1)
 ```
 
+> Exercise 
+
+>   1. Comparing in-sample and out-of-sample performance between these reduced models. 
+
+>   2. Conduct 10-fold cross validation on the full sample and compare the CV scores.
+
 * For pros and cons of variable/model selection using the common fit statistics: (adjusted) $R^2$, MSE, AIC, BIC, etc. refer to Ch9 in "Applied Linear Regression Models" by Kutner et al.
 * For other variable selection methods refer to section 3.4 - 3.8 of ["Elements of Statistical Learning" (Free Online)](http://www-stat.stanford.edu/~tibs/ElemStatLearn/).
+
+[go to top](#header)
+
+## Lasso and Elastic net 
+
+Two of the state-of-the-art automatic variable selection techniques of predictive modeling , Lasso [1] and Elastic net [2], are provided in the _glmnet_ package. These method are in general better than the stepwise regressions, especially when dealing with large amount of predictor variables.
+
+For a more theoretical review of these techniques refer to section 3.4 - 3.8 of ["Elements of Statistical Learning" (Free Online)](http://www-stat.stanford.edu/~tibs/ElemStatLearn/). For more details of the glmnet package you can watch [Professor Trevor Hastie's presentation](http://www.youtube.com/watch?v=BU2gjoLPfDc). 
+
+In short, Lasso and Elastic net are solving this optimization problem [2] :
+
+$$\begin{array}
+{rl}
+\hat{\beta}= & \underset{\beta}{\text{argmin}}|y-X\beta|^2_2 \\
+\text{subject to} & (1-\alpha)|\beta|_1+\alpha|\beta|^2\le t
+\end{array}$$
+
+Note that when solving the above problem without the constraint we have a familiar least square regression model. When the constraint is added, depending on how large $t$ is, some of the "unimportant" predictor variables will become 0 and are forced out of the model. Lasso is a special case of Elastic net when $\alpha = 0$.
+
+Two of the most important tuning parameters are $t$ and $\alpha$ in the above equation. 
+
+- $t$ is controlled by adding the left hand side of the constraint as a penalty term in the objective. By default 100 different penalty parameter $\lambda$ are evaluated. When $\lambda$ is large less variables are included in the model. You can choose the $\lambda$ yourself if you know how many variables you want in the model or use cv.glmnet to conduct a cross-validation.
+
+- The default $alpha = 1$ (the definition is the opposite of the above equation) gives Lasso penalty, which is fine in most cases.
+
+The case for using elastic net is [3]: 
+
+- Use elastic net when variables are highly correlated and you want to select more than one predictor variables from a group of correlated variables. Lasso tends to select one variable from a group and ignore the others.
+
+- Use elastic net when there are more variables than observations.
+
+Here we demonstrate Lasso on Boston Housing data. For parsimony we are not using training/testing split in this example.
+
+Note: If you have a binary response you can use _family= "binomial"_ option in the glmnet() function. 
+
+```{r library, eval=TRUE, echo=TRUE, results='hide', message=FALSE, warning=FALSE}
+library(MASS)
+```
+
+```{r}
+data(Boston);
+colnames(Boston) 
+```
+
+```{r, eval=FALSE}
+install.packages('glmnet')
+```
+
+```{r,message=FALSE,warning=FALSE}
+library(glmnet)
+```
+
+glmnet does not take data frame as input, so we have to specify the x matrix and y vector.
+
+```{r}
+lasso_fit = glmnet(x = as.matrix(Boston[, -c(which(colnames(Boston)=='medv'))]), y = Boston$medv, alpha = 1)
+#lambda = 0.5
+coef(lasso_fit,s=0.5)
+
+#lambda = 1
+coef(lasso_fit,s=1)
+
+#use 5-fold cross validation to pick lambda
+cv_lasso_fit = cv.glmnet(x = as.matrix(Boston[, -c(which(colnames(Boston)=='medv'))]), y = Boston$medv, alpha = 1, nfolds = 5)
+plot(cv_lasso_fit)
+```
+
+The best $\lambda$ (or _s_) is given by:
+```{r}
+cv_lasso_fit$lambda.min
+```
+
+Given a selected _s_ you can use _predict()_ this way to get prediction:
+```{r}
+Boston.insample.prediction = predict(lasso_fit, as.matrix(Boston[, -c(which(colnames(Boston)=='medv'))]), s = cv_lasso_fit$lambda.min)
+```
+
+> **Exercise**: 
+> For a [high dimensional dataset](data/HighDim.csv) having n<p (n=200, p=500), is it possible to fit a linear regression on that directly?
+> Fit a model with first five variables. 
+> How about LASSO variable selection?
+
+```{r , eval=FALSE, echo=FALSE}
+n <- 200;p <- 500;sigma <- 0.5
+beta <- rep(0,p);nonzero <- c(1,2,3);zero <- setdiff(1:p,nonzero)
+beta[nonzero] <- c(3,2,1.5)
+Sigma <- 0.3^(abs(outer(1:p,1:p,"-")))
+
+X <- mvrnorm(n,rep(0,p),Sigma)
+error <- rnorm(n,0,sigma)
+    
+X <- apply(X,2,scale)*sqrt(n)/sqrt(n-1)
+error <- error-mean(error)
+
+Y <- X %*% beta + error
+myData <- data.frame(Y, X)
+head(myData)
+write.csv(myData, file = "HighDim.csv")
+
+test_lm <- lm(Y~., data = myData)
+test_lm_null <- lm(Y ~ 1, data = myData)
+summary(test_lm)
+subset_result <- regsubsets(Y~.,data=myData, nbest=2, nvmax = 14)
+
+model_step_b <- step(test_lm, direction='backward')
+model_step_f <- step(test_lm_null, scope=list(lower=test_lm_null, upper=test_lm), direction='forward')
+model_step_s <- step(nullmodel, scope=list(lower=nullmodel, upper=fullmodel), direction='both')
+library(glmnet)
+lasso_fit = glmnet(x = as.matrix(myData[,-1]), y = myData[,1], alpha = 1, intercept = FALSE)
+summary(lasso_fit)
+coef(lasso_fit, s = 0.5)
+
+test_lm_3 <- lm(Y ~ X1+ X2+X3+0, data = myData)
+summary(test_lm_3)
+```
+
+
+[1]: Tibshirani, R. (1996). Regression shrinkage and selection via the lasso. Journal of the Royal Statistical Society. Series B (Methodological), 267-288.
+[2]: Zou, H., & Hastie, T. (2005). Regularization and variable selection via the elastic net. Journal of the Royal Statistical Society: Series B (Statistical Methodology), 67(2), 301-320.  
+[3]: http://www.stanford.edu/~hastie/TALKS/enet_talk.pdf "Regularization and Variable Selection via the Elastic Net"
+
+[go to top](#header)
+
+# Simulation Exercise
+
+Assume mean function $E(y|x)= 5 + 1.2*x_1 +3*x_2$
+
+- Generate data with $x_1 \sim N(2,.4^2)$, $x_2 \sim N(-1, .1^2)$, sample size $n=200$, and error term $\varepsilon\sim N(0,\sigma^2)$, where $\sigma^2=1$.
+
+```{r , eval=FALSE}
+#sample code for hw2 p3
+#monte carlo simulation
+n <- 200 #sample size
+m <- 100 #number of simulation iterations
+#part i) simulate predictors X
+
+#part ii)
+for(j in 1:m){
+  #simulate the error term m=100 times...
+  #generate response vector y with error term per iteration
+  lm.out <- ?? #fit linear regression
+  betaMatrix[j,] <- lm.out$coefficients
+  mysummary <- summary(lm.out)
+  listMSE[j] <- mysummary$sigma^2 #get MSE per iteration
+  }
+#part iii) compute MSE bias etc
+beta_mean <- apply(betaMatrix,2,mean)
+beta_var <- apply(betaMatrix,2,var)
+```
+
+```{r , echo=FALSE, eval=FALSE}
+# x1~N(2, .4^2), x2 ~ N(-1, .1^2), sample size n=200
+m <- 1000 # simulation times
+coef <- c(5, 1.2, 3)
+
+nseq <- seq(from=200, to=2000, by=200)
+resultA <- matrix(NA, nrow = 1, ncol = 10)
+
+for (j in nseq) {
+  x1 <- rnorm(n = j, mean = 2, sd = .4)
+  x2 <- rnorm(n = j, mean = -1, sd = .1)
+  fitcoef <- matrix(NA, m, 3)
+  for (i in 1:m) {
+    er <- rnorm(n = j, mean = 0, sd = 1)
+    simD <- data.frame(y=coef[1] + cbind(x1, x2) %*% coef[-1] + er, x1, x2)
+    mod <- lm(formula = y~x1+x2, data = simD)
+    fitcoef[i,] <- coef(mod)
+    }
+  # head(fitcoef)
+  biasBetas <- (colSums(fitcoef))/m - coef
+  VarBetas <- colSums(sweep(fitcoef, 2, coef)^2)/m
+  # biasBetas; VarBetas
+  mseBetas <- biasBetas^2 + VarBetas
+  # mseBetas
+  temp <- cbind(Size=j, Bias1=biasBetas[1], Var1=VarBetas[1], MSE1=mseBetas[1],
+                   Bias2=biasBetas[2], Var2=VarBetas[2], MSE2=mseBetas[2],
+                   Bias3=biasBetas[3], Var3=VarBetas[3], MSE3=mseBetas[3])
+  resultA <- rbind(resultA, temp)
+}
+
+resultA <- resultA[-1, ]
+```
+
 
 [go to top](#header)
 
@@ -242,7 +513,7 @@ Note
 ## 5-fold Cross Validation
 ```{r}
 library(boot)
-model_2 = glm(medv~indus + rm, data = Boston)
+model_2 <- glm(medv~indus + rm, data = Boston)
 cv.glm(data = Boston, glmfit = model_2, K = 5)$delta[2]
 ```
 
@@ -255,9 +526,9 @@ cv.glm(data = Boston, glmfit = model_2, K = nrow(Boston))$delta[2]
 Here we need to define a MAE cost function. The function takes 2 input vectors, pi =  predicted values, r = actual values.
 
 ```{r}
-model_2 = glm(medv~indus + rm, data = Boston)
+model_2 <- glm(medv~indus + rm, data = Boston)
 
-MAE_cost = function(pi, r){
+MAE_cost <- function(pi, r){
   return(mean(abs(pi-r)))
 }
 
@@ -275,7 +546,7 @@ install.packages('DAAG')
 library(DAAG)
 ```
 ```{r, warning=FALSE, eval=FALSE}
-model_2 = lm(medv~indus + rm, data = Boston)
+model_2 <- lm(medv~indus + rm, data = Boston)
 cv.lm(df=Boston, form.lm = model_2, m=3)
 ```
 
