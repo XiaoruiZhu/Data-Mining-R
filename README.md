@@ -38,8 +38,9 @@ Dr. Shaobo Li, Assistant Professor of Business Analytics at University of Kansas
 
 [Unsupervised Learning](lecture/7_UnsupervisedLearning.html)
 
-### Other Topics 1: Text Mining
+### Advanced Tree 
 
+[Advanced Tree Models -- Bagging, Random Forests, and Boosting](lecture/AdvTree.html)
 
 ### Other Topics 2: Advanced Variable Selection
 
