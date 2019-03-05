@@ -358,6 +358,7 @@ The horizontal line is the best prediction error from random forests we obtained
 library(adabag)
 credit.train$default.payment.next.month= as.factor(credit.train$default.payment.next.month)
 credit.boost= boosting(default.payment.next.month~., data = credit.train, boos = T)
+save(credit.boost, file = "credit.boost.Rdata")
 
 # Training AUC
 pred.credit.boost= predict(credit.boost, newdata = credit.train)
