@@ -10,6 +10,8 @@ output:
     fig_caption: yes
     number_sections: yes
     toc: yes
+editor_options: 
+  chunk_output_type: console
 ---
 
 
@@ -52,13 +54,74 @@ seed <- scale(seed)
 
 # K-means
 
-Use k-means method for clustering and plot results.
+The basic idea of k-means clustering is to define clusters then minimize the total intra-cluster variation (known as total within-cluster variation). The standard algorithm is the Hartigan-Wong algorithm (1979), which defines the total within-cluster variation as the **sum of squared distances Euclidean distances** between items and the corresponding centroid: $$W(C_k) = \sum_{x_i \in C_k}(x_i - \mu_k)^2,$$ where: 
+
+- $x_i$ is a data point belonging to the cluster $C_k$
+- $\mu_i$ is the mean value of the points assigned to the cluster $C_k$
+
+For clustering, one can rely on all kinds of distance measures and it is critical point. The distance measures will show how similar two elements (x, y) are and it will highly influence the results of the clustering analysis. The classical methods for distance measures are Euclidean and Manhattan distances, which are defined as follow:
+
+**Euclidean distance:**
+
+$d_{euc}(x,y) = \sqrt{\sum^n_{i=1}(x_i - y_i)^2} \tag{1}$
+
+**Manhattan distance:**
+
+$d_{man}(x,y) = \sum^n_{i=1}|(x_i - y_i)| \tag{2}$
+
+**Pearson correlation distance:**
+
+$d_{cor}(x, y) = 1 - \frac{\sum^n_{i=1}(x_i-\bar x)(y_i - \bar y)}{\sqrt{\sum^n_{i=1}(x_i-\bar x)^2\sum^n_{i=1}(y_i - \bar y)^2}} \tag{3}$ 
+
+
+In order to use k-means method for clustering and plot results, we can use `kmeans` function in R. It will group the data into a specified number of clusters (centers = 5). As mentioned before, the algorithm randomly k objects as the initial cluster centers to start the iteration, the final results may vary based on different initial centers. The `nstart` option of this function can allow the algorithm to attempt multiple initial configurations and reports on the best one. I recommended to set nstart for this function, which could give stable result. 
+
 ```{r}
+library(factoextra)
+distance <- get_dist(seed)
+fviz_dist(distance, gradient = list(low = "#00AFBB", mid = "white", high = "#FC4E07"))
 # K-Means Cluster Analysis
-fit <- kmeans(seed, 5) #5 cluster solution
+fit <- kmeans(seed, 2) #2 cluster solution
 #Display number of clusters in each cluster
 table(fit$cluster)
 #Plot cluster in kmeans
+```
+
+```{r}
+fit
+fviz_cluster(fit, data = seed)
+```
+
+
+- `cluster`: A vector of integers (from 1:k) indicating the cluster to which each point is allocated.
+- `centers`: A matrix of cluster centres.
+- `totss`: 	The total sum of squares.
+- `withinss`: Vector of within-cluster sum of squares, one component per cluster.
+- `tot.withinss`: Total within-cluster sum of squares, i.e. sum(withinss).
+- `betweenss`: The between-cluster sum of squares, i.e. totss-tot.withinss.
+- `size`: The number of points in each cluster.
+- `iter`: The number of (outer) iterations.
+- `ifault`: integer: indicator of a possible algorithm problem – for experts.
+
+We want to view the result so We can use `fviz_cluster`. It is function can provide a nice graph of the clusters. Usually, we have more than two dimensions (variables) `fviz_cluster` will perform principal component analysis (PCA) and plot the data points according to the first two principal components that explain the majority of the variance.
+
+```{r}
+fviz_cluster(fit, data = seed)
+```
+
+```{r}
+k3 <- kmeans(seed, centers = 3, nstart = 25)
+k4 <- kmeans(seed, centers = 4, nstart = 25)
+k5 <- kmeans(seed, centers = 5, nstart = 25)
+
+# plots to compare
+p1 <- fviz_cluster(fit, geom = "point", data = seed) + ggtitle("k = 2")
+p2 <- fviz_cluster(k3, geom = "point",  data = seed) + ggtitle("k = 3")
+p3 <- fviz_cluster(k4, geom = "point",  data = seed) + ggtitle("k = 4")
+p4 <- fviz_cluster(k5, geom = "point",  data = seed) + ggtitle("k = 5")
+
+library(gridExtra)
+grid.arrange(p1, p2, p3, p4, nrow = 2)
 ```
 
 ```{r, eval=FALSE}
@@ -194,12 +257,16 @@ plot(mclust_result)
 
 <a id="arules"></a>
 
-Association Rules is a popular and well researched method for discovering
-interesting relations between variables in large databases. *arules* package in R provides a basic infrastructure for creating and manipulating input data sets and for analyzing the resulting itemsets and rules. 
+Association Rules is a popular and well researched method for discovering interesting relations between variables in large databases. *arules* package in R provides a basic infrastructure for creating and manipulating input data sets and for analyzing the resulting itemsets and rules. 
 
 - For an introduction to arules and additional case studies see [Introduction to arules](http://cran.r-project.org/web/packages/arules/vignettes/arules.pdf)
 
 - For the reference manual for the package see [arules package manual](http://cran.r-project.org/web/packages/arules/arules.pdf))
+
+![](figure/AR_1.png)
+
+[Example](https://www.saedsayad.com/association_rules.htm): 
+![](figure/AR_2.png) 
 
 The Groceries data set contains 1 month (30 days) of real-world point-of-sale transaction data from a typical local grocery outlet. The data set contains 9835 transactions and the items are aggregated to 169 categories.
 ```{r}
