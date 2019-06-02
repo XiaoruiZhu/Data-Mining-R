@@ -1,16 +1,16 @@
 ---
 title: "Introduction"
 output:
+  md_document:
+    variant: markdown_github
+  html_notebook:
+    toc: yes
   html_document: 
     fig_caption: yes
     number_sections: yes
     theme: readable
     toc: yes
     code_folding: show
-  html_notebook:
-    toc: yes
-  md_document:
-    variant: markdown_github
   pdf_document: default
 editor_options: 
   chunk_output_type: console
