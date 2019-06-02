@@ -2,6 +2,8 @@
 layout: default
 title: Introduction to R and R Studio
 description: Introduction to R and R Studio
+* Do not remove this line (it will not be displayed)
+{:toc}
 ---
 
 Introduction to R and R Studio
