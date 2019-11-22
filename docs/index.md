@@ -47,3 +47,6 @@ Contributors:
 
 [Advanced Variable Selection Techniques](lecture/VS.html)
 
+### Other Topics 3: Basic Text Mining
+
+[Basic Text Mining](lecture/Basic_Text_Mining.html)

@@ -1,6 +1,11 @@
 ---
 title: "Basic Text Mining with R"
-output: html_document
+output: 
+  html_document: 
+    theme: readable
+    fig_caption: yes
+    number_sections: yes
+    toc: yes
 ---
 
 In this lab we will demonstrate the basic steps of using R to build a predictive model for movie review sentiments. Source of the data is from http://www.cs.cornell.edu/people/pabo/movie-review-data/.
