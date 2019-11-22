@@ -96,7 +96,7 @@ wordcloud(rownames(freq), freq[,1], max.words=100, colors=brewer.pal(1, "Dark2")
 
 ## Predictive modeling
 
-To predict the polarity (sentiment) of a review, we can make use of a precompiled list of words with positive and negative meanings ([Source](http://www.cs.uic.edu/~liub/FBS/sentiment-analysis.html))
+To predict the polarity (sentiment) of a review, we can make use of a precompiled list of words with positive and negative meanings ([Source](http://www.cs.uic.edu/~liub/FBS/sentiment-analysis.html), [negative-words.txt](data/negative-words.txt), [positive-words.txt](data/positive-words.txt))
 
 ```{r}
 neg_words = read.table("negative-words.txt", header = F, stringsAsFactors = F)[, 1]
