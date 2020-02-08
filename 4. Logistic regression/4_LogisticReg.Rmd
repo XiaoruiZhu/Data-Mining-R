@@ -336,7 +336,7 @@ Everything you have done about classification so far is for training sample. Now
 ## Variable Selection 
 
 ### Variable Selection with Stepwise Approach
-We can use the same procedures of variable selection, i.e. forward, backward, and stepwise, for linear regression models. **caution: this will take a long time since the sample size is not small**.
+We can use the same procedures of variable selection, i.e. forward, backward, and stepwise, for linear regression models. **Caution: this will take a long period of time since the dimension of predictor variables is not very small and the sample size is large**.
 ```{r, eval=FALSE}
 credit.glm.back <- step(credit.glm0) # backward selection (if you don't specify anything)
 summary(credit.glm.back)
