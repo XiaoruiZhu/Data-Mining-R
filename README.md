@@ -3,8 +3,8 @@
 This set of notes for undergraduate and graduate data mining class is currently maintained by Xiaorui Zhu(zhuxiaorui1989@gmail.com). Many materials are from Dr. Yan Yu's previous class notes. And lab notes are from four previous PhD students in Lindner College of Business.  
 
 Contributors:  
-Dr. Shaonan Tian, Assitant Professor at San José State University 
-Dr. Chaojiang Wu, Assistant Professor of Business Analytics at LeBow College of Business, Drexel University
+Dr. Shaonan Tian, Associate Professor at San José State University 
+Dr. Chaojiang Wu, Assistant Professor at Kent State University
 Dr. Feng Mai, Assistant Professor of Information Systems in the School of Business at Stevens Institute of Technology
 Dr. Shaobo Li, Assistant Professor of Business Analytics at University of Kansas School of Business
 
