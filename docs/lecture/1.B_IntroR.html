@@ -895,8 +895,11 @@ reg$coeffcients</code></pre>
 <li><p>Define a vector with values (5, 2, 11, 19, 3, -9, 8, 20, 1). Calculate the sum, mean, and standard deviation.</p></li>
 <li><p>Re-order the vector from largest to smallest, and make it a new vector.</p></li>
 <li><p>Convert the vector to a 3*3 matrix ordered by column. What is the sum of first column? What is the number in column 2 row 3? What is the column sum?</p></li>
-<li><p>Download the <a href="data/CustomerData.csv">CustomerData</a> to your working directory. Load it to R.</p></li>
+<li><p>Use the following code to load the <a href="data/CustomerData.csv">CustomerData</a> to your R.</p></li>
 </ol>
+</blockquote>
+<pre class="r"><code>customer &lt;- read.csv(file = &quot;https://xiaoruizhu.github.io/Data-Mining-R/lecture/data/CustomerData.csv&quot;)</code></pre>
+<blockquote>
 <ul>
 <li>How many rows and columns are there?</li>
 <li>Extract all variable names.</li>
@@ -929,11 +932,11 @@ reg$coeffcients</code></pre>
 <pre class="r"><code>qnorm(0.975)</code></pre>
 <pre><code>## [1] 1.959964</code></pre>
 <pre class="r"><code>rnorm(10)</code></pre>
-<pre><code>##  [1] -0.4128033  1.3624252 -1.0210679 -0.2379507 -0.3818760  0.8352122
-##  [7]  0.6556986 -1.9986947 -0.5913831  0.1981186</code></pre>
+<pre><code>##  [1] -1.0156322  1.2733000 -0.5853862  1.3993910  1.5722822  1.5409504
+##  [7]  0.5740034  0.9542027 -1.1610486  0.3240535</code></pre>
 <pre class="r"><code>rnorm(n=10,mean=100,sd=20)</code></pre>
-<pre><code>##  [1]  71.50761  76.89902  93.26954 106.76819  85.60960  77.88373 104.74106
-##  [8] 117.31606 133.58575  90.80013</code></pre>
+<pre><code>##  [1]  73.18172 101.51238  90.11383 101.62549 128.52197  92.55931  79.56247
+##  [8]  96.68870 121.44087 107.54043</code></pre>
 </div>
 </div>
 <div id="summary" class="section level1">

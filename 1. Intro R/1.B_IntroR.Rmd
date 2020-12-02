@@ -172,6 +172,15 @@ x > y
 > - h=$0.5: holding cost per unit
 > - **Q=?**
 
+```{r echo=FALSE, eval=FALSE}
+#Exercise 3.2
+D<-5000
+K<-4
+h<-0.5
+Q<-sqrt(2*D*K/h)
+Q 
+```
+
 
 ## Data Structure: Vector, Matrix, Data frame, and List {.tabset .tabset-fade .tabset-pills}
 There are four types of data structure in R: Vector, Matrix, Data frame, and List
@@ -473,16 +482,50 @@ If you have done object oriented programming before, the list "reg" is actually 
 > 2. Re-order the vector from largest to smallest, and make it a new vector.
 > 3. Convert the vector to a 3*3 matrix ordered by column. What is the sum of first column? What is the number in column 2 row 3? What is the column sum?
 > 
-> 4. Download the [CustomerData](data/CustomerData.csv) to your working directory. Load it to R.
+> 4. Use the following code to load the [CustomerData](data/CustomerData.csv) to your R.
+```{r echo=TRUE, eval=FALSE}
+customer <- read.csv(file = "https://xiaoruizhu.github.io/Data-Mining-R/lecture/data/CustomerData.csv")
+```
 >   - How many rows and columns are there?
 >   - Extract all variable names.
 >   - What is the average “Debt to Income Ratio”?
 >   - What is the proportion of “Married” customers?
 
 ```{r echo=FALSE, eval=FALSE}
-Cus <- read.csv(file = "data/CustomerData.csv")
-dim(Cus); names(Cus); mean(Cus$DebtToIncomeRatio)
-mean(Cus$MaritalStatus=="Married")
+#1.
+a <- c(5, 2, 11, 19, 3, -9, 8, 20, 1)
+sum(a)
+mean(a)
+sd(a)
+
+#2.
+a1 <- sort(a,decreasing = FALSE)
+a1
+a2 <- sort(a,decreasing = TRUE)
+a2
+
+#3. 
+matrixa <- matrix(a,nrow=3,ncol = 3,byrow = FALSE)
+matrixa[3,2]
+
+#4.
+customer <- read.csv(file = "https://xiaoruizhu.github.io/Data-Mining-R/lecture/data/CustomerData.csv")
+
+## How many rows and columns of the dataset?
+col<-ncol(customer)
+row<-nrow(customer)
+col; row
+
+## Extract all variable names.
+names<-colnames(customer)
+names
+
+##What is the average “Debt to Income Ratio”?
+mean(customer$DebtToIncomeRatio)
+
+##What is the proportion of “Married” customers?
+summary(customer$MaritalStatus)
+2401/(2401+2599)*100
 ```
 
 ## Basic Plotting
