@@ -33,7 +33,68 @@ There are two main types of problems, *regression problem* and *classification p
 
 In order to demonstrate this simple machine learning algorithm, I use Iris dataset, a famous dataset for almost all machine learning courses, and apply KNN onto the dataset to train a classifier for Iris Species.
 
-### Load and prepare the data
+### Load and prepare the Iris dataset
+
+Before start, always do 
+
+* set the working directory!
+* create a new R script (unless you are continuing last project)
+* Save the R script.
+
+Let's first load the **Iris** dataset. This is a very famous dataset in almost all data mining, machine learning courses, and it has been an R build-in dataset. The dataset consists of 50 samples from each of three species of Iris flowers (Iris setosa, Iris virginicaand Iris versicolor). Four features(variables) were measured from each sample, they are the **length** and the **width** of sepal and petal, in centimeters. It is introduced by Sir Ronald Fisher in 1936.
+
+- 3 Species
+
+![](pic/flower.png)
+
+- Four features of flower: **length** and the **width** of sepal and petal
+
+![](pic/parts.png)
+
+
+The *iris* flower data set is included in R. It is a data frame with 150 cases (rows) and 5 variables (columns) named Sepal.Length, Sepal.Width, Petal.Length, Petal.Width, and Species.
+
+First, load iris data to the current workspace
+ 
+```{r}
+data(iris)
+iris
+```
+
+What is in the dataset? You can use `head()` or `tail()` to print the first or last few rows of a dataset:
+```{r}
+head(iris)
+```
+
+Check dimensionality, the dataset has 150 rows(observations) and 5 columns (variables)
+```{r dim}
+dim(iris)
+```
+
+Variable names or column names
+```{r varname}
+names(iris); # or colnames(iris)
+```
+
+Structure of the dataframe, note that the difference between *num* and *Factor*
+```{r struc}
+str(iris)
+```
+
+By default, R treat strings as factors (or categorical variables), in many situations  (for example, building a regression model) this is what you want because R can automatically create "dummy variables" from the factors. However when merging data from different sources this can cause errors. In this case you can use `stringsAsFactors = FALSE` option in `read.table`.
+
+```{r}
+class(iris[,1])
+class(iris[,5])
+```
+
+Simple summary statistics
+
+Try the `summary()` function.
+```{r}
+summary(iris)
+```
+
 ```{r}
 data("iris")
 str(iris)

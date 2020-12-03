@@ -12,7 +12,7 @@ This set of learning materials for undergraduate and graduate data mining class 
 
 [1.C Advanced techniques: Function and loop](lecture/1.C_IntroFuncLoop.html) 
 
-[1.D Introduction to RMarkdown](lecture/1.D_IntroMarkdown.html) 
+[1.D Introduction to RMarkdown (optional)](lecture/1.D_IntroMarkdown.html) 
 
 ### Lab 2. Explore and describe dataset
 
