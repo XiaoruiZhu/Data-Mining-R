@@ -1,0 +1,533 @@
+---
+title: "Exploratory Analysis"
+output: 
+  html_document: 
+    theme: readable
+    fig_caption: yes
+    number_sections: yes
+    toc: yes
+    code_folding: show
+    df_print: paged
+  html_notebook: 
+    fig_caption: yes
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r set-options, echo=FALSE, cache=FALSE}
+options(width = 200)
+```
+
+Exploratory Data Analysis (EDA) is usually the first step when you analyze data, because you want to know what information the dataset carries. In this lab, we introudce basic R functions for EDA in both quantitative and graphical approaches. In the end, we will also learn some useful functions for data manipulation, which is often necessary in data analysis.
+
+# Exploratory Data Analysis
+
+## Basic summary Statistics
+
+Before start, always do 
+
+* set the working directory!
+* create a new R script (unless you are continuing last project)
+* Save the R script.
+
+Let's first load the **Iris** dataset. This is a very famous dataset in almost all data mining, machine learning courses, and it has been an R build-in dataset. The dataset consists of 50 samples from each of three species of Iris flowers (Iris setosa, Iris virginicaand Iris versicolor). Four features(variables) were measured from each sample, they are the **length** and the **width** of sepal and petal, in centimeters. It is introduced by Sir Ronald Fisher in 1936.
+
+- 3 Species
+
+![](pic/flower.png)
+
+- Four features of flower: **length** and the **width** of sepal and petal
+
+![](pic/parts.png)
+
+[go to top](#header)
+
+## Explore the *iris* Dataset with R
+
+### Load Data
+The *iris* flower data set is included in R. It is a data frame with 150 cases (rows) and 5 variables (columns) named Sepal.Length, Sepal.Width, Petal.Length, Petal.Width, and Species.
+
+First, load iris data to the current workspace
+ 
+```{r}
+data(iris)
+iris
+```
+
+### What is in the dataset?
+You can use `head()` or `tail()` to print the first or last few rows of a dataset:
+```{r}
+head(iris)
+```
+
+Check dimensionality, the dataset has 150 rows(observations) and 5 columns (variables)
+```{r dim}
+dim(iris)
+```
+
+Another way to get the dim is to use ncol or nrow:
+```{r}
+ncol(iris)
+nrow(iris)
+```
+
+
+Variable names or column names
+```{r varname}
+names(iris)
+```
+
+You can also use this command
+```{r, eval=FALSE}
+colnames(iris)
+```
+
+Structure of the dataframe, note that the difference between *num* and *Factor*
+```{r struc}
+str(iris)
+```
+
+By default, R treat strings as factors (or categorical variables), in many situations  (for example, building a regression model) this is what you want because R can automatically create "dummy variables" from the factors. However when merging data from different sources this can cause errors. In this case you can use `stringsAsFactors = FALSE` option in `read.table`.
+
+```{r}
+class(iris[,1])
+class(iris[,5])
+```
+
+
+### Simple summary statistics
+
+Try the `summary()` function.
+```{r}
+summary(iris)
+```
+
+It only produces the location statistics for continues variable, and count for categorical variable. How about standard deviation, another important summary statistic?
+
+```{r}
+sd(iris$Sepal.Length)
+quantile(iris$Sepal.Length)
+```
+
+Using `apply()` to calculate a particular statistic for multiple variables at the same time.
+
+```{r}
+apply(iris[,1:4], 2, sd)  # "2" means "by column"
+```
+
+
+## Summary by groups
+
+### Use `aggregate()` function to find summary statistics by group.
+```{r}
+# group mean
+aggregate(.~Species, iris, mean) 
+# group standard deviation
+aggregate(.~Species, iris, sd)
+```
+
+What if there are multiple "factor" variables?
+
+Let's first artificially create a new column that categorizes "Sepal.Length" by quantile.
+```{r}
+# use function cut for categorization based on quntiles
+Cate.SepalLength<- cut(iris$Sepal.Length, breaks=quantile(iris$Sepal.Length), include.lowes=T)
+# Add the created categorical variable to the data
+iris1<- iris
+iris1$Sepal.Length.Cate <- Cate.SepalLength
+```
+
+Average value of numerical varialbes by two categorical variables: Species and Sepal.Length.Cate:
+
+```{r}
+aggregate(.~Species+Sepal.Length.Cate, iris1, mean)
+```
+
+
+### Pivot table
+```{r}
+# One-way count table
+table(iris1$Species)
+# Two-way count table
+table(iris1$Species, iris1$Sepal.Length.Cate)
+```
+
+### Exercise
+
+* Download the customer data [here](data/CustomerData.csv), and read into R.
+* How many rows and columns of the dataset?
+* Print first few rows the dataset.
+* Obtain the summary statistics (Min, Median, Max, Mean and Std.) for *Age*, *EducationYears*, *HHIncome*, and *CreditDebt*.
+* Obtain the mean of *HHIncome* by *MaritalStatus*
+* Obtain a pivot table of *LoanDefault* vs. *JobCategory*. Which Job Category has the highest and lowerst loan default rate?
+
+
+```{r echo=FALSE, eval=FALSE}
+customer<- read.csv("CustomerData.csv")
+dim(customer)
+head(customer)
+names(customer)
+summary(customer)
+aggregate(HHIncome~MaritalStatus, data = customer, mean)
+mypivot= table(customer$LoanDefault, customer$JobCategory)
+mypivot[2,]/table(customer$JobCategory)
+```
+
+[go to top](#header)
+
+# Exploratory Data Analysis by Visualization
+
+## Histogram
+Histogram is the easiest way to show how **numerical** variables are distributed.
+
+#### Produce a single histogram
+```{r fig.align='center'}
+hist(iris$Sepal.Length, col="green", breaks=20)
+```
+
+You may change "breaks=" and "col=" to have different appearance.
+
+#### Density plot -- Fitted curve for histogram 
+
+Density plot is a nonparametric fitting.
+```{r fig.align='center'}
+plot(density(iris$Sepal.Length))
+```
+
+#### Combine the histogram and the density chart.
+
+You can make the plot more elegant with different options. For example, adding a title, adjusting the axis range, renaming the axis label, and so on...
+
+You can also add curves on top of an existing plot by using `lines()` or `abline()` function.
+```{r fig.align='center'}
+hist(iris$Sepal.Length, prob=T, col="green", breaks=20, main="Histogram and Density of Sepal Length", xlim=c(3,9), xlab="Sepal Length")
+lines(density(iris$Sepal.Length), col="red", lwd=2)
+
+# Add a vertical line that indicates the average of Sepal Length
+abline(v=mean(iris$Sepal.Length), col="blue", lty=2, lwd=1.5)
+```
+
+
+## Bar Chart
+
+Bar chart is produces by using a vector of single data points, which is often a vector of summary statistics. Therefore, you need to preprocess your data, and get summary statistics before drawing the bar chart.
+```{r fig.align='center'}
+# bar chart for average of the 4 quantitative variables
+aveg<- apply(iris[,1:4], 2, mean)
+barplot(aveg, ylab = "Average")
+```
+
+#### Use `?barplot` or Google search to produce following bar chart. 
+
+```{r, echo=FALSE,  fig.align='center'}
+data(iris)
+mean_by_group<- as.matrix(aggregate(.~Species, data=iris, mean)[,-1])
+rownames(mean_by_group)<- aggregate(.~Species, data=iris, mean)[,1]
+barplot(mean_by_group, col=c("darkblue","red", "green"), legend=rownames(mean_by_group), beside=TRUE, ylab = "Average", cex.names= 1)
+```
+
+## Pie Chart
+Pie chart is commonly used to visualize the proportion of different subject. It is similar to bar chart. You have to use a vector of single data points to produce a pie chart.
+```{r fig.align='center'}
+pie(table(iris$Species), col=rainbow(3))
+```
+
+## Box plot
+Box plot can only be drawn for continuous variable.
+```{r fig.align='center'}
+# box plot of Sepal.Length
+boxplot(iris$Sepal.Length)
+```
+
+#### Draw box plot of multiple variables into one figure
+```{r fig.align='center'}
+boxplot(iris[,1:4], notch=T, col=c("red", "blue", "yellow", "grey"))
+```
+
+#### Box plot by group
+```{r fig.align='center'}
+boxplot(iris[,1]~iris[,5], notch=T, ylab="Sepal Length", col="blue")
+```
+
+## Scatter Plot
+
+### Simple Scatter plot of two numerical variables
+```{r fig.align='center'}
+plot(iris$Sepal.Length, iris$Sepal.Width, xlab = "Length", ylab = "Width", main = "Sepal")
+```
+
+### Scatter plot matrix (all paired variables)
+```{r fig.align='center'}
+pairs(iris[,1:4])
+```
+
+## Parallel Coordinates
+```{r fig.align='center'}
+library(MASS)
+parcoord(iris[,1:4],col=iris$Species)
+```
+
+```{r echo=FALSE, eval=FALSE}
+nba <- read.csv("http://homepages.uc.edu/~lis6/Data/nba17.csv")
+nba_matrix<- as.matrix(nba[,-1])
+rownames(nba_matrix)<- nba[,1]
+nba_heatmap <- heatmap(nba_matrix[1:50,], scale="column")
+nba_heatmap <- heatmap(nba_matrix, Rowv=NA, Colv=NA, col = cm.colors(256), scale="column", margins=c(5,10))
+iris.mat<- as.matrix(iris[,-5])
+iris_heatmap <- heatmap(iris.mat, Rowv=NA, Colv=NA, scale="column")
+```
+
+## R Graphic Options
+
+You may display multiple plots in one window (one figure).
+```{r fig.height=10, fig.width=10, fig.align='center'}
+# set arrangement of multiple plots
+par(mfrow=c(2,2))
+# set mrgins
+par(mar=c(4.5, 4.2, 3, 1.5)) 
+hist(iris$Sepal.Length, xlab = "Sepal Length", cex.lab=1.5)
+hist(iris$Sepal.Width, xlab = "Sepal Width", col = "red")
+plot(iris$Sepal.Length, iris$Sepal.Width, xlab = "Length", ylab = "Width", main= "Sepal", pch=17)
+boxplot(iris[,1:4], notch=T, col=c("red", "blue", "yellow", "grey"))
+```
+
+There are much more options that can make your plot nice. You can learn options at [here](http://www.statmethods.net/advgraphs/parameters.html) or ask your best friend -- Google.
+
+Details about figure margins can be found [here](https://www.r-bloggers.com/setting-graph-margins-in-r-using-the-par-function-and-lots-of-cow-milk/).
+
+[go to top](#header)
+
+# **tidyverse**: collection of R packages for EDA
+We introduce package **tidyverse**, and some basic functions in the sub-packages for EDA. For more details, please see https://www.tidyverse.org/. This section is based on [Dr. Bradley Boehmke](http://bradleyboehmke.github.io/)'s [short course](http://uc-r.github.io/r_bootcamp) for MSBA students at Lindner College of Business. The course materials can be downloaded from [here](https://www.dropbox.com/sh/2qv0a02l9ausnyh/AAD0cRwMz_qTU-w15TwDxgLSa?dl=1).
+
+```{r eval=FALSE}
+install.packages("tidyverse")
+```
+
+```{r warning=FALSE}
+library(tidyverse)
+```
+
+## Data Manipulation with **dplyr**
+
+### Filtering and Indexing
+We introduce **dplyr** package with some very user-friendly functions for data manipulation. These functions are:
+
+* `filter()`
+* `select()`
+* `arrange()`
+* `rename()`
+* `mutate()`
+
+#### Filtering (Subsetting) data
+
+Here I introduce 4 ways to get subsets of data that satisfy certain logical conditions: `subset()`, logical vectors, SQL, and `filter()`. These kind of operations are called filtering in Excel. Knowing any one of these well is enough. Do not worry about memorizing the syntax, you can always look them up.
+
+Suppose we want to get the **observations that have Sepal.Length > 5 and Sepal.Width > 4**. We can use logical operators: !=  not equal to; ==  equal to; |  or; & and.
+
+- Use subset function
+```{r, eval=FALSE}
+subset(x = iris, subset = Sepal.Length > 5 & Sepal.Width > 4)
+```
+You can omit the x = and subset = part
+```{r eval=FALSE}
+subset(iris, Sepal.Length > 5 & Sepal.Width > 4)
+```
+
+- Use logical vectors
+```{r}
+iris[(iris$Sepal.Length > 5 & iris$Sepal.Width > 4), ]
+```
+
+- Use SQL statement
+```{r, eval=FALSE}
+install.packages('sqldf')
+library(sqldf)
+sqldf('select * from iris where `Sepal.Length` > 5 and `Sepal.Width` > 4')
+```
+In earlier version of sqldf all dots(.) in variable names need to be changed to underscores(_). 
+
+- `filter()` is a power function in package **dplyr** to perform fitering like Excel Filter.
+```{r}
+# filter by row observations
+data(iris)
+iris_filter <- filter(iris, Sepal.Length<=5 & Sepal.Width>3)
+iris_filter2 <- filter(iris, Species=="setosa", Sepal.Width<=3 | Sepal.Width>=4)
+```
+
+#### Subsetting the Dataset: Random Sample
+
+The following code random sample (without replacement) 90% of the original dataset and assgin them to a new variable *iris_sample*. 
+```{r}
+iris_sample <- iris[sample(x = nrow(iris), size = nrow(iris)*0.90),]
+```
+
+The `dplyr` package provides more convinient ways for generating random samples. You can take a fixed number of samples using `sample_n()` or a fraction using `sample_frac()` as follows
+```{r, eval=FALSE}
+install.packages('dplyr')
+library(dplyr)
+iris_sample <- sample_frac(iris, 0.9)
+```
+
+The `dplyr` package provides more convinient ways for generating random samples. You can take a fixed number of samples using `sample_n()` or a fraction using `sample_frac()` as follows
+```{r, eval=FALSE}
+install.packages('dplyr')
+library(dplyr)
+iris_sample <- sample_frac(iris, 0.9)
+# using dplyr for logical subsetting
+filter(iris, Sepal.Length> 5, Sepal.Width > 4)
+```
+I recommend you to go through the [`dplyr` tutorial](https://cran.rstudio.com/web/packages/dplyr/vignettes/introduction.html) and [lubridate tutorial](http://vita.had.co.nz/papers/lubridate.html). They make common data manipulation tasks and dealing with time-date much easier in R.
+
+
+#### Sorting
+Sorting by one or more variables is a common operation that you can do with datasets. With RStudio version 0.99+, you can sort a dataset when viewing it by clicking column header. 
+
+To do it with code, let's suppose that you would like to find the top 5 rows in `iris` dataset with largest `Sepal.Length`.
+
+```{r}
+iris[order(iris$Sepal.Length, decreasing = TRUE)[1:5], ] 
+```
+
+The syntax is cleaner with the `arrange()` function in the `dplyr` package:
+```{r, eval=FALSE}
+arrange(iris, desc(Sepal.Length))[1:5, ]
+```
+
+#### Select columns
+
+If you want to select one or more variables of a data frame, there are two ways to do that. First is using indexing by "[]". Second is `select()` function in *dplyr*. For example, suppose we want to select variable "Sepal.Length":
+```{r eval=FALSE}
+iris[, "Sepal.Length"]
+```
+or alternatively select two variables: "Sepal.Length", "Sepal.Width"
+```{r eval=FALSE}
+iris[, c("Sepal.Length", "Sepal.Width")]
+```
+
+On the other hand, `select()` in *dplyr* package can be used to filter by column, i.e., selecting or dropping variables.
+```{r}
+# Keep the variable Sepal.Length, Sepal.Width
+varname <- c("Sepal.Length", "Sepal.Width")
+iris_select <- select(iris, varname)
+# verify if we did correctly
+names(iris_select)
+# This is equivalent to 
+iris_select <- iris[,varname]
+```
+
+What about dropping variables? 
+```{r}
+iris_select2 <- select(iris, -Sepal.Length, -Petal.Length, -Species)
+names(iris_select2)
+```
+
+This is equivalent to
+```{r}
+varname <- c("Sepal.Length", "Petal.Length", "Species")
+iris_select2 <- iris[,!names(iris) %in% varname]
+names(iris_select2)
+```
+
+#### Exercise
+It would be easier if you know the order of the variables that you want to drop or keep. Try to obtain *iris_select* and *iris_select2* by using "dataname[, "variable_index"]."
+
+### Re-ordering columns and sorting rows
+Sorting by one or more variables is a common operation that you can do with datasets. With RStudio version 0.99+, you can sort a dataset when viewing it by clicking column header. 
+
+To do it with code, let's suppose that you would like to find the top 5 rows in `iris` dataset with largest `Sepal.Length`.
+
+```{r}
+iris[order(iris$Sepal.Length, decreasing = TRUE)[1:5], ] 
+```
+
+The syntax is cleaner with the `arrange()` function in the `dplyr` package:
+```{r, eval=FALSE}
+arrange(iris, desc(Sepal.Length))[1:5, ]
+```
+
+```{r}
+# re-ordering the columns
+iris_order <- select(iris, Species, Petal.Width, everything())
+names(iris_order)
+# sorting rows by particular variable
+iris_sort<- arrange(iris, Sepal.Length)
+# sorting by more than one variable
+iris_sort2<- arrange(iris, Sepal.Length, Sepal.Width)
+# descending order
+iris_sort_desc<- arrange(iris, desc(Sepal.Length))
+```
+
+Note that missing values are always sorted at the end.
+
+### Renaming variable
+```{r}
+iris_rename<- rename(iris, SL=Sepal.Length, SW=Sepal.Width)
+names(iris_rename)
+```
+
+### Creating New Variables
+```{r}
+iris_newvar<- mutate(iris, Sepal.L_W=Sepal.Length/Sepal.Width)
+names(iris_newvar)
+```
+
+#### Exercise
+Try to obtain *iris_newvar* WITHOUT using `mutate()` function. (You may need multiple steps, so `mutate()` is very useful especially you need to create many new variables.)
+
+### Missing data
+
+#### Detect missing values
+
+Recall the customer dataset we in previous exercise.
+```{r}
+customer <- read.csv("data/CustomerData.csv")
+```
+
+```{r}
+# How many missing values are in customer dataset?
+sum(is.na(customer))
+# How many missing values are in each variable?
+colSums(is.na(customer))
+```
+
+> **Exercise:**
+> How to get only those variables that contain missing values? Which variable has the most missing?
+
+#### How to deal with missing values?
+* Simply delete those observations(rows) that contains missing value.
+* Impute missing values by certain statistics, predictions or random number from estimated distributions.
+
+```{r}
+# Simply delete rows with missings
+clean_customer<- na.omit(customer)
+nrow(clean_customer)
+# Impute missing values by median
+medHS<- median(customer$HouseholdSize, na.rm = T)
+customer$HouseholdSize[is.na(customer$HouseholdSize)==T]<- medHS
+```
+
+## Data Visualization with **ggplot2**
+
+ggplot2 is a plotting system for R, based on the grammar of graphics, which tries to take the good parts of base and lattice graphics and none of the bad parts. It takes care of many of the fiddly details that make plotting a hassle (like drawing legends) as well as providing a powerful model of graphics that makes it easy to produce complex multi-layered graphics. More details can be found at http://ggplot2.org/. Here is a very good [tutorial](http://tutorials.iq.harvard.edu/R/Rgraphics/Rgraphics.html).
+
+[go to top](#header)
+
+
+## Things to remember
+
+* How to obtain basic summary statistics
+* Summary statistics by groups
+* Pivot table
+* Use of "[ ]" for subsetting and indexing
+* Functions in `dplyr` packages.
+* Basic R graphics.
+* Classification: K-Nearest Neighbor (KNN) 
+* Clustering: K-means clustering and Hierarchical clustering
+
+[go to top](#header)

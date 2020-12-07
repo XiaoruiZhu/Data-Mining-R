@@ -1,5 +1,5 @@
 ---
-title: "Introduction"
+title: "Introduction to R"
 output:
   html_document: 
     fig_caption: yes
@@ -574,33 +574,3 @@ You may have trouble in the rest of the semester..., so please try to get used t
 
 [go to top](#header)
 
-# You may want "click-and-results" tool
-## Install Rattle: "A Graphical User Interface for Data Mining using R"
-
-With Rattle you can presents statistical and visual summaries of data, transforms data into forms that can be readily modelled, builds both unsupervised and supervised models from the data, presents the performance of models graphically, and scores new datasets.[1]
-
-Basically, *R* is a command line language, *RStudio* offers a pleasant development enviroment for you to write code and manage projects, and *Rattle* is a package in R that allows you to do Data Mining tasks in a graphical interface. 
-
-To install Rattle, startup R and then run the following command:
-
-```{r, eval=FALSE}
-install.packages("rattle")
-```
-
-Alternatively, you can use the *Install Packages* in RStudio.
-
-## Starting Rattle
-To start Rattle, first load the Rattle package (after you install it), and use _rattle()_ command to launch it.
-```{r, eval=FALSE}
-library(rattle)
-rattle()
-```
-When using Rattle, it will ask you to install many packages along the way, you will have to keep hitting the Yes button.
-
-Note:
-Part of this handout is built upon Clarkson University's R Tutorial [2] and Dr.Yan Yu's slides.
-
-[1]: http://rattle.togaware.com/ "Rattle Official Website"
-[2]: http://www.cyclismo.org/tutorial/R/
-
-[go to top](#header)
