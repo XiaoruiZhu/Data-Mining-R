@@ -6,13 +6,12 @@ This set of learning materials for undergraduate and graduate data mining class 
 
 ### Introduction to Data Mining and R
 
-[1.A Introduction to Data Mining](lecture/1.A_IntroDM.html)
-
-[1.B Introduction to R](lecture/1.B_IntroR.html) &nbsp; &nbsp; [Exercise](lecture/1.B_Exercise.html)
-
-[1.C Advanced techniques: Function and loop](lecture/1.C_IntroFuncLoop.html)  &nbsp; &nbsp; [Exercise](lecture/1.C_Exercise.html)
-
-[1.D Introduction to RMarkdown (optional)](lecture/1.D_IntroMarkdown.html) 
+| Lab Notes |  Video | Exercise |
+|:----------|:-------------:|------:|
+| [1.A Introduction to Data Mining](lecture/1.A_IntroDM.html)   |            |   |
+| [1.B Introduction to R](lecture/1.B_IntroR.html) |       | [Exercise](lecture/1.B_Exercise.html) |
+| [1.C Advanced techniques: Function and loop](lecture/1.C_IntroFuncLoop.html) |   | [Exercise](lecture/1.C_Exercise.html) |
+| [1.D Introduction to RMarkdown (optional)](lecture/1.D_IntroMarkdown.html) |      |     |
 
 ### Lab 2. Explore and describe dataset
 
