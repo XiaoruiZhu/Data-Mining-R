@@ -1,0 +1,51 @@
+---
+title: "Exploratory Analysis in R"
+output: 
+  html_document: 
+    theme: readable
+    fig_caption: yes
+    number_sections: yes
+    toc: yes
+    code_folding: show
+    df_print: paged
+  html_notebook: 
+    fig_caption: yes
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r set-options, echo=FALSE, cache=FALSE}
+options(width = 200)
+```
+
+# **Exercise:** 
+
+> Download the customer data and read into R.
+
+```{r echo=TRUE, eval=FALSE}
+customer <- read.csv(file = "https://xiaoruizhu.github.io/Data-Mining-R/lecture/data/CustomerData.csv")
+```
+>
+> 1. How many rows and columns of the dataset?
+> 2. Print first few rows the dataset.
+> 3. Obtain the summary statistics (Min, Median, Max, Mean and Std.) for *Age*, *EducationYears*, *HHIncome*, and *CreditDebt*.
+> 4. Obtain the mean of *HHIncome* by *MaritalStatus*
+> 5. Obtain a pivot table of *LoanDefault* vs. *JobCategory*. Which Job Category has the highest and lowerst loan default rate?
+
+```{r echo=FALSE, eval=FALSE}
+customer<- read.csv("CustomerData.csv")
+dim(customer)
+head(customer)
+names(customer)
+summary(customer)
+aggregate(HHIncome~MaritalStatus, data = customer, mean)
+mypivot= table(customer$LoanDefault, customer$JobCategory)
+mypivot[2,]/table(customer$JobCategory)
+```
+
+[go to top](#header)
