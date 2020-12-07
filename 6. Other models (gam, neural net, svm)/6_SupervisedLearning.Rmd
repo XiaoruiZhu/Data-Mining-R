@@ -76,6 +76,8 @@ credit.gam <- gam(formula = gam_formula, family=binomial,data=credit.train);
 summary(credit.gam)
 
 plot(credit.gam, shade=TRUE,seWithMean=TRUE,scale=0, pages = 1)
+# vis.gam(credit.gam)
+vis.gam(credit.gam, view=c("X3","X5"), theta= -90) # different view 
 
 ```
 
