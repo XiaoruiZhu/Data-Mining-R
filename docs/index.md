@@ -6,6 +6,19 @@ This set of learning materials for undergraduate and graduate data mining class 
 
 ### Introduction to Data Mining and R
 
+<style>
+table th:first-of-type {
+    width: 60%;
+}
+table th:nth-of-type(2) {
+    width: 20%;
+}
+table th:nth-of-type(3) {
+    width: 30%;
+}
+</style>
+
+
 | Lab Notes |  Video | Exercise |
 |:----------|:-------------:|------:|
 | [1.A Introduction to Data Mining](lecture/1.A_IntroDM.html)   |            |   |
