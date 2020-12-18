@@ -8,13 +8,13 @@ This set of learning materials for undergraduate and graduate data mining class 
 
 <style>
 table th:first-of-type {
-    width: 70%;
+    width: 60%;
 }
 table th:nth-of-type(2) {
     width: 20%;
 }
 table th:nth-of-type(3) {
-    width: 30%;
+    width: 20%;
 }
 </style>
 
@@ -22,24 +22,24 @@ table th:nth-of-type(3) {
 | Lab Notes |  Video | Exercise |
 |:----------|:-------------:|------:|
 | [1.A Introduction to Data Mining](lecture/1.A_IntroDM.html)   |            |   |
-| [1.B Introduction to R](lecture/1.B_IntroR.html) |       | [1.B Exercise](lecture/1.B_Exercise.html) |
-| [1.C Advanced techniques: Function and loop](lecture/1.C_IntroFuncLoop.html) |   | [1.C Exercise](lecture/1.C_Exercise.html) |
+| [1.B Introduction to R](lecture/1.B_IntroR.html) |       | [1.B](lecture/1.B_Exercise.html) |
+| [1.C Advanced techniques: Function and loop](lecture/1.C_IntroFuncLoop.html) |   | [1.C](lecture/1.C_Exercise.html) |
 | [1.D Introduction to RMarkdown (optional)](lecture/1.D_IntroMarkdown.html) |      |     |
 
 ### Exploratory Data Analysis
 
 | Lab Notes |  Video | Exercise |
 |:----------|:-------------:|------:|
-| [2.A Explore and describe dataset](lecture/2.A_ExploratoryAnalyses.html)   |            | [2.A Exercise](lecture/2.A_Exercise.html)  |
-| [2.B Exploratory Data Analysis by Visualization](lecture/2.B_EDA_Vis.html)   |            | [2.B Exercise](lecture/2.B_Exercise.html) |
+| [2.A Explore and describe dataset](lecture/2.A_ExploratoryAnalyses.html)   |            | [2.A](lecture/2.A_Exercise.html)  |
+| [2.B Exploratory Data Analysis by Visualization](lecture/2.B_EDA_Vis.html)   |            | [2.B](lecture/2.B_Exercise.html) |
 | [2.C tidyverse: collection of R packages for EDA](lecture/2.C_tidyverse.html)   |            | |
 
 ### Linear Regression, Prediction and Variables Seleciton
 
 | Lab Notes |  Video | Exercise |
 |:----------|:-------------:|------:|
-| [3.A Linear Regression and Prediction](lecture/3.A_LinearReg.html)   |            | [3.A Exercise](lecture/3.A_Exercise.html)  |
-| [3.B Variables Seleciton](lecture/3.B_VarSel.html)                   |            | [3.B Exercise](lecture/3.A_Exercise.html) |
+| [3.A Linear Regression and Prediction](lecture/3.A_LinearReg.html)   |            | [3.A](lecture/3.A_Exercise.html)  |
+| [3.B Variables Seleciton](lecture/3.B_VarSel.html)                   |            | [3.B](lecture/3.A_Exercise.html) |
 
 ### Lab 4. Logistic Regression
 
