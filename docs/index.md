@@ -1,6 +1,6 @@
 # Data Mining in R
 
-This set of learning materials for undergraduate and graduate data mining class is currently maintained by Xiaorui Zhu(zhuxiaorui1989@gmail.com). Many materials are from Dr. Yan Yu's previous class notes. And lab notes are from four previous Ph.D. students [go to top](#header) in Lindner College of Business. Thanks to Dr. Brittany Green for recording the videos. 
+This set of learning materials for undergraduate and graduate data mining class is currently maintained by Xiaorui Zhu(zhuxiaorui1989@gmail.com). Many materials are from Dr. Yan Yu's previous class notes. And lab notes are from four previous Ph.D. students [Ph.D. students](#footer) in Lindner College of Business. Thanks to Dr. Brittany Green for recording the videos. 
 
 ## Lecture and Lab Notes
 
