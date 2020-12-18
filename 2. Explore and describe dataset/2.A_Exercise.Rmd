@@ -23,7 +23,7 @@ knitr::opts_chunk$set(echo = TRUE)
 options(width = 200)
 ```
 
-# **Exercise:** 
+# Exploratory Data Analysis **Exercise:** 
 
 > Download the customer data and read into R.
 
@@ -46,6 +46,108 @@ summary(customer)
 aggregate(HHIncome~MaritalStatus, data = customer, mean)
 mypivot= table(customer$LoanDefault, customer$JobCategory)
 mypivot[2,]/table(customer$JobCategory)
+```
+
+```{r echo=FALSE, eval=FALSE}
+#################### Exercise ###########################
+
+## Download the customer data here, and read into R.
+customer <- read.csv(file = "https://xiaoruizhu.github.io/Data-Mining-R/lecture/data/CustomerData.csv")
+
+## How many rows and columns of the dataset?
+col<-ncol(customer)
+col
+row<-nrow(customer)
+row
+
+## Print first few rows the dataset.
+
+head(customer)
+tail(customer)
+
+## Obtain the summary statistics (Min, Median, Max, Mean and Std.) for Age, 
+## EducationYears, HHIncome, and CreditDebt.
+
+# Age
+summary(customer$Age)
+sd(customer$Age)
+
+# EducationYears
+summary(customer$EducationYears)
+sd(customer$EducationYears)
+
+# HHIncome
+
+summary(customer$HHIncome)
+sd(customer$HHIncome)
+
+# CreditDebt.
+
+summary(customer$CreditDebt)
+sd(customer$CreditDebt)
+
+## Obtain the mean of HHIncome by MaritalStatus
+
+aggregate(HHIncome~MaritalStatus, customer, mean)
+
+## Obtain a pivot table of LoanDefault vs. JobCategory.
+## Which Job Category has the highest and lowerst loan default rate? 
+
+table_loan<-table(customer$JobCategory,customer$LoanDefault)
+table_loan
+table_loan_pro<-prop.table(table(customer$JobCategory,customer$LoanDefault))
+table_loan_pro
+cbind(table_loan,table_loan_pro)
+```
+
+# Data Manipulation **Exercise:** 
+
+> 1. Obtain a dataset "iris_select" that drop the first and second column by using dataname[, "variable_index"]; 
+> 2. Create new variable Sepal_LW equals to the ratio of sepal length to sepal width. (without using mutate());
+> 3. How to get only those variables that contain missing values? 
+> 4. Random sample a training data set that contains 80% of original data points.
+
+```{r echo=FALSE, eval=FALSE}
+################### Exercise 3.1.1.5 ########################################
+## Obtain iris_select and iris_select2 by using “dataname[, “variable_index”]
+
+data("iris")
+names(iris) # obtain the order of the variable name
+
+index1<-c(1,2)
+iris_select<-iris[,index1]# select variables by the order number
+names(iris_select) #check the variables
+
+index2<-c(1,3,5)
+iris_select2<-iris[,-index2]# dropping the variables by the order number
+names(iris_select2)# check the variables
+
+################### Exercise 3.1.4.1 ########################################
+## Try to obtain iris_newvar WITHOUT using mutate() function
+Sepal.L_W<-iris$Sepal.Length/iris$Sepal.Width
+iris_newvar<-cbind(iris,Sepal.L_W)
+names(iris_newvar)
+
+######Exercise: How to get only those variables that contain missing values? 
+######Which variable has the most missing?##################################
+
+colnames(customer)[colSums(is.na(customer)) > 0] 
+##variables contain missing values
+
+customer_mis<-customer[,colnames(customer)[colSums(is.na(customer)) > 0]]
+##select those variables
+
+colnames(customer)[colSums(is.na(customer))==max(colSums(is.na(customer)))]
+max(colSums(is.na(customer)))
+##variable has the most missing
+
+#######Exercise: (HW 1)##################################################### 
+##Random sample a training data set that contains 80% of original data points.
+
+#Use the customer dataset as an example
+sample_index <- sample(nrow(customer),nrow(customer)*0.80)
+customer_train<- customer[sample_index,]
+customer_test<-customer[-sample_index,]
 ```
 
 [go to top](#header)

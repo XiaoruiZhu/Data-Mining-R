@@ -1,6 +1,6 @@
 # Data Mining in R
 
-This set of learning materials for undergraduate and graduate data mining class is currently maintained by Xiaorui Zhu(zhuxiaorui1989@gmail.com). Many materials are from Dr. Yan Yu's previous class notes. And lab notes are from four previous Ph.D. students in Lindner College of Business. Thanks to Dr. Brittany Green for recording the videos. 
+This set of learning materials for undergraduate and graduate data mining class is currently maintained by Xiaorui Zhu(zhuxiaorui1989@gmail.com). Many materials are from Dr. Yan Yu's previous class notes. And lab notes are from four previous Ph.D. students [go to top](#header) in Lindner College of Business. Thanks to Dr. Brittany Green for recording the videos. 
 
 ## Lecture and Lab Notes
 
@@ -30,13 +30,16 @@ table th:nth-of-type(3) {
 
 | Lab Notes |  Video | Exercise |
 |:----------|:-------------:|------:|
-| [Explore and describe dataset](lecture/2.A_ExploratoryAnalyses.html)   |            | [2.A Exercise](lecture/2.A_Exercise.html)  |
-| [Exploratory Data Analysis by Visualization](lecture/2.B_ExploratoryAnalyses.html)   |            | |
-| [tidyverse: collection of R packages for EDA](lecture/2.C_tidyverse.html)   |            | |
+| [2.A Explore and describe dataset](lecture/2.A_ExploratoryAnalyses.html)   |            | [2.A Exercise](lecture/2.A_Exercise.html)  |
+| [2.B Exploratory Data Analysis by Visualization](lecture/2.B_EDA_Vis.html)   |            | [2.B Exercise](lecture/2.B_Exercise.html) |
+| [2.C tidyverse: collection of R packages for EDA](lecture/2.C_tidyverse.html)   |            | |
 
-### Lab 3. Linear Regression, Prediction and Variables Seleciton
+### Linear Regression, Prediction and Variables Seleciton
 
-[Linear Regression](lecture/3_LinearReg.html)
+| Lab Notes |  Video | Exercise |
+|:----------|:-------------:|------:|
+| [3.A Linear Regression and Prediction](lecture/3.A_LinearReg.html)   |            | [3.A Exercise](lecture/3.A_Exercise.html)  |
+| [3.B Variables Seleciton](lecture/3.B_VarSel.html)                   |            | [3.B Exercise](lecture/3.A_Exercise.html) |
 
 ### Lab 4. Logistic Regression
 
@@ -67,9 +70,14 @@ table th:nth-of-type(3) {
 [Basic Text Mining](lecture/Basic_Text_Mining.html)
 
 
-Contributors:  
-- Dr. Shaonan Tian, Assitant Professor at San José State University 
-- Dr. Chaojiang Wu, Assistant Professor of Business Analytics at LeBow College of Business, Drexel University
-- Dr. Feng Mai, Assistant Professor of Information Systems in the School of Business at Stevens Institute of Technology
-- Dr. Shaobo Li, Assistant Professor of Business Analytics at University of Kansas School of Business
-- Dr. Brittany Green, Assistant Professor at University of Louisville College of Business
+Contributors: 
+- Tracy Zhou Wu, Ph.D. (2008). Executive Director/VP, JPMorgan Chase, Dallas, TX.  
+- Shaonan Tian, Ph.D. (2012). Tenure Track Assistant Prof. at San Jose State University, CA. 
+- Chaojiang Wu, Ph.D. (2013). Tenure Track Assistant Prof. at Drexel University, PA (now Kent State University, OH).
+- Feng Mai, Ph.D., Assistant Professor of Information Systems in the School of Business at Stevens Institute of Technology
+- Shaobo Li, Ph.D.  (2018). Tenure Track Assistant Prof. at University of Kansas.
+- Yuankun Zhang, Ph.D.  (2018). VP, Bank of New York Mellon, Pittsburgh, PA.
+- Brittany Green, Ph.D. (2020). Tenure Track Assistant Prof. at University of Louisville.
+- Xiaorui Zhu, Tianhai Zu, Saidat Sanni, Zewei Lin, ongoing Ph.D. students.
+- Zhiyuan Dong, Ph.D Principal, Media Center of Excellence at IRI, Chicago
+- Wei Xiong, Jingyin Gene, ChongQing, China

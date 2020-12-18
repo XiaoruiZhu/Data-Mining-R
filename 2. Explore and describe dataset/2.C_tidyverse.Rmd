@@ -202,37 +202,6 @@ names(iris_newvar)
 #### Exercise
 Try to obtain *iris_newvar* WITHOUT using `mutate()` function. (You may need multiple steps, so `mutate()` is very useful especially you need to create many new variables.)
 
-### Missing data
-
-#### Detect missing values
-
-Recall the customer dataset we in previous exercise.
-```{r}
-customer <- read.csv("data/CustomerData.csv")
-```
-
-```{r}
-# How many missing values are in customer dataset?
-sum(is.na(customer))
-# How many missing values are in each variable?
-data.frame(num_missing=colSums(is.na(customer)))
-```
-
-> **Exercise:**
-> How to get only those variables that contain missing values? Which variable has the most missing?
-
-#### How to deal with missing values?
-* Simply delete those observations(rows) that contains missing value.
-* Impute missing values by certain statistics, predictions or random number from estimated distributions.
-
-```{r}
-# Simply delete rows with missings
-clean_customer<- na.omit(customer)
-nrow(clean_customer)
-# Impute missing values by median
-medHS<- median(customer$HouseholdSize, na.rm = T)
-customer$HouseholdSize[is.na(customer$HouseholdSize)==T]<- medHS
-```
 
 ## Data Visualization with **ggplot2**
 

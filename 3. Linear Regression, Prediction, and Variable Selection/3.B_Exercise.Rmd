@@ -1,0 +1,52 @@
+---
+title: "Variable Selection"
+output: 
+  html_document: 
+    theme: readable
+    fig_caption: yes
+    number_sections: yes
+    toc: yes
+  html_notebook: 
+    fig_caption: yes
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+# **Exercise:** 
+
+> 1. Manually compare two models: the full model with all covariates and a model without crim and zn;
+> 2. Sample 90% of the observation as the training set, then compare in-sample and out-of-sample performance between these reduced models.
+
+```{r echo=FALSE, eval=FALSE}
+#5.3.3
+##Comparing in-sample and out-of-sample performance between these reduced models.
+nullmodel=lm(medv~1, data=Boston_train)
+fullmodel=lm(medv~., data=Boston_train)
+model_step_b <- step(fullmodel,direction='backward')
+model_step_f <- step(nullmodel, scope=list(lower=nullmodel, upper=fullmodel), direction='forward')
+model_step_s <- step(nullmodel, scope=list(lower=nullmodel, upper=fullmodel), direction='both')
+###MSE
+smodelb<-summary(model_step_b)
+smodelf<-summary(model_step_f)
+smodels<-summary(model_step_s)
+smodelb$sigma^2
+smodelf$sigma^2
+smodels$sigma^2
+###MSPE
+
+pb<-predict(model_step_b,newdata = Boston_test)
+ps<-predict(model_step_s,newdata = Boston_test)
+pf<-predict(model_step_f,newdata = Boston_test)
+
+mean((pb-Boston_test$medv)^2)
+mean((pf-Boston_test$medv)^2)
+mean((ps-Boston_test$medv)^2)
+
+```
+
+
+[go to top](#header)
+
+
+

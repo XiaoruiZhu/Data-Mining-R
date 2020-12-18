@@ -1727,7 +1727,6 @@ summary {
 <li><a href="#re-ordering-columns-and-sorting-rows"><span class="toc-section-number">1.1.2</span> Re-ordering columns and sorting rows</a></li>
 <li><a href="#renaming-variable"><span class="toc-section-number">1.1.3</span> Renaming variable</a></li>
 <li><a href="#creating-new-variables"><span class="toc-section-number">1.1.4</span> Creating New Variables</a></li>
-<li><a href="#missing-data"><span class="toc-section-number">1.1.5</span> Missing data</a></li>
 </ul></li>
 <li><a href="#data-visualization-with-ggplot2"><span class="toc-section-number">1.2</span> Data Visualization with <strong>ggplot2</strong></a></li>
 <li><a href="#things-to-remember"><span class="toc-section-number">1.3</span> Things to remember</a></li>
@@ -1740,12 +1739,12 @@ summary {
 <p>We introduce package <strong>tidyverse</strong>, and some basic functions in the sub-packages for EDA. For more details, please see <a href="https://www.tidyverse.org/" class="uri">https://www.tidyverse.org/</a>. This section is based on <a href="http://bradleyboehmke.github.io/">Dr. Bradley Boehmke</a>’s <a href="http://uc-r.github.io/r_bootcamp">short course</a> for MSBA students at Lindner College of Business. The course materials can be downloaded from <a href="https://www.dropbox.com/sh/2qv0a02l9ausnyh/AAD0cRwMz_qTU-w15TwDxgLSa?dl=1">here</a>.</p>
 <pre class="r"><code>install.packages(&quot;tidyverse&quot;)</code></pre>
 <pre class="r"><code>library(tidyverse)</code></pre>
-<pre><code>## -- Attaching packages --------------------------------------------------------------------------------------------- tidyverse 1.3.0 --</code></pre>
+<pre><code>## -- Attaching packages ------------------------------------------------------------------------------------------------------------------- tidyverse 1.3.0 --</code></pre>
 <pre><code>## v ggplot2 3.3.0     v purrr   0.3.3
 ## v tibble  2.1.3     v dplyr   0.8.4
 ## v tidyr   1.0.2     v stringr 1.4.0
 ## v readr   1.3.1     v forcats 0.4.0</code></pre>
-<pre><code>## -- Conflicts ------------------------------------------------------------------------------------------------ tidyverse_conflicts() --
+<pre><code>## -- Conflicts ---------------------------------------------------------------------------------------------------------------------- tidyverse_conflicts() --
 ## x dplyr::filter() masks stats::filter()
 ## x dplyr::lag()    masks stats::lag()</code></pre>
 <div id="data-manipulation-with-dplyr" class="section level2">
@@ -1896,41 +1895,6 @@ names(iris_newvar)</code></pre>
 <div id="exercise-1" class="section level4">
 <h4><span class="header-section-number">1.1.4.1</span> Exercise</h4>
 <p>Try to obtain <em>iris_newvar</em> WITHOUT using <code>mutate()</code> function. (You may need multiple steps, so <code>mutate()</code> is very useful especially you need to create many new variables.)</p>
-</div>
-</div>
-<div id="missing-data" class="section level3">
-<h3><span class="header-section-number">1.1.5</span> Missing data</h3>
-<div id="detect-missing-values" class="section level4">
-<h4><span class="header-section-number">1.1.5.1</span> Detect missing values</h4>
-<p>Recall the customer dataset we in previous exercise.</p>
-<pre class="r"><code>customer &lt;- read.csv(&quot;data/CustomerData.csv&quot;)</code></pre>
-<pre class="r"><code># How many missing values are in customer dataset?
-sum(is.na(customer))</code></pre>
-<pre><code>## [1] 76</code></pre>
-<pre class="r"><code># How many missing values are in each variable?
-data.frame(num_missing=colSums(is.na(customer)))</code></pre>
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["num_missing"],"name":[1],"type":["dbl"],"align":["right"]}],"data":[{"1":"0","_rn_":"CustomerID"},{"1":"0","_rn_":"Region"},{"1":"0","_rn_":"TownSize"},{"1":"0","_rn_":"Gender"},{"1":"0","_rn_":"Age"},{"1":"0","_rn_":"EducationYears"},{"1":"0","_rn_":"JobCategory"},{"1":"0","_rn_":"UnionMember"},{"1":"0","_rn_":"EmploymentLength"},{"1":"0","_rn_":"Retired"},{"1":"0","_rn_":"HHIncome"},{"1":"0","_rn_":"DebtToIncomeRatio"},{"1":"0","_rn_":"CreditDebt"},{"1":"0","_rn_":"OtherDebt"},{"1":"0","_rn_":"LoanDefault"},{"1":"0","_rn_":"MaritalStatus"},{"1":"8","_rn_":"HouseholdSize"},{"1":"6","_rn_":"NumberPets"},{"1":"7","_rn_":"NumberCats"},{"1":"8","_rn_":"NumberDogs"},{"1":"34","_rn_":"NumberBirds"},{"1":"13","_rn_":"HomeOwner"},{"1":"0","_rn_":"CarsOwned"},{"1":"0","_rn_":"CarOwnership"},{"1":"0","_rn_":"CarBrand"},{"1":"0","_rn_":"CarValue"},{"1":"0","_rn_":"CommuteTime"},{"1":"0","_rn_":"PoliticalPartyMem"},{"1":"0","_rn_":"Votes"},{"1":"0","_rn_":"CreditCard"},{"1":"0","_rn_":"CardTenure"},{"1":"0","_rn_":"CardItemsMonthly"},{"1":"0","_rn_":"CardSpendMonth"},{"1":"0","_rn_":"ActiveLifestyle"},{"1":"0","_rn_":"PhoneCoTenure"},{"1":"0","_rn_":"VoiceLastMonth"},{"1":"0","_rn_":"VoiceOverTenure"},{"1":"0","_rn_":"EquipmentRental"},{"1":"0","_rn_":"EquipmentLastMonth"},{"1":"0","_rn_":"EquipmentOverTenure"},{"1":"0","_rn_":"CallingCard"},{"1":"0","_rn_":"WirelessData"},{"1":"0","_rn_":"DataLastMonth"},{"1":"0","_rn_":"DataOverTenure"},{"1":"0","_rn_":"Multiline"},{"1":"0","_rn_":"VM"},{"1":"0","_rn_":"Pager"},{"1":"0","_rn_":"Internet"},{"1":"0","_rn_":"CallerID"},{"1":"0","_rn_":"CallWait"},{"1":"0","_rn_":"CallForward"},{"1":"0","_rn_":"ThreeWayCalling"},{"1":"0","_rn_":"EBilling"},{"1":"0","_rn_":"TVWatchingHours"},{"1":"0","_rn_":"OwnsPC"},{"1":"0","_rn_":"OwnsMobileDevice"},{"1":"0","_rn_":"OwnsGameSystem"},{"1":"0","_rn_":"OwnsFax"},{"1":"0","_rn_":"NewsSubscriber"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
-  </script>
-</div>
-<blockquote>
-<p><strong>Exercise:</strong> How to get only those variables that contain missing values? Which variable has the most missing?</p>
-</blockquote>
-</div>
-<div id="how-to-deal-with-missing-values" class="section level4">
-<h4><span class="header-section-number">1.1.5.2</span> How to deal with missing values?</h4>
-<ul>
-<li>Simply delete those observations(rows) that contains missing value.</li>
-<li>Impute missing values by certain statistics, predictions or random number from estimated distributions.</li>
-</ul>
-<pre class="r"><code># Simply delete rows with missings
-clean_customer&lt;- na.omit(customer)
-nrow(clean_customer)</code></pre>
-<pre><code>## [1] 4940</code></pre>
-<pre class="r"><code># Impute missing values by median
-medHS&lt;- median(customer$HouseholdSize, na.rm = T)
-customer$HouseholdSize[is.na(customer$HouseholdSize)==T]&lt;- medHS</code></pre>
 </div>
 </div>
 </div>

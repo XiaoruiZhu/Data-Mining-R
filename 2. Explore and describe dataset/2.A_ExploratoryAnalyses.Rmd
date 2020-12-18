@@ -158,7 +158,155 @@ table(iris1$Species, iris1$Sepal.Length.Cate)
 ```
 
 
-### **Exercise:** 
+## **Exercise:** 
+
+> Download the customer data and read into R.
+
+```{r echo=TRUE, eval=FALSE}
+customer <- read.csv(file = "https://xiaoruizhu.github.io/Data-Mining-R/lecture/data/CustomerData.csv")
+```
+>
+> 1. How many rows and columns of the dataset?
+> 2. Print first few rows the dataset.
+> 3. Obtain the summary statistics (Min, Median, Max, Mean and Std.) for *Age*, *EducationYears*, *HHIncome*, and *CreditDebt*.
+> 4. Obtain the mean of *HHIncome* by *MaritalStatus*
+> 5. Obtain a pivot table of *LoanDefault* vs. *JobCategory*. Which Job Category has the highest and lowerst loan default rate?
+
+```{r echo=FALSE, eval=FALSE}
+customer<- read.csv("CustomerData.csv")
+dim(customer)
+head(customer)
+names(customer)
+summary(customer)
+aggregate(HHIncome~MaritalStatus, data = customer, mean)
+mypivot= table(customer$LoanDefault, customer$JobCategory)
+mypivot[2,]/table(customer$JobCategory)
+```
+
+```{r echo=FALSE, eval=FALSE}
+#################### Exercise ###########################
+
+## Download the customer data here, and read into R.
+customer <- read.csv(file = "https://xiaoruizhu.github.io/Data-Mining-R/lecture/data/CustomerData.csv")
+
+## How many rows and columns of the dataset?
+col<-ncol(customer)
+col
+row<-nrow(customer)
+row
+
+## Print first few rows the dataset.
+
+head(customer)
+tail(customer)
+
+## Obtain the summary statistics (Min, Median, Max, Mean and Std.) for Age, 
+## EducationYears, HHIncome, and CreditDebt.
+
+# Age
+summary(customer$Age)
+sd(customer$Age)
+
+# EducationYears
+summary(customer$EducationYears)
+sd(customer$EducationYears)
+
+# HHIncome
+
+summary(customer$HHIncome)
+sd(customer$HHIncome)
+
+# CreditDebt.
+
+summary(customer$CreditDebt)
+sd(customer$CreditDebt)
+
+## Obtain the mean of HHIncome by MaritalStatus
+
+aggregate(HHIncome~MaritalStatus, customer, mean)
+
+## Obtain a pivot table of LoanDefault vs. JobCategory.
+## Which Job Category has the highest and lowerst loan default rate? 
+
+table_loan<-table(customer$JobCategory,customer$LoanDefault)
+table_loan
+table_loan_pro<-prop.table(table(customer$JobCategory,customer$LoanDefault))
+table_loan_pro
+cbind(table_loan,table_loan_pro)
+```
+
+[go to top](#header)
+
+# Data Manipulation
+
+## Re-ordering columns and sorting rows
+Sorting by one or more variables is a common operation that you can do with datasets. With RStudio version 0.99+, you can sort a dataset when viewing it by clicking column header. 
+
+To do it with code, let's suppose that you would like to find the top 5 rows in `iris` dataset with largest `Sepal.Length`.
+
+```{r}
+iris[order(iris$Sepal.Length, decreasing = TRUE)[1:5], ] 
+```
+
+
+## Sorting
+
+Sorting by one or more variables is a common operation that you can do with datasets. With RStudio version 0.99+, you can sort a dataset when viewing it by clicking column header. 
+
+To do it with code, let's suppose that you would like to find the top 5 rows in `iris` dataset with largest `Sepal.Length`.
+
+```{r}
+iris[order(iris$Sepal.Length, decreasing = TRUE)[1:5], ] 
+```
+
+The syntax is cleaner with the `arrange()` function in the `dplyr` package:
+```{r, eval=FALSE}
+arrange(iris, desc(Sepal.Length))[1:5, ]
+```
+
+## Select columns
+
+If you want to select one or more variables of a data frame, there are two ways to do that. First is using indexing by "[]". Second is `select()` function in *dplyr*. For example, suppose we want to select variable "Sepal.Length":
+```{r eval=FALSE}
+iris[, "Sepal.Length"]
+```
+or alternatively select two variables: "Sepal.Length", "Sepal.Width"
+```{r eval=FALSE}
+iris[, c("Sepal.Length", "Sepal.Width")]
+```
+
+
+## Missing data
+
+### Detect missing values
+
+Recall the customer dataset we in previous exercise.
+```{r}
+customer <- read.csv("data/CustomerData.csv")
+```
+
+```{r}
+# How many missing values are in customer dataset?
+sum(is.na(customer))
+# How many missing values are in each variable?
+data.frame(num_missing=colSums(is.na(customer)))
+```
+
+### How to deal with missing values?
+
+* Simply delete those observations(rows) that contains missing value.
+* Impute missing values by certain statistics, predictions or random number from estimated distributions.
+
+```{r}
+# Simply delete rows with missings
+clean_customer<- na.omit(customer)
+nrow(clean_customer)
+# Impute missing values by median
+medHS<- median(customer$HouseholdSize, na.rm = T)
+customer$HouseholdSize[is.na(customer$HouseholdSize)==T]<- medHS
+```
+
+## **Exercise:** 
 
 > Download the customer data and read into R.
 

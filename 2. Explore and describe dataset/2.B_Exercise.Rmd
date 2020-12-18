@@ -1,0 +1,37 @@
+---
+title: "Exploratory Data Analysis by Visualization"
+output: 
+  html_document: 
+    theme: readable
+    fig_caption: yes
+    number_sections: yes
+    toc: yes
+    code_folding: show
+    df_print: paged
+  html_notebook: 
+    fig_caption: yes
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r set-options, echo=FALSE, cache=FALSE}
+options(width = 200)
+```
+
+# **Exercise:** 
+
+> Use `?barplot` or Google search to produce following bar chart. 
+
+```{r, echo=FALSE,  fig.align='center'}
+data(iris)
+mean_by_group<- as.matrix(aggregate(.~Species, data=iris, mean)[,-1])
+rownames(mean_by_group)<- aggregate(.~Species, data=iris, mean)[,1]
+barplot(mean_by_group, col=c("darkblue","red", "green"), legend=rownames(mean_by_group), beside=TRUE, ylab = "Average", cex.names= 1)
+```
+
+[go to top](#header)

@@ -1731,8 +1731,18 @@ summary {
 <li><a href="#summary-by-groups"><span class="toc-section-number">1.3</span> Summary by groups</a><ul>
 <li><a href="#use-aggregate-function-to-find-summary-statistics-by-group."><span class="toc-section-number">1.3.1</span> Use <code>aggregate()</code> function to find summary statistics by group.</a></li>
 <li><a href="#pivot-table"><span class="toc-section-number">1.3.2</span> Pivot table</a></li>
-<li><a href="#exercise"><span class="toc-section-number">1.3.3</span> <strong>Exercise:</strong></a></li>
 </ul></li>
+<li><a href="#exercise"><span class="toc-section-number">1.4</span> <strong>Exercise:</strong></a></li>
+</ul></li>
+<li><a href="#data-manipulation"><span class="toc-section-number">2</span> Data Manipulation</a><ul>
+<li><a href="#re-ordering-columns-and-sorting-rows"><span class="toc-section-number">2.1</span> Re-ordering columns and sorting rows</a></li>
+<li><a href="#sorting"><span class="toc-section-number">2.2</span> Sorting</a></li>
+<li><a href="#select-columns"><span class="toc-section-number">2.3</span> Select columns</a></li>
+<li><a href="#missing-data"><span class="toc-section-number">2.4</span> Missing data</a><ul>
+<li><a href="#detect-missing-values"><span class="toc-section-number">2.4.1</span> Detect missing values</a></li>
+<li><a href="#how-to-deal-with-missing-values"><span class="toc-section-number">2.4.2</span> How to deal with missing values?</a></li>
+</ul></li>
+<li><a href="#exercise-1"><span class="toc-section-number">2.5</span> <strong>Exercise:</strong></a></li>
 </ul></li>
 </ul>
 </div>
@@ -1880,8 +1890,9 @@ table(iris1$Species, iris1$Sepal.Length.Cate)</code></pre>
 ##   versicolor         4        20        17         9
 ##   virginica          1         5        18        26</code></pre>
 </div>
-<div id="exercise" class="section level3">
-<h3><span class="header-section-number">1.3.3</span> <strong>Exercise:</strong></h3>
+</div>
+<div id="exercise" class="section level2">
+<h2><span class="header-section-number">1.4</span> <strong>Exercise:</strong></h2>
 <blockquote>
 <p>Download the customer data and read into R.</p>
 </blockquote>
@@ -1897,6 +1908,88 @@ table(iris1$Species, iris1$Sepal.Length.Cate)</code></pre>
 </blockquote>
 <p><a href="#header">go to top</a></p>
 </div>
+</div>
+<div id="data-manipulation" class="section level1">
+<h1><span class="header-section-number">2</span> Data Manipulation</h1>
+<div id="re-ordering-columns-and-sorting-rows" class="section level2">
+<h2><span class="header-section-number">2.1</span> Re-ordering columns and sorting rows</h2>
+<p>Sorting by one or more variables is a common operation that you can do with datasets. With RStudio version 0.99+, you can sort a dataset when viewing it by clicking column header.</p>
+<p>To do it with code, let’s suppose that you would like to find the top 5 rows in <code>iris</code> dataset with largest <code>Sepal.Length</code>.</p>
+<pre class="r"><code>iris[order(iris$Sepal.Length, decreasing = TRUE)[1:5], ] </code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Sepal.Length"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Sepal.Width"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["Petal.Length"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Petal.Width"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["Species"],"name":[5],"type":["fctr"],"align":["left"]}],"data":[{"1":"7.9","2":"3.8","3":"6.4","4":"2.0","5":"virginica","_rn_":"132"},{"1":"7.7","2":"3.8","3":"6.7","4":"2.2","5":"virginica","_rn_":"118"},{"1":"7.7","2":"2.6","3":"6.9","4":"2.3","5":"virginica","_rn_":"119"},{"1":"7.7","2":"2.8","3":"6.7","4":"2.0","5":"virginica","_rn_":"123"},{"1":"7.7","2":"3.0","3":"6.1","4":"2.3","5":"virginica","_rn_":"136"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+<div id="sorting" class="section level2">
+<h2><span class="header-section-number">2.2</span> Sorting</h2>
+<p>Sorting by one or more variables is a common operation that you can do with datasets. With RStudio version 0.99+, you can sort a dataset when viewing it by clicking column header.</p>
+<p>To do it with code, let’s suppose that you would like to find the top 5 rows in <code>iris</code> dataset with largest <code>Sepal.Length</code>.</p>
+<pre class="r"><code>iris[order(iris$Sepal.Length, decreasing = TRUE)[1:5], ] </code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Sepal.Length"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Sepal.Width"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["Petal.Length"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Petal.Width"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["Species"],"name":[5],"type":["fctr"],"align":["left"]}],"data":[{"1":"7.9","2":"3.8","3":"6.4","4":"2.0","5":"virginica","_rn_":"132"},{"1":"7.7","2":"3.8","3":"6.7","4":"2.2","5":"virginica","_rn_":"118"},{"1":"7.7","2":"2.6","3":"6.9","4":"2.3","5":"virginica","_rn_":"119"},{"1":"7.7","2":"2.8","3":"6.7","4":"2.0","5":"virginica","_rn_":"123"},{"1":"7.7","2":"3.0","3":"6.1","4":"2.3","5":"virginica","_rn_":"136"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<p>The syntax is cleaner with the <code>arrange()</code> function in the <code>dplyr</code> package:</p>
+<pre class="r"><code>arrange(iris, desc(Sepal.Length))[1:5, ]</code></pre>
+</div>
+<div id="select-columns" class="section level2">
+<h2><span class="header-section-number">2.3</span> Select columns</h2>
+<p>If you want to select one or more variables of a data frame, there are two ways to do that. First is using indexing by “[]”. Second is <code>select()</code> function in <em>dplyr</em>. For example, suppose we want to select variable “Sepal.Length”:</p>
+<pre class="r"><code>iris[, &quot;Sepal.Length&quot;]</code></pre>
+<p>or alternatively select two variables: “Sepal.Length”, “Sepal.Width”</p>
+<pre class="r"><code>iris[, c(&quot;Sepal.Length&quot;, &quot;Sepal.Width&quot;)]</code></pre>
+</div>
+<div id="missing-data" class="section level2">
+<h2><span class="header-section-number">2.4</span> Missing data</h2>
+<div id="detect-missing-values" class="section level3">
+<h3><span class="header-section-number">2.4.1</span> Detect missing values</h3>
+<p>Recall the customer dataset we in previous exercise.</p>
+<pre class="r"><code>customer &lt;- read.csv(&quot;data/CustomerData.csv&quot;)</code></pre>
+<pre class="r"><code># How many missing values are in customer dataset?
+sum(is.na(customer))</code></pre>
+<pre><code>## [1] 76</code></pre>
+<pre class="r"><code># How many missing values are in each variable?
+data.frame(num_missing=colSums(is.na(customer)))</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["num_missing"],"name":[1],"type":["dbl"],"align":["right"]}],"data":[{"1":"0","_rn_":"CustomerID"},{"1":"0","_rn_":"Region"},{"1":"0","_rn_":"TownSize"},{"1":"0","_rn_":"Gender"},{"1":"0","_rn_":"Age"},{"1":"0","_rn_":"EducationYears"},{"1":"0","_rn_":"JobCategory"},{"1":"0","_rn_":"UnionMember"},{"1":"0","_rn_":"EmploymentLength"},{"1":"0","_rn_":"Retired"},{"1":"0","_rn_":"HHIncome"},{"1":"0","_rn_":"DebtToIncomeRatio"},{"1":"0","_rn_":"CreditDebt"},{"1":"0","_rn_":"OtherDebt"},{"1":"0","_rn_":"LoanDefault"},{"1":"0","_rn_":"MaritalStatus"},{"1":"8","_rn_":"HouseholdSize"},{"1":"6","_rn_":"NumberPets"},{"1":"7","_rn_":"NumberCats"},{"1":"8","_rn_":"NumberDogs"},{"1":"34","_rn_":"NumberBirds"},{"1":"13","_rn_":"HomeOwner"},{"1":"0","_rn_":"CarsOwned"},{"1":"0","_rn_":"CarOwnership"},{"1":"0","_rn_":"CarBrand"},{"1":"0","_rn_":"CarValue"},{"1":"0","_rn_":"CommuteTime"},{"1":"0","_rn_":"PoliticalPartyMem"},{"1":"0","_rn_":"Votes"},{"1":"0","_rn_":"CreditCard"},{"1":"0","_rn_":"CardTenure"},{"1":"0","_rn_":"CardItemsMonthly"},{"1":"0","_rn_":"CardSpendMonth"},{"1":"0","_rn_":"ActiveLifestyle"},{"1":"0","_rn_":"PhoneCoTenure"},{"1":"0","_rn_":"VoiceLastMonth"},{"1":"0","_rn_":"VoiceOverTenure"},{"1":"0","_rn_":"EquipmentRental"},{"1":"0","_rn_":"EquipmentLastMonth"},{"1":"0","_rn_":"EquipmentOverTenure"},{"1":"0","_rn_":"CallingCard"},{"1":"0","_rn_":"WirelessData"},{"1":"0","_rn_":"DataLastMonth"},{"1":"0","_rn_":"DataOverTenure"},{"1":"0","_rn_":"Multiline"},{"1":"0","_rn_":"VM"},{"1":"0","_rn_":"Pager"},{"1":"0","_rn_":"Internet"},{"1":"0","_rn_":"CallerID"},{"1":"0","_rn_":"CallWait"},{"1":"0","_rn_":"CallForward"},{"1":"0","_rn_":"ThreeWayCalling"},{"1":"0","_rn_":"EBilling"},{"1":"0","_rn_":"TVWatchingHours"},{"1":"0","_rn_":"OwnsPC"},{"1":"0","_rn_":"OwnsMobileDevice"},{"1":"0","_rn_":"OwnsGameSystem"},{"1":"0","_rn_":"OwnsFax"},{"1":"0","_rn_":"NewsSubscriber"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+<div id="how-to-deal-with-missing-values" class="section level3">
+<h3><span class="header-section-number">2.4.2</span> How to deal with missing values?</h3>
+<ul>
+<li>Simply delete those observations(rows) that contains missing value.</li>
+<li>Impute missing values by certain statistics, predictions or random number from estimated distributions.</li>
+</ul>
+<pre class="r"><code># Simply delete rows with missings
+clean_customer&lt;- na.omit(customer)
+nrow(clean_customer)</code></pre>
+<pre><code>## [1] 4940</code></pre>
+<pre class="r"><code># Impute missing values by median
+medHS&lt;- median(customer$HouseholdSize, na.rm = T)
+customer$HouseholdSize[is.na(customer$HouseholdSize)==T]&lt;- medHS</code></pre>
+</div>
+</div>
+<div id="exercise-1" class="section level2">
+<h2><span class="header-section-number">2.5</span> <strong>Exercise:</strong></h2>
+<blockquote>
+<p>Download the customer data and read into R.</p>
+</blockquote>
+<pre class="r"><code>customer &lt;- read.csv(file = &quot;https://xiaoruizhu.github.io/Data-Mining-R/lecture/data/CustomerData.csv&quot;)</code></pre>
+<blockquote>
+<ol style="list-style-type: decimal">
+<li>How many rows and columns of the dataset?</li>
+<li>Print first few rows the dataset.</li>
+<li>Obtain the summary statistics (Min, Median, Max, Mean and Std.) for <em>Age</em>, <em>EducationYears</em>, <em>HHIncome</em>, and <em>CreditDebt</em>.</li>
+<li>Obtain the mean of <em>HHIncome</em> by <em>MaritalStatus</em></li>
+<li>Obtain a pivot table of <em>LoanDefault</em> vs. <em>JobCategory</em>. Which Job Category has the highest and lowerst loan default rate?</li>
+</ol>
+</blockquote>
+<p><a href="#header">go to top</a></p>
 </div>
 </div>
 
