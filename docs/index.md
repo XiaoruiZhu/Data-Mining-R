@@ -8,7 +8,7 @@ This set of learning materials for undergraduate and graduate data mining class 
 
 <style>
 table th:first-of-type {
-    width: 80%;
+    width: 70%;
 }
 table th:nth-of-type(2) {
     width: 20%;
