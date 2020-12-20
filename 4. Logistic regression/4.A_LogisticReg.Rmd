@@ -1,0 +1,153 @@
+---
+title: "Logistic Regression"
+output: 
+  html_document: 
+    theme: readable
+    fig_caption: yes
+    number_sections: yes
+    toc: yes
+  html_notebook: 
+    fig_caption: yes
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+# Objective
+
+The objective of this case is to get you understand logistic regression (binary classification) and some important ideas such as cross validation, ROC curve, cut-off probability. 
+
+# Credit Card Default Data
+
+We will use a Credit Card Default Data for this lab and illustration. The details of the data can be found at http://archive.ics.uci.edu/ml/datasets/default+of+credit+card+clients. 
+Think about what kind of factors could affect people to fail to pay their credit balance.
+
+We first load the credit scoring data. It is easy to load comma-separated values (CSV). 
+```{r}
+credit.data <- read.csv(file = "https://xiaoruizhu.github.io/Data-Mining-R/lecture/data/credit_default.csv", header=T)
+```
+
+Look at what information do we have.
+```{r}
+colnames(credit.data)
+```
+
+Let's look at how many people were actually default in this sample.
+```{r}
+mean(credit.data$default.payment.next.month)
+```
+
+The name of response variable is too long! I want to make it shorter by renaming. Recall the `rename()` function.
+```{r message=FALSE}
+library(dplyr)
+credit.data<- rename(credit.data, default=default.payment.next.month)
+```
+
+How about the variable type and summary statistics?
+```{r eval=FALSE}
+str(credit.data)    # structure - see variable type
+summary(credit.data) # summary statistics
+```
+
+We see all variables are **int**, but we know that *SEX, EDUCATION, MARRIAGE* are categorical, we convert them to **factor**.
+```{r}
+credit.data$SEX<- as.factor(credit.data$SEX)
+credit.data$EDUCATION<- as.factor(credit.data$EDUCATION)
+credit.data$MARRIAGE<- as.factor(credit.data$MARRIAGE)
+```
+
+*We omit other EDA, but you shouldn't whenever you are doing data analysis.*
+
+[go to top](#header)
+
+
+# Logistic Regression
+
+Randomly split the data to training (80%) and testing (20%) datasets:
+```{r}
+index <- sample(nrow(credit.data),nrow(credit.data)*0.80)
+credit.train = credit.data[index,]
+credit.test = credit.data[-index,]
+```
+
+## Train a logistic regression model with all variables
+
+```{r, warning=FALSE}
+credit.glm0<- glm(default~., family=binomial, data=credit.train)
+summary(credit.glm0)
+```
+
+You have seen `glm()` before. In this lab, this is the main function used to build logistic regression model because it is a member of generalized linear model. In `glm()`, the only thing new is `family`. It specifies the distribution of your response variable. You may also specify the link function after the name of distribution, for example, `family=binomial(logit)` (default link is logit). You can also specify `family=binomial(link = "probit")` to run probit regression. You may also use `glm()` to build many other generalized linear models.
+
+### (Optional) Two-way contingency table and Chi-square test
+
+Two-way contingency table is a very useful tool for exploring the relationship between categorical variables. It is essentially the simplest pivot-table (see example below). Often time, after you create a two-way contingency table, Chi-square test is used to test if X affect Y. The null hypothesis is: X and Y are independent (e.g., MARRIAGE has nothing to do with likelihood of default).
+
+The $\chi^2$ test statistic is defined as
+$$\chi^2=\sum \frac{(observed-expected)^2}{expected},$$
+where the expected count is calculated by assuming row variable has nothing to do with column variable.
+
+Here is a very good tutorial for Chi-square test https://www.youtube.com/watch?v=WXPBoFDqNVk. 
+
+```{r}
+table.edu<- table(credit.data$EDUCATION, credit.data$default)
+table.edu
+chisq.test(table.edu)
+```
+
+What we saw from above test result is that p-value < 0.05. What is your conclusion?
+
+[go to top](#header)
+
+## Get some criteria of model fitting
+
+You can simply extract some criteria of the model fitting, for example, Residual deviance (equivalent to SSE in linear regression model), AIC and BIC. Unlike linear regression models, there is no $R^2$ in logistic regression.
+```{r}
+credit.glm0$deviance
+AIC(credit.glm0)
+BIC(credit.glm0)
+```
+
+## Prediction
+
+Similar to linear regression, we use `predict()` function for prediction. 
+
+To get prediction from a logistic regression model, there are several steps you need to understand. Refer to textbook/slides for detailed math.
+
+1.The fitted model $\hat{\eta} = b_0 +b_1 x_1 + b_2 x_2 + ...$ gives you the estimated value before the inverse of link (logit in case of logistic regression). In logistic regression the $\hat{\eta}$ are called **log odds ratio**, which is $\log(P(y=1)/(1-P(y=1)))$. In R you use the *predict()* function to get a vector of all in-sample $\hat{\eta}$ (for each training obs).
+
+```{r, fig.width=6, fig.height=4, fig.align='center'}
+hist(predict(credit.glm0))
+```
+
+2.For each $\hat{\eta}$, in order to get the P(y=1), we can apply the inverse of the link function (logit here) to $\hat{\eta}$. The equation is $P(y=1) =  1/ (1+exp(-\hat{\eta}))$. In R you use the *fitted()* function or *predict(,type="response") to get the **predicted probability** for each training ob.
+```{r, fig.width=6, fig.height=4, fig.align='center'}
+pred_resp <- predict(credit.glm0,type="response")
+hist(pred_resp)
+```
+
+3.Last but not least, you want a binary classification decision rule. The default rule is if the fitted $P(y=1) > 0.5$ then $y = 1$. The value 0.5 is called **cut-off probability**. You can choose the cut-off probability based on mis-classification rate, cost function, etc. In this case, the cost function can indicate the trade off between the risk of giving loan to someone who cannot pay (predict 0, truth 1), and risk of rejecting someone who qualifys (predict 1, truth 0).
+
+These tables illustrate the impact of choosing different cut-off probability. Choosing a large cut-off probability will result in few cases being predicted as 1, and chossing a small cut-off probability will result in many cases being predicted as 1.
+
+```{r}
+table(predict(credit.glm0,type="response") > 0.5)
+table(predict(credit.glm0,type="response") > 0.2)
+table(predict(credit.glm0,type="response") > 0.0001)
+```
+
+# Summary
+
+## Things to remember
+
+* Know how to use glm() to build logistic regression;
+
+## Guide for Assignment
+
+* EDA
+
+* Train logistic model
+
+[go to top](#header)
+

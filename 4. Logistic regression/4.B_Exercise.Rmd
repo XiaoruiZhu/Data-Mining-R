@@ -1,0 +1,19 @@
+---
+title: "Logistic Regression, Prediction and ROC"
+output: 
+  html_document: 
+    theme: readable
+    fig_caption: yes
+    number_sections: yes
+    toc: yes
+  html_notebook: 
+    fig_caption: yes
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+# **Exercise:** 
+
+> 1. Replicate the ROC curves in training and testing data.

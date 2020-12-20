@@ -21,39 +21,61 @@ table th:nth-of-type(3) {
 
 | Lab Notes |  Video | Exercise |
 |:----------|:-------------:|------:|
-| [1.A Introduction to Data Mining](lecture/1.A_IntroDM.html)   |            |   |
-| [1.B Introduction to R](lecture/1.B_IntroR.html) |       | [1.B](lecture/1.B_Exercise.html) |
-| [1.C Advanced techniques: Function and loop](lecture/1.C_IntroFuncLoop.html) |   | [1.C](lecture/1.C_Exercise.html) |
-| [1.D Introduction to RMarkdown (optional)](lecture/1.D_IntroMarkdown.html) |      |     |
+| [1.A Introduction to Data Mining](lecture/1.A_IntroDM.html)                   |       |                                  |
+| [1.B Introduction to R](lecture/1.B_IntroR.html)                              |       | [1.B](lecture/1.B_Exercise.html) |
+| [1.C Advanced techniques: function and loop](lecture/1.C_IntroFuncLoop.html)  |       | [1.C](lecture/1.C_Exercise.html) |
+| [1.D Introduction to RMarkdown (optional)](lecture/1.D_IntroMarkdown.html)    |       |                                  |
 
 ### Exploratory Data Analysis
 
 | Lab Notes |  Video | Exercise |
 |:----------|:-------------:|------:|
-| [2.A Explore and describe dataset](lecture/2.A_ExploratoryAnalyses.html)   |            | [2.A](lecture/2.A_Exercise.html)  |
-| [2.B Exploratory Data Analysis by Visualization](lecture/2.B_EDA_Vis.html)   |            | [2.B](lecture/2.B_Exercise.html) |
-| [2.C tidyverse: collection of R packages for EDA](lecture/2.C_tidyverse.html)   |            | |
+| [2.A Explore and describe dataset](lecture/2.A_ExploratoryAnalyses.html)     |            | [2.A](lecture/2.A_Exercise.html)  |
+| [2.B Exploratory data analysis by visualization](lecture/2.B_EDA_Vis.html)   |            | [2.B](lecture/2.B_Exercise.html) |
+| [2.C tidyverse: R packages for EDA (optional)](lecture/2.C_tidyverse.html)   |            |                                   |
 
 ### Linear Regression, Prediction and Variables Seleciton
 
 | Lab Notes |  Video | Exercise |
 |:----------|:-------------:|------:|
-| [3.A Linear Regression and Prediction](lecture/3.A_LinearReg.html)   |            | [3.A](lecture/3.A_Exercise.html)  |
-| [3.B Variables Seleciton](lecture/3.B_VarSel.html)                   |            | [3.B](lecture/3.A_Exercise.html) |
+| [3.A Linear regression and prediction](lecture/3.A_LinearReg.html)           |            | [3.A](lecture/3.A_Exercise.html)  |
+| [3.B Subset variable selection](lecture/3.B_SubsetVS.html)                   |            | [3.B](lecture/3.B_Exercise.html) |
+| [3.C LASSO variables veleciton](lecture/3.C_LASSO.html)                      |            | [3.C](lecture/3.C_Exercise.html) |
 
-### Lab 4. Logistic Regression
+### Logistic Regression
 
-[Logistic Regression](lecture/4_LogisticReg.html)
+| Lab Notes |  Video | Exercise |
+|:----------|:-------------:|------:|
+| [4.A Logistic regression](lecture/4.A_LogisticReg.html)                                         |            | [4.A](lecture/4.A_Exercise.html)  |
+| [4.B Logistic regression, prediction and ROC](lecture/4.B_LogisticReg_ROC.html)                 |            | [4.B](lecture/4.B_Exercise.html) |
+| [4.C Logistic Regression for binary classification](lecture/4.C_LogisticReg_Classification.html)|            | [4.C](lecture/4.C_Exercise.html) |
+| [4.D Logistic regression and variable selection](lecture/4.D_LogisticReg_VS.html)               |            | [4.D](lecture/4.D_Exercise.html) |
 
-### Lab 5. Tree Models
+### Cross Validation
 
-[Regression tree and classification tree](lecture/5_Tree.html)
+| Lab Notes |  Video | Exercise |
+|:----------|:-------------:|------:|
+| [Cross Validation](lecture/5_CrossValidation.html)   |            |   |
 
-### Lab 6. GAM, Neural Network, LDA and SVM
+### Tree Models
 
-[GAM, Neural Network, LDA and SVM](lecture/6_SupervisedLearning.html)
+| Lab Notes |  Video | Exercise |
+|:----------|:-------------:|------:|
+| [6.A Regression tree](lecture/5.A_RegTree.html)       |            | [6.A](lecture/5.A_Exercise.html)  |
+| [6.B Classification tree](lecture/5.B_ClassTree.html) |            | [6.B](lecture/5.B_Exercise.html) |
 
-### Lab 7. Unsupervised Learning
+### GAM, Neural Network, LDA and SVM
+
+| Lab Notes |  Video | Exercise |
+|:----------|:-------------:|------:|
+| [7.A Moving Beyond Linearity](lecture/6.A_BeyondLinearity.html)   |            | [7.A](lecture/)  |
+| [7.B Generalized additive model (GAM)](lecture/6.B_GAM.html)      |            | [7.B](lecture/) |
+| [7.C Discriminant analysis](lecture/6.C_DiscriminantAnalysis.html)|            | [7.C](lecture/)  |
+| [7.D Neural network models](lecture/6.D_NeuralNet.html)           |            | [7.D](lecture/) |
+| [7.E Support vector machine (SVM)](lecture/6.E_SVM.html)          |            | [7.E](lecture/)  |
+| [7.F Performance Comparisons](lecture/6.F_Comparison.html)        |            | [7.F](lecture/) |
+
+### Unsupervised Learning
 
 [Unsupervised Learning](lecture/7_UnsupervisedLearning.html)
 

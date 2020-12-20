@@ -8,10 +8,6 @@ output:
     toc: yes
     code_folding: show
     df_print: paged
-  html_notebook: 
-    fig_caption: yes
-    number_sections: yes
-    toc: yes
 editor_options: 
   chunk_output_type: console
 ---
@@ -52,9 +48,9 @@ abline(lm_mod, col="blue", lwd = 1)
 
 # Polynomial Regression
 
-The coefficients can be easily estimated using least squares linear regression because this is just a standard linear model with predictors x, x^2, x^3, ...,x^d. 
+The coefficients can be easily estimated using least squares linear regression because this is just a standard linear model with predictors $x, x^2, x^3, \dots, x^d$. 
 
-## 1.1 Quadratic
+## Quadratic
 
 ```{r echo=TRUE, message = FALSE}
 quad_mod <- lm(Y~X+I(X^2), data=mcycle) 
@@ -75,7 +71,7 @@ anova(lm_mod,quad_mod)
 
 
 
-## 1.2 Fifth-degree Polynomial
+## Fifth-degree Polynomial
 
 ```{r echo=TRUE, message = FALSE}
 poly_mod <- lm(Y~poly(X,5,raw=T),data=mcycle) 
@@ -104,7 +100,7 @@ lines(X,poly_mod$fitted.values, col="blue", lwd = 1)
 
 # Splines
 
-## 2.1 Regression Splines
+## Regression Splines
 
 In order to fit regression splines in R, we use the bs() function from the splines library. By default, "cubic splines" are produced. That is cubic polynomial with no interior knots
 
@@ -148,7 +144,7 @@ lines(X, conf_interval[,2], col="red", lty=2)
 lines(X, conf_interval[,3], col="red", lty=2)
 ```
 
-## 2.2 Natural Cubic Splines
+## Natural Cubic Splines
 
 Here the degree of freedom is pre-specified and different numbers are used to see the the best curve that fits the data.
 
@@ -190,133 +186,8 @@ lines(X, conf_interval[,3], col="red", lty=2)
 ```
 
 
-## 2.3 Smoothing/Penalized Spline
+## Smoothing/Penalized Spline
 
 We now use penalized splines where a penalty/smoothing parameter can help control the smoothness while many knots can be used and knot location does not need to be carefully selected. The s() function is part of the gam function from the mgcv package.
-
-[go to top](#header)
-
-# Generalized Additive Model
-## 3.1 GAM using the "Motorcycle" dataset
-
-```{r echo=TRUE, message = FALSE, warning= FALSE}
-library(mgcv)
-s_gam <- gam(Y ~ s(X),data=mcycle)
-summary(s_gam)
-
-#plot the model
-plot(s_gam, residuals = TRUE, pch = 1)
-```
-
-## 3.2 GAM on "Wage" dataset
-
-This dataset contains Wage and other data for a group of 3,000 male workers in the Mid-Atlantic region.
-First we conduct EDA and fit a multiple linear regression of wage on age, year, and education.
-
-```{r echo=TRUE, message = FALSE}
-require(ISLR)
-attach(Wage)
-# ?Wage
-dim(Wage)
-
-s_Wage <- Wage[c("age","year","education","wage")]
-str(s_Wage)
-summary(s_Wage)
-```
-
-
-```{r echo=TRUE, message = FALSE}
-library(ggplot2)
-ggplot(data = Wage, mapping = aes(x = age, y = wage)) + 
-    geom_point()
-
-ggplot(data = Wage, mapping = aes(x = year, y = wage)) + 
-    geom_point()
-
-#categorical variable
-ggplot(Wage, aes(x = education, y = wage)) +
-    geom_boxplot()
-```
-
-```{r echo=TRUE, message = FALSE, results='hide'}
-#multiple linear regression model
-mul_model <- lm(wage~age+year+education, data=Wage)
-summary(mul_model)
-```
-
-
-We then fit a GAM where 'age' and 'year' enter the model nonlinearly, whereas variable 'education' enters linearly.
-
-```{r echo=TRUE, message = FALSE,warning=FALSE}
-gam_mod <- gam(wage~s(age, k=6)+s(year, k=6)+education ,data = Wage)
-summary(gam_mod)
-
-plot(gam_mod, se=TRUE ,col="blue")
-```
-
-
-**Basis dimension choice for smooths**
-
-*gam.check* runs a simple simulation based check on the basis dimensions, which can help to flag up terms for which k is too low. Grossly too small k will also be visible from partial residuals available with plot.gam.
-
-```{r echo=TRUE, message = FALSE,warning=FALSE}
-gam.check(gam_mod)
-```
-
-## 3.3 GAM on Boston Housing dataset
-
-```{r echo=TRUE, message = FALSE,warning=FALSE, results='hide'}
-library(MASS)
-set.seed(1234)
-sample_index <- sample(nrow(Boston),nrow(Boston)*0.70)
-Boston_train <- Boston[sample_index,]
-Boston_test <- Boston[-sample_index,]
-str(Boston_train)
-```
-
-
-**Model and plots**
-
-
-```{r echo=TRUE, message = FALSE,warning=FALSE}
-#create gam model
-
-Boston.gam <- gam(medv ~ s(crim)+s(zn)+s(indus)+chas+s(nox)
-                 +s(rm)+s(age)+s(dis)+rad+s(tax)+s(ptratio)
-                 +s(black)+s(lstat),data=Boston_train)
-
-summary(Boston.gam)
-
-plot(Boston.gam, pages=1)
-```
-
-
-**Model AIC/BIC and mean residual deviance**
-
-```{r echo=TRUE, message = FALSE,warning=FALSE, results="hide"}
-AIC(Boston.gam)
-BIC(Boston.gam)
-Boston.gam$deviance
-```
-
-
-**In-sample fit performance**
-
-```{r echo=TRUE, message = FALSE,warning=FALSE}
-#in-sample mse using df 
-Boston.gam.mse.train <- Boston.gam$dev/Boston.gam$df.residual 
-#Average Sum of Squared Error
-Boston.gam.mse.train <- Boston.gam$dev/nrow(Boston_train) 
-
-#using the predict() function
-pi <- predict(Boston.gam,Boston_train)
-mean((pi - Boston_train$medv)^2)
-```
-
-**out of sample performance**
-```{r echo=TRUE, message = FALSE,warning=FALSE}
-pi.out <- predict(Boston.gam,Boston_test)
-mean((pi.out - Boston_test$medv)^2)
-```
 
 [go to top](#header)

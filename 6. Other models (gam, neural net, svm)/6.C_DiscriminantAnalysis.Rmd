@@ -1,0 +1,89 @@
+---
+title: "Discriminant Analysis"
+header-includes:
+   - \usepackage{float}
+output: 
+  html_document: 
+    theme: readable
+    fig_caption: yes
+    number_sections: yes
+    toc: yes
+    code_folding: show
+    df_print: paged
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE)
+```
+```{r library, eval=TRUE, echo=FALSE, results='hide', message=FALSE, warning=FALSE}
+library(xtable)
+library(glmnet)
+```
+
+# Credit Score Data
+## Load Data
+
+```{r}
+credit.data <- read.csv("data/credit0.csv", header=T)
+```
+
+We remove X9 and id from the data since we will not be using them for prediction.
+```{r}
+credit.data$X9 = NULL
+credit.data$id = NULL
+credit.data$Y = as.factor(credit.data$Y)
+```
+
+Now split the data 90/10 as training/testing datasets:
+```{r}
+id_train <- sample(nrow(credit.data),nrow(credit.data)*0.90)
+credit.train = credit.data[id_train,]
+credit.test = credit.data[-id_train,]
+```
+
+The training dataset has 61 variables, 4500 obs. 
+
+You are already familiar with the credit scoring set. Let's define a cost function for benchmarking testing set performance. Note this is slightly different from the one we used for searching for optimal cut-off probability in logistic regression. Here the 2nd argument is the predict class instead of the predict probability (since many methods are not based on predict probability).
+
+```{r}
+creditcost <- function(observed, predicted){
+  weight1 = 10
+  weight0 = 1
+  c1 = (observed==1)&(predicted == 0) #logical vector - true if actual 1 but predict 0
+  c0 = (observed==0)&(predicted == 1) #logical vector - true if actual 0 but predict 1
+  return(mean(weight1*c1+weight0*c0))
+}
+```
+
+[go to top](#header)
+
+
+# Discriminant Analysis
+Linear Discriminant Analysis (LDA) (in-sample and out-of-sample performance measure) is illustrated here. The following illustrate the usage of an arbitrary cut off probability.
+
+## In-sample
+```{r}
+library(MASS)
+credit.train$Y = as.factor(credit.train$Y)
+credit.lda <- lda(Y~.,data=credit.train)
+prob.lda.in <- predict(credit.lda,data=credit.train)
+pcut.lda <- .15
+pred.lda.in <- (prob.lda.in$posterior[,2]>=pcut.lda)*1
+table(credit.train$Y,pred.lda.in,dnn=c("Obs","Pred"))
+mean(ifelse(credit.train$Y != pred.lda.in, 1, 0))
+```
+
+## Out-of-sample
+```{r}
+lda.out <- predict(credit.lda,newdata=credit.test)
+cut.lda <- .12
+pred.lda.out <- as.numeric((lda.out$posterior[,2]>=cut.lda))
+table(credit.test$Y,pred.lda.out,dnn=c("Obs","Pred"))
+mean(ifelse(credit.test$Y != pred.lda.out, 1, 0))
+creditcost(credit.test$Y, pred.lda.out)
+```
+[go to top](#header)
+
+

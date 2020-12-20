@@ -1,5 +1,5 @@
 ---
-title: "Variable Selection"
+title: "Subset Variable Selection"
 output: 
   html_document: 
     theme: readable
@@ -15,10 +15,13 @@ editor_options:
 ---
 # **Exercise:** 
 
-> 1. Manually compare two models: the full model with all covariates and a model without crim and zn;
+> 1. Manually compare two models of boston housing data: the full model with all covariates and a model without crim and zn;
 > 2. Sample 90% of the observation as the training set, then compare in-sample and out-of-sample performance between these reduced models.
 
 ```{r echo=FALSE, eval=FALSE}
+sample_index <- sample(nrow(Boston),nrow(Boston)*0.90)
+Boston_train <- Boston[sample_index,]
+Boston_test <- Boston[-sample_index,]
 #5.3.3
 ##Comparing in-sample and out-of-sample performance between these reduced models.
 nullmodel=lm(medv~1, data=Boston_train)

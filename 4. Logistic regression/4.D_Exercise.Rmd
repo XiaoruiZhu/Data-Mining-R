@@ -1,0 +1,21 @@
+---
+title: "Logistic Regression, Prediction and ROC"
+output: 
+  html_document: 
+    theme: readable
+    fig_caption: yes
+    number_sections: yes
+    toc: yes
+  html_notebook: 
+    fig_caption: yes
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+# **Exercise:** 
+
+> 1. Try forward and stepwise selection procedures to see if they deliver the same best model;
+> 2. Get ROC curve and AUC for both full model and the best model you obtained;
+> 3. Calculate MR, FPR, FNR, the asymmetric cost for both full model and the best model you obtained.
+

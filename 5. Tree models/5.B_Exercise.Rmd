@@ -1,0 +1,59 @@
+---
+title: "Classification Tree Models"
+output: 
+  html_document: 
+    theme: readable
+    fig_caption: yes
+    number_sections: yes
+    toc: yes
+---
+# **Exercise:** 
+
+> 1. Calculate the out-of-sample prediction performance;
+
+```{r, echo=FALSE, eval=FALSE}
+#Predicted Class
+credit.test.pred.tree1<- 
+table()
+```
+
+```{r}
+
+```
+
+> 2. If the cost ratio of false negative to false positive is 10 to 1, calculate the out-of-sample prediction
+
+```{r, echo=FALSE, eval=FALSE}
+cost <- function(r, pi){
+  weight1 = 10
+  weight0 = 1
+  c1 = (r==1)&(pi==0) #logical vector - true if actual 1 but predict 0
+  c0 = (r==0)&(pi==1) #logical vector - true if actual 0 but predict 1
+  return(mean(weight1*c1+weight0*c0))
+}
+
+cost(credit.train$Y,credit.train.pred.tree1)
+#Predicted Class
+credit.test.pred.tree1<- 
+table()
+```
+
+> 3. Try `type="prob"` in prediction, what can you say about these predicted probabilities?
+
+> 4. Draw the ROC curve for training sample.
+
+<!-- ## Cumulative Gains Chart -->
+
+<!-- Cumulative Gains Chart is useful for certain types of binary classification problem. For example a direct marketing campaign, a cumulative gain chart answers the following question according to your model: what is the percentage of customers you need to contact in order to get the certain percentages of customers who will buy the product? -->
+
+<!-- Using the Portuguese banking direct marketing dataset as example: -->
+<!-- ```{r} -->
+<!-- bank.train = read.csv("http://homepages.uc.edu/~maifg/7040/bank_train.csv") -->
+<!-- bank.test = read.csv("http://homepages.uc.edu/~maifg/7040/bank_test.csv") -->
+<!-- bank.pred.prob = predict(rpart(y~., bank.train),bank.test) -->
+<!-- plot(performance(prediction(bank.pred.prob, bank.test$y), "tpr", "rpp")) -->
+<!-- ``` -->
+
+<!-- The above graph tells you that using the predictive model, we only need to call about 40% of the customers (the 40% customers with the highest predicted probability) to get the 80% of the subscription. -->
+
+[go to top](#header)

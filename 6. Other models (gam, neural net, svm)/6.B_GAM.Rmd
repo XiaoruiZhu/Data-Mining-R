@@ -1,0 +1,290 @@
+---
+title: "Generalized Additive Model"
+output: 
+  html_document: 
+    theme: readable
+    fig_caption: yes
+    number_sections: yes
+    toc: yes
+    code_folding: show
+    df_print: paged
+editor_options: 
+  chunk_output_type: console
+---
+
+
+# Generalized Additive Model
+
+There are two common implementations of GAMs in R.  The older version (originally made for S-PLUS) is available as the 'gam' package by Hastie and Tibshirani.  The newer version that we will use below is the 'mgcv' package from Simon Wood. The basic modeling procedure for both packages is similar (the function is gam for both; be wary of having both libraries loaded at the same time), but the behind-the-scenes computational approaches differ, as do the arguments for optimization and the model output. Expect the results to be slightly different when used with the same model structure on the same dataset.
+
+## GAM on Credit Score Data
+
+```{r}
+credit.data <- read.csv("data/credit0.csv", header=T)
+```
+
+We remove X9 and id from the data since we will not be using them for prediction.
+```{r}
+credit.data$X9 = NULL
+credit.data$id = NULL
+credit.data$Y = as.factor(credit.data$Y)
+```
+
+Now split the data 90/10 as training/testing datasets:
+
+```{r}
+id_train <- sample(nrow(credit.data),nrow(credit.data)*0.90)
+credit.train = credit.data[id_train,]
+credit.test = credit.data[-id_train,]
+```
+
+The training dataset has 61 variables, 4500 obs. 
+
+You are already familiar with the credit scoring set. Let's define a cost function for benchmarking testing set performance. Note this is slightly different from the one we used for searching for optimal cut-off probability in logistic regression. Here the 2nd argument is the predict class instead of the predict probability (since many methods are not based on predict probability).
+
+```{r}
+creditcost <- function(observed, predicted){
+  weight1 = 10
+  weight0 = 1
+  c1 = (observed==1)&(predicted == 0) #logical vector - true if actual 1 but predict 0
+  c0 = (observed==0)&(predicted == 1) #logical vector - true if actual 0 but predict 1
+  return(mean(weight1*c1+weight0*c0))
+}
+```
+
+```{r, message=FALSE}
+library(mgcv)
+
+## Create a formula for a model with a large number of variables:
+gam_formula <- as.formula(paste("Y~s(X2)+s(X3)+s(X4)+s(X5)+", paste(colnames(credit.train)[6:61], collapse= "+")))
+
+credit.gam <- gam(formula = gam_formula, family=binomial,data=credit.train);
+summary(credit.gam)
+
+plot(credit.gam, shade=TRUE,seWithMean=TRUE,scale=0, pages = 1)
+# vis.gam(credit.gam)
+vis.gam(credit.gam, view=c("X3","X5"), theta= -90) # different view 
+
+```
+
+Model AIC/BIC and mean residual deviance
+```{r}
+AIC(credit.gam)
+BIC(credit.gam)
+credit.gam$deviance
+```
+
+### In-sample fit performance
+In order to see the in-sample fit performance, you may look into the confusion matrix by using commands as following. 
+
+```{r}
+pcut.gam <- .08
+prob.gam.in<-predict(credit.gam,credit.train,type="response")
+pred.gam.in<-(prob.gam.in>=pcut.gam)*1
+table(credit.train$Y,pred.gam.in,dnn=c("Observed","Predicted"))
+```
+
+Likewise, misclassification rate is another thing you can check:
+
+```{r}
+mean(ifelse(credit.train$Y != pred.gam.in, 1, 0))
+```
+
+Training model AIC and BIC:
+```{r}
+AIC(credit.gam)
+BIC(credit.gam)
+```
+
+### Search for optimal cut-off probability
+
+The following code does a grid search from pcut = 0.01 to pcut = 0.99 with the objective of minimizing overall cost in the training set. I am using an asymmetric cost function by assuming that giving out a bad loan cost 10 time as much as rejecting application from someone who can pay.
+
+```{r, fig.width=7}
+#define the searc grid from 0.01 to 0.20
+searchgrid = seq(0.01, 0.20, 0.01)
+#result.gam is a 99x2 matrix, the 1st col stores the cut-off p, the 2nd column stores the cost
+result.gam = cbind(searchgrid, NA)
+#in the cost function, both r and pi are vectors, r=Observed, pi=predicted probability
+cost1 <- function(r, pi){
+  weight1 = 10
+  weight0 = 1
+  c1 = (r==1)&(pi<pcut) #logical vector - true if actual 1 but predict 0
+  c0 = (r==0)&(pi>pcut) #logical vector - true if actual 0 but predict 1
+  return(mean(weight1*c1+weight0*c0))
+}
+
+for(i in 1:length(searchgrid))
+{
+  pcut <- result.gam[i,1]
+  #assign the cost to the 2nd col
+  result.gam[i,2] <- cost1(credit.train$Y, predict(credit.gam,type="response"))
+}
+plot(result.gam, ylab="Cost in Training Set")
+index.min<-which.min(result.gam[,2])#find the index of minimum value
+result.gam[index.min,2] #min cost
+result.gam[index.min,1] #optimal cutoff probability
+```
+
+### Out-of-sample fit performance
+```{r}
+pcut <-  result.gam[index.min,1] 
+prob.gam.out<-predict(credit.gam,credit.test,type="response")
+pred.gam.out<-(prob.gam.out>=pcut)*1
+table(credit.test$Y,pred.gam.out,dnn=c("Observed","Predicted"))
+```
+mis-classifciation rate is
+```{r}
+mean(ifelse(credit.test$Y != pred.gam.out, 1, 0))
+```
+Cost associated with misclassification is
+```{r}
+creditcost(credit.test$Y, pred.gam.out)
+```
+
+[go to top](#header)
+
+
+## GAM using the "Motorcycle" dataset
+
+```{r echo=TRUE, message = FALSE, results='hide'}
+library(MASS)
+data('mcycle')
+str(mcycle)
+summary(mcycle)
+```
+
+```{r echo=TRUE, message = FALSE}
+# Rename the variables for ease of usage
+Y <- mcycle$accel
+X <- mcycle$times
+
+#Scatterplot
+plot(Y~X, xlab="time",ylab="Acceleration", main="Scatterplot of Acceleration against Time")
+```
+
+```{r echo=TRUE, message = FALSE, warning= FALSE}
+library(mgcv)
+s_gam <- gam(Y ~ s(X),data=mcycle)
+summary(s_gam)
+
+#plot the model
+plot(s_gam, residuals = TRUE, pch = 1)
+```
+
+[go to top](#header)
+
+## GAM on "Wage" dataset
+
+This dataset contains Wage and other data for a group of 3,000 male workers in the Mid-Atlantic region.
+First we conduct EDA and fit a multiple linear regression of wage on age, year, and education.
+
+```{r echo=TRUE, message = FALSE}
+require(ISLR)
+attach(Wage)
+# ?Wage
+dim(Wage)
+
+s_Wage <- Wage[c("age","year","education","wage")]
+str(s_Wage)
+summary(s_Wage)
+```
+
+```{r echo=TRUE, message = FALSE}
+library(ggplot2)
+ggplot(data = Wage, mapping = aes(x = age, y = wage)) + 
+    geom_point()
+
+ggplot(data = Wage, mapping = aes(x = year, y = wage)) + 
+    geom_point()
+
+#categorical variable
+ggplot(Wage, aes(x = education, y = wage)) +
+    geom_boxplot()
+```
+
+```{r echo=TRUE, message = FALSE, results='hide'}
+#multiple linear regression model
+mul_model <- lm(wage~age+year+education, data=Wage)
+summary(mul_model)
+```
+
+
+We then fit a GAM where 'age' and 'year' enter the model nonlinearly, whereas variable 'education' enters linearly.
+
+```{r echo=TRUE, message = FALSE,warning=FALSE}
+gam_mod <- gam(wage~s(age, k=6)+s(year, k=6)+education ,data = Wage)
+summary(gam_mod)
+
+plot(gam_mod, se=TRUE ,col="blue")
+```
+
+
+**Basis dimension choice for smooths**
+
+*gam.check* runs a simple simulation based check on the basis dimensions, which can help to flag up terms for which k is too low. Grossly too small k will also be visible from partial residuals available with plot.gam.
+
+```{r echo=TRUE, message = FALSE,warning=FALSE}
+gam.check(gam_mod)
+```
+
+[go to top](#header)
+
+## GAM on Boston Housing dataset
+
+```{r echo=TRUE, message = FALSE,warning=FALSE, results='hide'}
+library(MASS)
+set.seed(1234)
+sample_index <- sample(nrow(Boston),nrow(Boston)*0.70)
+Boston_train <- Boston[sample_index,]
+Boston_test <- Boston[-sample_index,]
+str(Boston_train)
+```
+
+
+**Model and plots**
+
+
+```{r echo=TRUE, message = FALSE,warning=FALSE}
+#create gam model
+
+Boston.gam <- gam(medv ~ s(crim)+s(zn)+s(indus)+chas+s(nox)
+                 +s(rm)+s(age)+s(dis)+rad+s(tax)+s(ptratio)
+                 +s(black)+s(lstat),data=Boston_train)
+
+summary(Boston.gam)
+
+plot(Boston.gam, pages=1)
+```
+
+
+**Model AIC/BIC and mean residual deviance**
+
+```{r echo=TRUE, message = FALSE,warning=FALSE, results="hide"}
+AIC(Boston.gam)
+BIC(Boston.gam)
+Boston.gam$deviance
+```
+
+
+**In-sample fit performance**
+
+```{r echo=TRUE, message = FALSE,warning=FALSE}
+#in-sample mse using df 
+Boston.gam.mse.train <- Boston.gam$dev/Boston.gam$df.residual 
+#Average Sum of Squared Error
+Boston.gam.mse.train <- Boston.gam$dev/nrow(Boston_train) 
+
+#using the predict() function
+pi <- predict(Boston.gam,Boston_train)
+mean((pi - Boston_train$medv)^2)
+```
+
+**out of sample performance**
+```{r echo=TRUE, message = FALSE,warning=FALSE}
+pi.out <- predict(Boston.gam,Boston_test)
+mean((pi.out - Boston_test$medv)^2)
+```
+
+[go to top](#header)
+

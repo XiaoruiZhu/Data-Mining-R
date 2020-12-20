@@ -1,0 +1,25 @@
+---
+title: "Logistic Regression"
+output: 
+  html_document: 
+    theme: readable
+    fig_caption: yes
+    number_sections: yes
+    toc: yes
+  html_notebook: 
+    fig_caption: yes
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+# **Exercise:** 
+
+> 1. Compare Residual deviance (equivalent to SSE in linear regression model) AIC, and BIC of these two models.
+
+```{r echo=FALSE, eval=FALSE}
+credit.glm0$deviance
+AIC(credit.glm0)
+BIC(credit.glm0)
+```
+

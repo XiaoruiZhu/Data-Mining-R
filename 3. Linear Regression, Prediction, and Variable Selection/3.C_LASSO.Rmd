@@ -1,0 +1,151 @@
+---
+title: "LASSO Variable Selection"
+output: 
+  html_document: 
+    theme: readable
+    fig_caption: yes
+    number_sections: yes
+    toc: yes
+  html_notebook: 
+    fig_caption: yes
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+# Lasso and Elastic net 
+
+Two of the state-of-the-art automatic variable selection techniques of predictive modeling , Lasso [1] and Elastic net [2], are provided in the _glmnet_ package. These method are in general better than the stepwise regressions, especially when dealing with large amount of predictor variables.
+
+For a more theoretical review of these techniques refer to section 3.4 - 3.8 of ["Elements of Statistical Learning" (Free Online)](http://www-stat.stanford.edu/~tibs/ElemStatLearn/). For more details of the glmnet package you can watch [Professor Trevor Hastie's presentation](http://www.youtube.com/watch?v=BU2gjoLPfDc). 
+
+In short, Lasso and Elastic net are solving this optimization problem [2] :
+
+$$\begin{array}
+{rl}
+\hat{\beta}= & \underset{\beta}{\text{argmin}}|y-X\beta|^2_2 \\
+\text{subject to} & (1-\alpha)|\beta|_1+\alpha|\beta|^2\le t
+\end{array}$$
+
+Note that when solving the above problem without the constraint we have a familiar least square regression model. When the constraint is added, depending on how large $t$ is, some of the "unimportant" predictor variables will become 0 and are forced out of the model. Lasso is a special case of Elastic net when $\alpha = 0$.
+
+Two of the most important tuning parameters are $t$ and $\alpha$ in the above equation. 
+
+- $t$ is controlled by adding the left hand side of the constraint as a penalty term in the objective. By default 100 different penalty parameter $\lambda$ are evaluated. When $\lambda$ is large less variables are included in the model. You can choose the $\lambda$ yourself if you know how many variables you want in the model or use cv.glmnet to conduct a cross-validation.
+
+- The default $alpha = 1$ (the definition is the opposite of the above equation) gives Lasso penalty, which is fine in most cases.
+
+The case for using elastic net is [3]: 
+
+- Use elastic net when variables are highly correlated and you want to select more than one predictor variables from a group of correlated variables. Lasso tends to select one variable from a group and ignore the others.
+
+- Use elastic net when there are more variables than observations.
+
+Here we demonstrate Lasso on Boston Housing data. For parsimony we are not using training/testing split in this example.
+
+Note: If you have a binary response you can use _family= "binomial"_ option in the glmnet() function. 
+
+```{r library, eval=TRUE, echo=TRUE, results='hide', message=FALSE, warning=FALSE}
+library(MASS)
+```
+
+```{r}
+data(Boston)
+colnames(Boston) 
+```
+
+```{r, eval=FALSE}
+install.packages('glmnet')
+```
+
+```{r,message=FALSE,warning=FALSE}
+library(glmnet)
+```
+
+glmnet does not take data frame as input, so we have to specify the x matrix and y vector.
+
+```{r}
+lasso_fit = glmnet(x = as.matrix(Boston[, -c(which(colnames(Boston)=='medv'))]), y = Boston$medv, alpha = 1)
+#lambda = 0.5
+coef(lasso_fit,s=0.5)
+#lambda = 1
+coef(lasso_fit,s=1)
+```
+
+Draw the solution path of the LASSO selection results:
+
+1. `plot.glmnet()` (or directly apply `plot()` on a glmnet object) can draw the solution path for LASSO, but the plot is not well adjusted; 
+2. An enhanced version of the above function is the `plot_glmnet` in `plotmo` package. It can draw better plot of the solution paths. 
+
+```{r}
+plot(lasso_fit, xvar = "lambda", label = TRUE)
+library(plotmo) # for plot_glmnet
+plot_glmnet(lasso_fit, label=TRUE)                             # default colors
+plot_glmnet(lasso_fit, label=8, xvar ="norm")                  # label the 5 biggest final coefs
+```
+
+Using 5-fold cross-validation to search optimal lambda: 
+
+```{r}
+#use 5-fold cross validation to pick lambda
+cv_lasso_fit = cv.glmnet(x = as.matrix(Boston[, -c(which(colnames(Boston)=='medv'))]), y = Boston$medv, alpha = 1, nfolds = 5)
+plot(cv_lasso_fit)
+```
+
+The best $\lambda$ (or _s_) is given by:
+```{r}
+cv_lasso_fit$lambda.min
+```
+
+Given a selected _s_ you can use _predict()_ this way to get prediction:
+```{r}
+Boston.insample.prediction = predict(lasso_fit, as.matrix(Boston[, -c(which(colnames(Boston)=='medv'))]), s = cv_lasso_fit$lambda.min)
+```
+
+> **Exercise**: 
+> For a [high dimensional dataset](data/HighDim.csv) having n<p (n=200, p=500), is it possible to fit a linear regression on that directly?
+> Fit a model with first five variables. 
+> How about LASSO variable selection?
+
+```{r , eval=FALSE, echo=FALSE}
+n <- 200;p <- 500;sigma <- 0.5
+beta <- rep(0,p);nonzero <- c(1,2,3);zero <- setdiff(1:p,nonzero)
+beta[nonzero] <- c(3,2,1.5)
+Sigma <- 0.3^(abs(outer(1:p,1:p,"-")))
+
+X <- mvrnorm(n,rep(0,p),Sigma)
+error <- rnorm(n,0,sigma)
+    
+X <- apply(X,2,scale)*sqrt(n)/sqrt(n-1)
+error <- error-mean(error)
+
+Y <- X %*% beta + error
+myData <- data.frame(Y, X)
+head(myData)
+write.csv(myData, file = "HighDim.csv")
+
+test_lm <- lm(Y~., data = myData)
+test_lm_null <- lm(Y ~ 1, data = myData)
+summary(test_lm)
+subset_result <- regsubsets(Y~.,data=myData, nbest=2, nvmax = 14)
+
+model_step_b <- step(test_lm, direction='backward')
+model_step_f <- step(test_lm_null, scope=list(lower=test_lm_null, upper=test_lm), direction='forward')
+model_step_s <- step(nullmodel, scope=list(lower=nullmodel, upper=fullmodel), direction='both')
+library(glmnet)
+lasso_fit = glmnet(x = as.matrix(myData[,-1]), y = myData[,1], alpha = 1, intercept = FALSE)
+summary(lasso_fit)
+coef(lasso_fit, s = 0.5)
+
+test_lm_3 <- lm(Y ~ X1+ X2+X3+0, data = myData)
+summary(test_lm_3)
+```
+
+
+[1]: Tibshirani, R. (1996). Regression shrinkage and selection via the lasso. Journal of the Royal Statistical Society. Series B (Methodological), 267-288.
+[2]: Zou, H., & Hastie, T. (2005). Regularization and variable selection via the elastic net. Journal of the Royal Statistical Society: Series B (Statistical Methodology), 67(2), 301-320.  
+[3]: http://www.stanford.edu/~hastie/TALKS/enet_talk.pdf "Regularization and Variable Selection via the Elastic Net"
+
+[go to top](#header)
+

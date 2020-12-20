@@ -1,0 +1,235 @@
+---
+title: "Logistic Regression for Binary Classification"
+output: 
+  html_document: 
+    theme: readable
+    fig_caption: yes
+    number_sections: yes
+    toc: yes
+  html_notebook: 
+    fig_caption: yes
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+# Objective
+
+The objective of this case is to get you understand logistic regression (binary classification) and some important ideas such as cross validation, ROC curve, cut-off probability. 
+
+# Credit Card Default Data
+
+We will use a Credit Card Default Data for this lab and illustration. The details of the data can be found at http://archive.ics.uci.edu/ml/datasets/default+of+credit+card+clients. 
+Think about what kind of factors could affect people to fail to pay their credit balance.
+
+We first load the credit scoring data. It is easy to load comma-separated values (CSV). 
+```{r}
+credit.data <- read.csv(file = "https://xiaoruizhu.github.io/Data-Mining-R/lecture/data/credit_default.csv", header=T)
+```
+
+Look at what information do we have.
+```{r}
+colnames(credit.data)
+```
+
+Let's look at how many people were actually default in this sample.
+```{r}
+mean(credit.data$default.payment.next.month)
+```
+
+The name of response variable is too long! I want to make it shorter by renaming. Recall the `rename()` function.
+```{r message=FALSE}
+library(dplyr)
+credit.data<- rename(credit.data, default=default.payment.next.month)
+```
+
+How about the variable type and summary statistics?
+```{r eval=FALSE}
+str(credit.data)    # structure - see variable type
+summary(credit.data) # summary statistics
+```
+
+We see all variables are **int**, but we know that *SEX, EDUCATION, MARRIAGE* are categorical, we convert them to **factor**.
+```{r}
+credit.data$SEX<- as.factor(credit.data$SEX)
+credit.data$EDUCATION<- as.factor(credit.data$EDUCATION)
+credit.data$MARRIAGE<- as.factor(credit.data$MARRIAGE)
+```
+
+*We omit other EDA, but you shouldn't whenever you are doing data analysis.*
+
+[go to top](#header)
+
+
+# Logistic Regression
+
+Randomly split the data to training (80%) and testing (20%) datasets:
+```{r}
+index <- sample(nrow(credit.data),nrow(credit.data)*0.80)
+credit.train = credit.data[index,]
+credit.test = credit.data[-index,]
+```
+
+## Train a logistic regression model with all variables
+
+```{r, warning=FALSE}
+credit.glm0<- glm(default~., family=binomial, data=credit.train)
+summary(credit.glm0)
+```
+
+You have seen `glm()` before. In this lab, this is the main function used to build logistic regression model because it is a member of generalized linear model. In `glm()`, the only thing new is `family`. It specifies the distribution of your response variable. You may also specify the link function after the name of distribution, for example, `family=binomial(logit)` (default link is logit). You can also specify `family=binomial(link = "probit")` to run probit regression. You may also use `glm()` to build many other generalized linear models.
+
+## Binary Classification
+
+As we talked in the lecture, people may be more interested in the classification results. But we have to define a cut-off probability first.
+
+These tables illustrate the impact of choosing different cut-off probability. Choosing a large cut-off probability will result in few cases being predicted as 1, and chossing a small cut-off probability will result in many cases being predicted as 1.
+```{r}
+
+pred.glm0.train <- predict(credit.glm0, type="response")
+
+table((pred.glm0.train > 0.9)*1)
+table((pred.glm0.train > 0.5)*1)
+table((pred.glm0.train > 0.2)*1)
+table((pred.glm0.train > 0.0001)*1)
+```
+Therefore, determine the optimal cut-off probability is crucial. The simplest way to determine the cut-off is to use the proportion of "1" in the original data. We will intriduce a more appropriate way to determine the optimal p-cut.
+
+### Naive Choice of Cut-off probability
+
+The simplest way is to choose the event proportion in training sample. This is roughly reasonable because the sample proportion is an estimate of mean probability of $Y=1$. 
+```{r}
+pcut1<- mean(credit.train$default)
+```
+
+Based on this cut-off probability, we can obtain the binary prediction (predicted classification) and the confusion matrix
+```{r}
+# get binary prediction
+class.glm0.train<- (pred.glm0.train>pcut1)*1
+# get confusion matrix
+table(credit.train$default, class.glm0.train, dnn = c("True", "Predicted"))
+```
+In `table()` function, two vectors must be both binary in order to get confusion matrix (it is essentially a pivot table or contingency table), `dnn` is to specify the row and column name of this 2*2 table. The first input vector is TRUE, so the first name should be TRUE accordingly.
+
+Then it is easy to get different types of classification error rate, i.e., false positive rate (FPR), false negative rate (FNR), and overall misclassification rate (MR). **Commonly, you can use overall MR as the cost (a criterion) to evaluate the model prediction.**
+```{r, eval=FALSE}
+# (equal-weighted) misclassification rate
+MR<- mean(credit.train$default!=class.glm0.train)
+# False positive rate
+FPR<- sum(credit.train$default==0 & class.glm0.train==1)/sum(credit.train$default==0)
+# False negative rate (exercise)
+# FNR<- 
+```
+
+### (Optional) Determine Optimal cut-off Probability using Grid Search Method
+Recall the lecture, different p-cut results in different confusion matrix, hence different MR (or cost). You need to search all possible p-cut to find the one that provides minimum cost. The first step is to define a symmetric/asymmetric cost function (misclassification rate), as a function of cut-off. Think about what else is needed to calculate MR? The answer is observed $Y$ and predicted probability.
+```{r}
+# define a cost function with input "obs" being observed response 
+# and "pi" being predicted probability, and "pcut" being the threshold.
+costfunc = function(obs, pred.p, pcut){
+	weight1 = 5   # define the weight for "true=1 but pred=0" (FN)
+	weight0 = 1    # define the weight for "true=0 but pred=1" (FP)
+	c1 = (obs==1)&(pred.p<pcut)    # count for "true=1 but pred=0"   (FN)
+	c0 = (obs==0)&(pred.p>=pcut)   # count for "true=0 but pred=1"   (FP)
+	cost = mean(weight1*c1 + weight0*c0)  # misclassification with weight
+	return(cost) # you have to return to a value when you write R functions
+} # end of the function
+```
+Next, define a sequence of probability (you need to search the optimal p-cut from this sequence)
+```{r}
+# define a sequence from 0.01 to 1 by 0.01
+p.seq = seq(0.01, 1, 0.01) 
+```
+Then, you need to calculate the cost (as you defined before) for each probability in the sequence p.seq.
+```{r}
+# write a loop for all p-cut to see which one provides the smallest cost
+# first, need to define a 0 vector in order to save the value of cost from all pcut
+cost = rep(0, length(p.seq))  
+for(i in 1:length(p.seq)){ 
+	cost[i] = costfunc(obs = credit.train$default, pred.p = pred.glm0.train, pcut = p.seq[i])  
+} # end of the loop
+```
+Last, draw a plot with cost against p.seq, and find the p-cut that gives you the minimum cost.
+```{r}
+# draw a plot with X axis being all pcut and Y axis being associated cost
+plot(p.seq, cost)
+# find the optimal pcut
+optimal.pcut.glm0 = p.seq[which(cost==min(cost))]
+```
+
+#### Use the optimal cut-off probability
+
+Now let calculate MR, FPR, FNR, and cost based on the optimal cut-off.
+
+```{r}
+# step 1. get binary classification
+class.glm0.train.opt <- (pred.glm0.train>optimal.pcut.glm0)*1
+# step 2. get confusion matrix, MR, FPR, FNR
+table(credit.train$default, class.glm0.train.opt, dnn = c("True", "Predicted"))
+MR <- mean(credit.train$default!= class.glm0.train.opt)
+FPR <- sum(credit.train$default==0 & class.glm0.train.opt==1)/sum(credit.train$default==0)
+FNR <- sum(credit.train$default==1 & class.glm0.train.opt==0)/sum(credit.train$default==1)
+cost <- costfunc(obs = credit.train$default, pred.p = pred.glm0.train, pcut = optimal.pcut.glm0)  
+```
+
+#### **Exercise 1:** 
+
+> 1. Change the weights to different values, and see how your optimal cut-off changes.
+> 2. obtain confusion matrix and calculate the (asymmetric) cost based on the optimal cut-off. 
+> 3. Find optimal cut-off probability using symmetric cost. 
+> 4. Calculate MR and cost, what do you find?
+> 5. Further, rewrite the cost function to make the weights (or the ratio of two weights) as input parameter.
+> 6. Use F-score to determine the optimal cut-off.
+
+### Out-of-sample Classification
+
+Everything you have done about classification so far is for training sample. Now let's get to testing sample. Keep in mind the principle, **testing sample is only used for evaluating your model's prediction accuracy**! NO NEED TO CHOOSE CUT-OFF PROBABILITY in this stage.
+
+#### **Exercise 2:** 
+
+> 1. Calculate MR, FPR, FNR based on the optimal cut-off you get from training sample with weights (5:1)
+> 2. Calculate asymetric cost based on the optimal cut-off you get from training sample with weights (5:1)
+> 3. Calculate above statistics based on the cut-off you get from training sample with symmetric weights (1:1) 
+
+**************************
+
+
+# Summary
+
+## Things to remember
+
+* Know how to use glm() to build logistic regression;
+
+* Know how to get ROC and AUC based on predicted probability;
+
+* Know how to get PR curve and AUC based on predicted probability;
+
+* Know how to find optimal cut-off;
+
+* Know how to do binary classification, and calculation of MR, FPR, FNR, and cost;
+
+* Know how to use LASSO for logistic regression
+
+## Guide for Assignment
+
+* EDA
+
+* Train logistic model
+
+* Prediction (ROC, AUC; PR, AUC)
+
+* Model comparison using AUC
+
+* Find optimal cut-off based on training sample
+
+* Classification -- Obtain the confusion matrix and calculate the MR, asymmetric cost, FPR, Precision, Recall, and F-score for both training and testing sample based on (1) naive cut-off determined by sample proportion; (2) optimal cut-off determined by asymmetric cost; (3) optimal cut-off determined by F-score.
+
+* Build new models by Variable Selection 
+
+* Calculate all criteria
+
+* Comprehensive comparison
+
+[go to top](#header)
+

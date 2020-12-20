@@ -1,0 +1,181 @@
+---
+title: "Logistic regression and variable selection"
+output: 
+  html_document: 
+    theme: readable
+    fig_caption: yes
+    number_sections: yes
+    toc: yes
+  html_notebook: 
+    fig_caption: yes
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+# Objective
+
+The objective of this case is to get you understand logistic regression (binary classification) and some important ideas such as cross validation, ROC curve, cut-off probability. 
+
+# Credit Card Default Data
+
+We will use a Credit Card Default Data for this lab and illustration. The details of the data can be found at http://archive.ics.uci.edu/ml/datasets/default+of+credit+card+clients. 
+Think about what kind of factors could affect people to fail to pay their credit balance.
+
+We first load the credit scoring data. It is easy to load comma-separated values (CSV). 
+```{r}
+credit.data <- read.csv(file = "https://xiaoruizhu.github.io/Data-Mining-R/lecture/data/credit_default.csv", header=T)
+```
+
+Look at what information do we have.
+```{r}
+colnames(credit.data)
+```
+
+Let's look at how many people were actually default in this sample.
+```{r}
+mean(credit.data$default.payment.next.month)
+```
+
+The name of response variable is too long! I want to make it shorter by renaming. Recall the `rename()` function.
+```{r message=FALSE}
+library(dplyr)
+credit.data<- rename(credit.data, default=default.payment.next.month)
+```
+
+How about the variable type and summary statistics?
+```{r eval=FALSE}
+str(credit.data)    # structure - see variable type
+summary(credit.data) # summary statistics
+```
+
+We see all variables are **int**, but we know that *SEX, EDUCATION, MARRIAGE* are categorical, we convert them to **factor**.
+```{r}
+credit.data$SEX<- as.factor(credit.data$SEX)
+credit.data$EDUCATION<- as.factor(credit.data$EDUCATION)
+credit.data$MARRIAGE<- as.factor(credit.data$MARRIAGE)
+```
+
+*We omit other EDA, but you shouldn't whenever you are doing data analysis.*
+
+[go to top](#header)
+
+
+# Logistic Regression
+
+Randomly split the data to training (80%) and testing (20%) datasets:
+```{r}
+index <- sample(nrow(credit.data),nrow(credit.data)*0.80)
+credit.train = credit.data[index,]
+credit.test = credit.data[-index,]
+```
+
+## Train a logistic regression model with all variables
+
+```{r, warning=FALSE}
+credit.glm0<- glm(default~., family=binomial, data=credit.train)
+summary(credit.glm0)
+```
+
+You have seen `glm()` before. In this lab, this is the main function used to build logistic regression model because it is a member of generalized linear model. In `glm()`, the only thing new is `family`. It specifies the distribution of your response variable. You may also specify the link function after the name of distribution, for example, `family=binomial(logit)` (default link is logit). You can also specify `family=binomial(link = "probit")` to run probit regression. You may also use `glm()` to build many other generalized linear models.
+
+## Variable Selection 
+
+### Variable Selection with Stepwise Approach
+We can use the same procedures of variable selection, i.e. forward, backward, and stepwise, for linear regression models. **Caution: this will take a long period of time since the dimension of predictor variables is not very small and the sample size is large**.
+```{r, eval=FALSE}
+credit.glm.back <- step(credit.glm0) # backward selection (if you don't specify anything)
+summary(credit.glm.back)
+credit.glm.back$deviance
+AIC(credit.glm.back)
+BIC(credit.glm.back)
+```
+
+You can try model selection with BIC (usually results in a simpler model than AIC criterion)
+```{r, eval= FALSE}
+credit.glm.back.BIC <- step(credit.glm0, k=log(nrow(credit.train))) 
+summary(credit.glm.back.BIC)
+credit.glm.back.BIC$deviance
+AIC(credit.glm.back.BIC)
+BIC(credit.glm.back.BIC)
+```
+**Exercise:** Try forward and stepwise selection procedures to see if they deliver the same best model.
+
+#### Exercise:
+
+* Get ROC curve and AUC for both training and testing sample
+
+* Using training sample, find the optimal cut-off by grid search method with asymmetric cost (weights ratio = 5:1)
+
+* Calculate MR, FPR, FNR, the asymmetric cost for both taining and testing sample.
+
+
+**************************
+
+
+### Variable selection with LASSO
+
+Be careful that LASSO does require x to be **numeric** matrix. Therefore, we need to manually convert categorical variable ("SEX", "EDUCATION" and "MARRIAGE") to dummy variable. For simplicity, only if you have evidence that the categorical variable has monotonic relationship to response can you directly convert it to numeric by using `as.numeric()`. For example, the probability of default increases/decreases as EDUCATION level goes from 1 to 4. This can be seen from the two-way contingency table by calculating the default proportion at each education level. 
+
+Here I will show how to convert categorical variable to dummy variables.
+
+```{r}
+dummy<- model.matrix(~ ., data = credit.data)
+```
+```{r eval=FALSE}
+# look at first few rows of data
+head(dummy)
+```
+
+The function `model.matrix()` can automatically convert categorical variable to dummy. It also creates a column of 1, which we don't need at this time. That column of 1 is used for estimating intercept if you write algorithm by yourself, but most available functions automatically creates that column during estimation. 
+
+```{r}
+credit.data.lasso<- data.frame(dummy[,-1])
+```
+
+Now let's get data prepared for LASSO.
+```{r}
+#index <- sample(nrow(credit.data),nrow(credit.data)*0.80)
+credit.train.X = as.matrix(select(credit.data.lasso, -default)[index,])
+credit.test.X = as.matrix(select(credit.data.lasso, -default)[-index,])
+credit.train.Y = credit.data.lasso[index, "default"]
+credit.test.Y = credit.data.lasso[-index, "default"]
+```
+
+
+```{r}
+library(glmnet)
+credit.lasso<- glmnet(x=credit.train.X, y=credit.train.Y, family = "binomial")
+```
+
+Perform cross-validation to determine the shrinkage parameter.
+```{r}
+credit.lasso.cv<- cv.glmnet(x=credit.train.X, y=credit.train.Y, family = "binomial", type.measure = "class")
+plot(credit.lasso.cv)
+```
+
+For logistc regression, we can specify `type.measure="class"` so that the CV error will be misclassification error.
+
+Get the coefficient with optimal $\lambda$
+```{r}
+coef(credit.lasso, s=credit.lasso.cv$lambda.min)
+coef(credit.lasso, s=credit.lasso.cv$lambda.1se)
+```
+
+#### Prediction
+```{r}
+# in-sample prediction
+pred.lasso.train<- predict(credit.lasso, newx=credit.train.X, s=credit.lasso.cv$lambda.1se, type = "response")
+# out-of-sample prediction
+pred.lasso.test<- predict(credit.lasso, newx=credit.test.X, s=credit.lasso.cv$lambda.1se, type = "response")
+```
+
+#### Exercise:
+
+* Get ROC curve and AUC for both training and testing sample
+
+* Using training sample, find the optimal cut-off by grid search method with asymmetric cost (weights ratio = 5:1)
+
+* Calculate MR, FPR, FNR, the asymmetric cost for both taining and testing sample.
+

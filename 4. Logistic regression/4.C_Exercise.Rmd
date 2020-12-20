@@ -1,0 +1,33 @@
+---
+title: "Logistic Regression for Binary Classification"
+output: 
+  html_document: 
+    theme: readable
+    fig_caption: yes
+    number_sections: yes
+    toc: yes
+  html_notebook: 
+    fig_caption: yes
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+# **Exercise 1:** 
+
+> 1. Change the weights to different values, and see how your optimal cut-off changes.
+> 2. obtain confusion matrix and calculate the (asymmetric) cost based on the optimal cut-off. 
+> 3. Find optimal cut-off probability using symmetric cost. 
+> 4. Calculate MR and cost, what do you find?
+> 5. Further, rewrite the cost function to make the weights (or the ratio of two weights) as input parameter.
+> 6. Use F-score to determine the optimal cut-off.
+
+# **Exercise 2:** 
+
+> 1. Calculate MR, FPR, FNR based on the optimal cut-off you get from training sample with weights (5:1)
+> 2. Calculate asymetric cost based on the optimal cut-off you get from training sample with weights (5:1)
+> 3. Calculate above statistics based on the cut-off you get from training sample with symmetric weights (1:1) 
+
+[go to top](#header)
+

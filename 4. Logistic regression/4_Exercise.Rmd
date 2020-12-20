@@ -1,22 +1,22 @@
 ---
-  title: "Logistic Regression, Prediction and ROC"
+title: "Logistic Regression, Prediction and ROC"
 output: 
   html_document: 
-  theme: readable
-fig_caption: yes
-number_sections: yes
-toc: yes
-html_notebook: 
-  fig_caption: yes
-number_sections: yes
-toc: yes
+    theme: readable
+    fig_caption: yes
+    number_sections: yes
+    toc: yes
+  html_notebook: 
+    fig_caption: yes
+    number_sections: yes
+    toc: yes
 editor_options: 
   chunk_output_type: console
 ---
-  
-  # Objective
-  
-  The objective of this case is to get you understand logistic regression (binary classification) and some important ideas such as cross validation, ROC curve, cut-off probability. Code in this case is built upon lecture slides and sample code of Shaonan Tian and Shaobo Li.
+
+# Objective
+
+The objective of this case is to get you understand logistic regression (binary classification) and some important ideas such as cross validation, ROC curve, cut-off probability. Code in this case is built upon lecture slides and sample code of Shaonan Tian and Shaobo Li.
 
 # Input and sample data
 
@@ -57,32 +57,15 @@ credit.data$EDUCATION<- as.factor(credit.data$EDUCATION)
 credit.data$MARRIAGE<- as.factor(credit.data$MARRIAGE)
 ```
 
+*We omit other EDA, but you shouldn't whenever you are doing data analysis.*
+
 [go to top](#header)
 
-# Two-way contingency table and Chi-square test
 
-Two-way contingency table is a very useful tool for exploring the relationship between categorical variables. It is essentially the simplest pivot-table (see example below). Often time, after you create a two-way contingency table, Chi-square test is used to test if X affect Y. The null hypothesis is: X and Y are independent (e.g., MARRIAGE has nothing to do with likelihood of default).
+# Logistic Regression
 
-The $\chi^2$ test statistic is defined as
-$$\chi^2=\sum \frac{(observed-expected)^2}{expected}$$,
-where the expected count is calculated by assuming row variable has nothing to do with column variable.
-
-Here is a very good tutorial for Chi-square test https://www.youtube.com/watch?v=WXPBoFDqNVk. 
-
+Randomly split the data to training (80%) and testing (20%) datasets:
 ```{r}
-table.edu<- table(credit.data$EDUCATION, credit.data$default)
-table.edu
-chisq.test(table.edu)
-```
-
-What we saw from above test result is that p-value < 0.05. What is your conclusion?
-
-
-*We omit other EDA, but you shouldn't whenever you are doing data analysis.*
-  
-  # Logistic Regression
-  Randomly split the data to training (80%) and testing (20%) datasets:
-  ```{r}
 index <- sample(nrow(credit.data),nrow(credit.data)*0.80)
 credit.train = credit.data[index,]
 credit.test = credit.data[-index,]
@@ -139,10 +122,10 @@ pred.glm0.train<- predict(credit.glm0, type="response")
 ```
 
 (**IMPORTANT!!!**) You have to specify `type="response"` in order to get probability outcome, which is what we want. Otherwise, what it produces is the linear predictor term $\beta_0+\beta_1X_1+\beta_2X_2+\dotso$. Recall the lecture, how is this linear predictor related to probability?
-  
-  #### ROC Curve
-  
-  In order to show give an overall measure of goodness of classification, using the Receiver Operating Characteristic (ROC) curve is one way. Rather than use an overall misclassification rate, it employs
+
+#### ROC Curve
+
+In order to show give an overall measure of goodness of classification, using the Receiver Operating Characteristic (ROC) curve is one way. Rather than use an overall misclassification rate, it employs
 two measures – true positive fraction (TPF) and false positive fraction (FPF). 
 
 True positive fraction, $\text{TPF}=\frac{\text{TP}}{\text{TP+FN}}$: is the proportion of true positives correctly predicted as positive.
@@ -365,11 +348,11 @@ BIC(credit.glm.back.BIC)
 
 
 **************************
-  
-  
-  ### Variable selection with LASSO
-  
-  Be careful that LASSO does require x to be **numeric** matrix. Therefore, we need to manually convert categorical variable ("SEX", "EDUCATION" and "MARRIAGE") to dummy variable. For simplicity, only if you have evidence that the categorical variable has monotonic relationship to response can you directly convert it to numeric by using `as.numeric()`. For example, the probability of default increases/decreases as EDUCATION level goes from 1 to 4. This can be seen from the two-way contingency table by calculating the default proportion at each education level. 
+
+
+### Variable selection with LASSO
+
+Be careful that LASSO does require x to be **numeric** matrix. Therefore, we need to manually convert categorical variable ("SEX", "EDUCATION" and "MARRIAGE") to dummy variable. For simplicity, only if you have evidence that the categorical variable has monotonic relationship to response can you directly convert it to numeric by using `as.numeric()`. For example, the probability of default increases/decreases as EDUCATION level goes from 1 to 4. This can be seen from the two-way contingency table by calculating the default proportion at each education level. 
 
 Here I will show how to convert categorical variable to dummy variables.
 
@@ -411,7 +394,7 @@ plot(credit.lasso.cv)
 For logistc regression, we can specify `type.measure="class"` so that the CV error will be misclassification error.
 
 Get the coefficient with optimal $\lambda$
-  ```{r}
+```{r}
 coef(credit.lasso, s=credit.lasso.cv$lambda.min)
 coef(credit.lasso, s=credit.lasso.cv$lambda.1se)
 ```
@@ -456,12 +439,12 @@ You should read the cv.glm help to understand how it works.
 We can use the same cost function as defined before, but you need to modify it such that there are only two input: observed $Y$ and predicted probability.
 ```{r}
 costfunc = function(obs, pred.p){
-  weight1 = 5   # define the weight for "true=1 but pred=0" (FN)
-  weight0 = 1    # define the weight for "true=0 but pred=1" (FP)
-  c1 = (obs==1)&(pred.p<pcut)    # count for "true=1 but pred=0"   (FN)
-  c0 = (obs==0)&(pred.p>=pcut)   # count for "true=0 but pred=1"   (FP)
-  cost = mean(weight1*c1 + weight0*c0)  # misclassification with weight
-  return(cost) # you have to return to a value when you write R functions
+	weight1 = 5   # define the weight for "true=1 but pred=0" (FN)
+	weight0 = 1    # define the weight for "true=0 but pred=1" (FP)
+	c1 = (obs==1)&(pred.p<pcut)    # count for "true=1 but pred=0"   (FN)
+	c0 = (obs==0)&(pred.p>=pcut)   # count for "true=0 but pred=1"   (FP)
+	cost = mean(weight1*c1 + weight0*c0)  # misclassification with weight
+	return(cost) # you have to return to a value when you write R functions
 } # end of the function
 ```
 Then you need to assign a value to pcut.
@@ -483,91 +466,112 @@ The first component of `delta` is the raw cross-validation estimate of predictio
 Keep in mind that CV-score is averaged model error. Here, it is the cost you have defined before. You may also use F-score for cross-validation, but again, you need to define the function of F-score. (Exercise!)
 
 [go to top](#header)
-  
-  
-  # Summary
-  
-  ## Things to remember
-  
-  * Know how to use glm() to build logistic regression;
-  
-  * Know how to get ROC and AUC based on predicted probability;
-  
-  * Know how to get PR curve and AUC based on predicted probability;
-  
-  * Know how to find optimal cut-off;
-  
-  * Know how to do binary classification, and calculation of MR, FPR, FNR, and cost;
-  
-  * Know how to use LASSO for logistic regression
-  
-  ## Guide for Assignment
-  
-  * EDA
-  
-  * Train logistic model
-  
-  * Prediction (ROC, AUC; PR, AUC)
-  
-  * Model comparison using AUC
-  
-  * Find optimal cut-off based on training sample
-  
-  * Classification -- Obtain the confusion matrix and calculate the MR, asymmetric cost, FPR, Precision, Recall, and F-score for both training and testing sample based on (1) naive cut-off determined by sample proportion; (2) optimal cut-off determined by asymmetric cost; (3) optimal cut-off determined by F-score.
-  
-  * Build new models by Variable Selection 
-  
-  * Calculate all criteria
-  
-  * Comprehensive comparison
-  
-  [go to top](#header)
-    
-    # Starter code for German credit scoring
-    
-    Refer to http://archive.ics.uci.edu/ml/datasets/Statlog+(German+Credit+Data) for variable description.
-    Notice that "It is worse to class a customer as good when they are bad (5), than it is to class a customer as bad when they are good (1)." Define your cost function accordingly!
-      
-      ```{r,eval=FALSE}
-    german_credit = read.table("http://archive.ics.uci.edu/ml/machine-learning-databases/statlog/german/german.data")
-    
-    colnames(german_credit)=c("chk_acct","duration","credit_his","purpose","amount","saving_acct","present_emp","installment_rate","sex","other_debtor","present_resid","property","age","other_install","housing","n_credits","job","n_people","telephone","foreign","response")
-    
-    #orginal response coding 1= good, 2 = bad
-    #we need 0 = good, 1 = bad
-    german_credit$response = german_credit$response - 1
-    ```
-    
-    [go to top](#header)
-      
-      ```{r , echo=FALSE, eval=FALSE}
-      m <- 1000 # simulation times
-      coef <- c(-1.1, 5, -0.4)
-      set.seed(43657)
-      n <- 500
-      x1 <- runif(n, 0, 1)
-      x2 <- (rep(c(1,0), n/2))
-      x3 <- rnorm(n)
-      
-      linearPart <- coef[1] + coef[2] * x1 + coef[3] * x2
-      
-      p <- 1/(1+exp(-(linearPart)))
-      y <- rbinom(n, 1, p)
-      # summary(as.factor(y))
-      # m <- sum(y==1)
-      # hist(p)
-      # hist(p[y==1])
-      # hist(p[y==0])
-      
-      dat <- data.frame(y, x1, x2, x1.2=x1^2, x3)
-      mod1 <- glm(y~x1+x2 , family=binomial, data = dat)
-      # summary(mod1)
-      pred1 <- predict(mod1, newdata = dat, type = "response")
-      dec1 <- decileT(pred.prob = pred1, OrigDefault = dat$y)
-      # dec1
-      # hist(pred1)
-      test1 <- gof(mod1, g = 10, plotROC = FALSE)
-      # test1$gof; 
-      # test1$auc
-      ```
-      
+
+
+# (Optional) Two-way contingency table and Chi-square test
+
+Two-way contingency table is a very useful tool for exploring the relationship between categorical variables. It is essentially the simplest pivot-table (see example below). Often time, after you create a two-way contingency table, Chi-square test is used to test if X affect Y. The null hypothesis is: X and Y are independent (e.g., MARRIAGE has nothing to do with likelihood of default).
+
+The $\chi^2$ test statistic is defined as
+$$\chi^2=\sum \frac{(observed-expected)^2}{expected},$$
+where the expected count is calculated by assuming row variable has nothing to do with column variable.
+
+Here is a very good tutorial for Chi-square test https://www.youtube.com/watch?v=WXPBoFDqNVk. 
+
+```{r}
+table.edu<- table(credit.data$EDUCATION, credit.data$default)
+table.edu
+chisq.test(table.edu)
+```
+
+What we saw from above test result is that p-value < 0.05. What is your conclusion?
+
+[go to top](#header)
+
+
+# Summary
+
+## Things to remember
+
+* Know how to use glm() to build logistic regression;
+
+* Know how to get ROC and AUC based on predicted probability;
+
+* Know how to get PR curve and AUC based on predicted probability;
+
+* Know how to find optimal cut-off;
+
+* Know how to do binary classification, and calculation of MR, FPR, FNR, and cost;
+
+* Know how to use LASSO for logistic regression
+
+## Guide for Assignment
+
+* EDA
+
+* Train logistic model
+
+* Prediction (ROC, AUC; PR, AUC)
+
+* Model comparison using AUC
+
+* Find optimal cut-off based on training sample
+
+* Classification -- Obtain the confusion matrix and calculate the MR, asymmetric cost, FPR, Precision, Recall, and F-score for both training and testing sample based on (1) naive cut-off determined by sample proportion; (2) optimal cut-off determined by asymmetric cost; (3) optimal cut-off determined by F-score.
+
+* Build new models by Variable Selection 
+
+* Calculate all criteria
+
+* Comprehensive comparison
+
+[go to top](#header)
+
+# Starter code for German credit scoring
+
+Refer to http://archive.ics.uci.edu/ml/datasets/Statlog+(German+Credit+Data) for variable description.
+Notice that "It is worse to class a customer as good when they are bad (5), than it is to class a customer as bad when they are good (1)." Define your cost function accordingly!
+
+```{r,eval=FALSE}
+german_credit = read.table("http://archive.ics.uci.edu/ml/machine-learning-databases/statlog/german/german.data")
+
+colnames(german_credit)=c("chk_acct","duration","credit_his","purpose","amount","saving_acct","present_emp","installment_rate","sex","other_debtor","present_resid","property","age","other_install","housing","n_credits","job","n_people","telephone","foreign","response")
+
+#orginal response coding 1= good, 2 = bad
+#we need 0 = good, 1 = bad
+german_credit$response = german_credit$response - 1
+```
+
+[go to top](#header)
+
+```{r , echo=FALSE, eval=FALSE}
+m <- 1000 # simulation times
+coef <- c(-1.1, 5, -0.4)
+set.seed(43657)
+n <- 500
+x1 <- runif(n, 0, 1)
+x2 <- (rep(c(1,0), n/2))
+x3 <- rnorm(n)
+
+linearPart <- coef[1] + coef[2] * x1 + coef[3] * x2
+
+p <- 1/(1+exp(-(linearPart)))
+y <- rbinom(n, 1, p)
+# summary(as.factor(y))
+# m <- sum(y==1)
+# hist(p)
+# hist(p[y==1])
+# hist(p[y==0])
+
+dat <- data.frame(y, x1, x2, x1.2=x1^2, x3)
+mod1 <- glm(y~x1+x2 , family=binomial, data = dat)
+# summary(mod1)
+pred1 <- predict(mod1, newdata = dat, type = "response")
+dec1 <- decileT(pred.prob = pred1, OrigDefault = dat$y)
+# dec1
+# hist(pred1)
+test1 <- gof(mod1, g = 10, plotROC = FALSE)
+# test1$gof; 
+# test1$auc
+```
+
