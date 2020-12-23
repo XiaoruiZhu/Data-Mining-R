@@ -8,13 +8,13 @@ This set of learning materials for undergraduate and graduate data mining class 
 
 <style>
 table th:first-of-type {
-    width: 60%;
+    width: 480px;
 }
 table th:nth-of-type(2) {
-    width: 20%;
+    width: 160px;
 }
 table th:nth-of-type(3) {
-    width: 20%;
+    width: 160px;
 }
 </style>
 
@@ -41,6 +41,7 @@ table th:nth-of-type(3) {
 | [3.A Linear regression and prediction](lecture/3.A_LinearReg.html)           |            | [3.A](lecture/3.A_Exercise.html)  |
 | [3.B Subset variable selection](lecture/3.B_SubsetVS.html)                   |            | [3.B](lecture/3.B_Exercise.html) |
 | [3.C LASSO variables veleciton](lecture/3.C_LASSO.html)                      |            | [3.C](lecture/3.C_Exercise.html) |
+| [3.D Monte Carlo simulation](lecture/3.D_Simulation.html)                      |          | [3.D](lecture/3.D_Exercise.html) |
 
 ### Logistic Regression
 
@@ -55,7 +56,8 @@ table th:nth-of-type(3) {
 
 | Lab Notes |  Video | Exercise |
 |:----------|:-------------:|------:|
-| [Cross Validation](lecture/5_CrossValidation.html)   |            |   |
+| [5.A Cross validation](lecture/5.A_CrossValidation.html)                      |            |   |
+| [5.B Cross validation (Logit model)](lecture/5.B_CrossValidationLogit.html)   |            |   |
 
 ### Tree Models
 
@@ -64,30 +66,41 @@ table th:nth-of-type(3) {
 | [6.A Regression tree](lecture/5.A_RegTree.html)       |            | [6.A](lecture/5.A_Exercise.html)  |
 | [6.B Classification tree](lecture/5.B_ClassTree.html) |            | [6.B](lecture/5.B_Exercise.html) |
 
-### GAM, Neural Network, LDA and SVM
+### Advanced Tree Models: Bagging, Random Forests, and Boosting Tree
+
+| Lab Notes                                             |  Video     | Exercise                         |
+|:------------------------------------------------------|:----------:|---------------------------------:|
+| [7.A Bagging tree](lecture/7.A_Bagging.html)          |            | [7.A](lecture/) |
+| [7.B Random forests](lecture/7.B_RandomForests.html)  |            | [7.B](lecture/) |
+| [7.C Boosting tree](lecture/7.C_Boosting.html)        |            | [7.C](lecture/) |
+
+### Nonlinearity, Generalized Additive Models (GAM), and Nonparametric Smoothing
 
 | Lab Notes |  Video | Exercise |
 |:----------|:-------------:|------:|
-| [7.A Moving Beyond Linearity](lecture/6.A_BeyondLinearity.html)   |            | [7.A](lecture/)  |
-| [7.B Generalized additive model (GAM)](lecture/6.B_GAM.html)      |            | [7.B](lecture/) |
-| [7.C Discriminant analysis](lecture/6.C_DiscriminantAnalysis.html)|            | [7.C](lecture/)  |
-| [7.D Neural network models](lecture/6.D_NeuralNet.html)           |            | [7.D](lecture/) |
-| [7.E Support vector machine (SVM)](lecture/6.E_SVM.html)          |            | [7.E](lecture/)  |
-| [7.F Performance Comparisons](lecture/6.F_Comparison.html)        |            | [7.F](lecture/) |
+| [8.A Univariate Nonparametric Smoothing](lecture/6.A_BeyondLinearity.html)   |            | [8.A](lecture/)  |
+| [8.B Generalized additive model (GAM)](lecture/6.B_GAM.html)      |            | [8.B](lecture/) |
 
-### Unsupervised Learning
+### Neural Network, LDA, and SVM 
 
-[Unsupervised Learning](lecture/7_UnsupervisedLearning.html)
+| Lab Notes |  Video | Exercise |
+|:----------|:-------------:|------:|
+| [9.A Neural network models](lecture/6.D_NeuralNet.html)           |            | [9.A](lecture/) |
+| [9.B (Optional) Discriminant analysis](lecture/6.C_DiscriminantAnalysis.html)|            | [9.B](lecture/)  |
+| [9.C (Optional) Support vector machine (SVM)](lecture/6.E_SVM.html)          |            | [9.C](lecture/)  |
 
-### Advanced Tree 
+### Unsupervised Learning: Clustering and Aassociation Rules
 
-[Advanced Tree Models -- Bagging, Random Forests, and Boosting](lecture/AdvTree.html)
+| Lab Notes |  Video | Exercise |
+|:----------|:-------------:|------:|
+| [10.A Clustering](lecture/7.A_Clustering.html)           |            | [10.A](lecture/) |
+| [10.B Association Rules](lecture/7.B_AssociationRules.html)|            | [10.B](lecture/)  |
 
-### Other Topics 2: Advanced Variable Selection
+### Other Topics 1: Advanced Variable Selection
 
 [Advanced Variable Selection Techniques](lecture/VS.html)
 
-### Other Topics 3: Basic Text Mining
+### Other Topics 2: Basic Text Mining
 
 [Basic Text Mining](lecture/Basic_Text_Mining.html)
 

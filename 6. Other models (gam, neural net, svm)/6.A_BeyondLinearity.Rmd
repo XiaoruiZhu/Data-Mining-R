@@ -1,5 +1,5 @@
 ---
-title: "Moving Beyond Linearity"
+title: "Nonparametric Smoothing: Moving Beyond Linearity"
 output: 
   html_document: 
     theme: readable

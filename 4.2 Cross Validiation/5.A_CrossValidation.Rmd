@@ -1,0 +1,120 @@
+---
+title: "Cross Validation"
+output: 
+  html_document: 
+    theme: readable
+    fig_caption: yes
+    number_sections: yes
+    toc: yes
+  html_notebook: 
+    fig_caption: yes
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+# Cross Validation
+
+Cross validation is an alternative approach to training/testing split. For k-fold cross validation, the dataset is divided into k parts. Each part serves as the test set in each iteration and the rest serve as training set. The out-of-sample performance measures from the k iterations are averaged. Instead of fitting a model on a pre-specified 90% training sample and evaluate the MSPE on the hold-out 10% testing sample, it is more reliable to use cross-validation for out-of-sample performance evaluation. For k-fold cross-validation, the dataset is divided into k parts (equal sample size). Each part serves as the testing sample in and the rest (k-1 together) serves as training sample. This training/testing procedure is iteratively performed k times. The CV score is usually the average of the metric of out-of-sample performance across k iterations.
+
+Note
+
+1. We use the **entire** dataset for cross validation
+
+2. We need to use glm instead of lm to fit the model (if we want to use cv.glm fucntion in boot package)
+
+3. The default measure of performance is the Mean Squared Error (MSE). If we want to use another measure we need to define a cost function.
+
+## Cross validation for linear model
+
+### 5-fold Cross Validation
+
+The `cv.glm` is the cross validation approach in R for glm (more details of arguments are in help doc). By comparing the cross-validation estimate of prediction error, we can tell the full model outperforms the model with only `indus` and `rm` in terms of prediction error. 
+
+```{r}
+library(MASS)
+data(Boston); #this data is in MASS package
+library(boot)
+model_full <- glm(medv~., data = Boston)
+cv.glm(data = Boston, glmfit = model_full, K = 5)$delta[2]
+
+model_2 <- glm(medv~indus + rm, data = Boston)
+cv.glm(data = Boston, glmfit = model_2, K = 5)$delta[2]
+```
+
+### 5-fold Cross Validation Using MAE
+
+Here we need to define a MAE cost function. The function takes 2 input vectors, pi =  predicted values, r = actual values.
+
+```{r}
+MAE_cost <- function(pi, r){
+  return(mean(abs(pi-r)))
+}
+
+cv.glm(data = Boston, glmfit = model_full, cost = MAE_cost, K = 5)$delta[2]
+
+cv.glm(data = Boston, glmfit = model_2, cost = MAE_cost, K = 5)$delta[2]
+```
+
+### LOOCV (Leave-one-out Cross Validation)
+
+The same finding is observed by conducting LOOCV. 
+
+```{r}
+cv.glm(data = Boston, glmfit = model_full, K = nrow(Boston))$delta[2]
+
+cv.glm(data = Boston, glmfit = model_2, K = nrow(Boston))$delta[2]
+```
+
+
+### Cross Validation for search optimal tuning parameter in LASSO 
+
+Using 5-fold cross-validation to search optimal lambda: 
+
+```{r message=FALSE}
+library(glmnet)
+lasso_fit  <- glmnet(x = as.matrix(Boston[, -c(which(colnames(Boston)=='medv'))]), y = Boston$medv, alpha = 1)
+#use 5-fold cross validation to pick lambda
+cv_lasso_fit = cv.glmnet(x = as.matrix(Boston[, -c(which(colnames(Boston)=='medv'))]), y = Boston$medv, alpha = 1, nfolds = 5)
+plot(cv_lasso_fit)
+```
+
+The best $\lambda$ (or _s_) is given by:
+```{r}
+cv_lasso_fit$lambda.min
+```
+
+Given a selected _s_ you can use _predict()_ this way to get prediction:
+```{r}
+coef(lasso_fit, s = cv_lasso_fit$lambda.min)
+pred_IS <- predict(lasso_fit, as.matrix(Boston[, -c(which(colnames(Boston)=='medv'))]), s = cv_lasso_fit$lambda.min)
+MAE_cost(pred_IS, Boston$medv)
+```
+
+| Model                      |  MAE            | Best   |
+|:---------------------------|:---------------:|-------:|
+| LASSO selected             |   3.259         |   $\checkmark$     |
+| Full model                 |   3.396         |        |
+| Reduced model (indus, rm)   |   4.249         |        |
+
+The LASSO selected model outperforms the full model and the reduced model in terms of the MAE. 
+
+### (Optional) Supplementary package: DAAG 
+
+Another package DAAG also does cross validation. It prints out the performance in each fold and gives you a plot at the end. But currently I cannot figure out how to get the cross-validation error programmatically.
+
+```{r, eval=FALSE}
+install.packages('DAAG')
+```
+
+```{r,message=FALSE, eval=FALSE}
+library(DAAG)
+```
+```{r, warning=FALSE, eval=FALSE}
+model_2 <- lm(medv~indus + rm, data = Boston)
+cv3 <- cv.lm(data = Boston, form.lm = model_2, m=3)
+```
+
+[go to top](#header)
+

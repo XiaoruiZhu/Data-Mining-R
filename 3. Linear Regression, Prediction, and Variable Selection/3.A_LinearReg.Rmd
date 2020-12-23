@@ -181,60 +181,6 @@ Which is the same as
 model_1$fitted.values
 ```
 
-## Cross-validation
-
-Instead of fitting a model on a pre-specified 90% training sample and evaluate the MSPE on the hold-out 10% testing sample, it is more reliable to use cross-validation for out-of-sample performance evaluation. For k-fold cross-validation, the dataset is divided into k parts (equal sample size). Each part serves as the testing sample in and the rest (k-1 together) serves as training sample. This training/testing procedure is iteratively performed k times. The CV score is usually the average of the metric of out-of-sample performance across k iterations.
-
-Note
-
-1. We use the **entire** dataset for cross validation
-
-2. We need to use `glm()` instead of `lm()` to fit the model (if we want to use cv.glm function in boot package)
-
-3. The default cost is the Mean Squared Prediction Error (MSPE). If we want to use another measure we need to define a cost function.
-
-10-fold Cross Validation
-```{r}
-library(boot)
-model.glm1 = glm(medv~., data = Boston)
-cv.glm(data = Boston, glmfit = model.glm1, K = 10)$delta[2]
-```
-
-Comparing with model 2
-```{r}
-model.glm2 = glm(medv~. -indus -age, data = Boston)
-cv.glm(data = Boston, glmfit = model.glm2, K = 10)$delta[2]
-```
-
-LOOCV (Leave-one-out Cross Validation)
-```{r, eval=FALSE}
-cv.glm(data = Boston, glmfit = model.glm1, K = nrow(Boston))$delta[2]
-```
-
-Now we define a MAD cost function as the CV score. The function takes 2 input vectors, pi =  predicted values, r = actual values.
-```{r}
-MAD_cost = function(pi, r){
-  return(mean(abs(pi-r)))
-}
-cv.glm(data = Boston, glmfit = model.glm1, cost = MAD_cost, K = 10)$delta[2]
-```
-
-> **Exercise**: 
-> Do 10-fold cross-validation for all candidate models, and compare the CV score in terms of MSE and MAE. 
-
-
-## Robust Linear Regression
-
-The traditional linear regression uses ordinary least square for the estimation, but we know that OLS is very sensitive to outliers, meaning that the estimation results can be severely affected by outliers. As an alternative, robust estimation can be used deal with this issue. Most robust estimator is called M-estimator (here is a good tutorial for [introduction](http://www.statisticalconsultants.co.nz/blog/m-estimators.html)).
-
-In `MASS` package, function `rlm()` is designed for robust linear regression.
-```{r}
-lm_rob= rlm(medv~., data = Boston_train)
-pred_rob= predict(lm_rob, newdata = Boston_test)
-mspe_rob= mean((pred_rob-Boston_test$medv)^2)
-mspe_rob
-```
-
 [go to top](#header)
 
 

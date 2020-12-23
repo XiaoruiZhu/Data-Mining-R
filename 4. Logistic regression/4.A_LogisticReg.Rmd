@@ -6,10 +6,6 @@ output:
     fig_caption: yes
     number_sections: yes
     toc: yes
-  html_notebook: 
-    fig_caption: yes
-    number_sections: yes
-    toc: yes
 editor_options: 
   chunk_output_type: console
 ---

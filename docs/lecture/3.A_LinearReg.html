@@ -394,8 +394,6 @@ summary {
 <li><a href="#model-assessment"><span class="toc-section-number">4</span> Model Assessment</a><ul>
 <li><a href="#in-sample-model-evaluation-train-error"><span class="toc-section-number">4.1</span> In-sample model evaluation (train error)</a></li>
 <li><a href="#out-of-sample-prediction-test-error"><span class="toc-section-number">4.2</span> Out-of-sample prediction (test error)</a></li>
-<li><a href="#cross-validation"><span class="toc-section-number">4.3</span> Cross-validation</a></li>
-<li><a href="#robust-linear-regression"><span class="toc-section-number">4.4</span> Robust Linear Regression</a></li>
 </ul></li>
 </ul>
 </div>
@@ -513,30 +511,30 @@ summary(model_1)</code></pre>
 ## 
 ## Residuals:
 ##      Min       1Q   Median       3Q      Max 
-## -15.8852  -2.7496  -0.5723   1.9346  25.5337 
+## -16.2087  -2.8695  -0.6913   1.9638  25.8761 
 ## 
 ## Coefficients:
 ##             Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept) 22.71846    0.22684 100.154  &lt; 2e-16 ***
-## crim        -1.07336    0.29940  -3.585 0.000375 ***
-## zn           1.16930    0.34658   3.374 0.000807 ***
-## indus        0.06713    0.46460   0.144 0.885184    
-## chas         0.69464    0.23634   2.939 0.003464 ** 
-## nox         -2.08841    0.47645  -4.383 1.46e-05 ***
-## rm           2.65654    0.31130   8.534 2.30e-16 ***
-## age          0.07266    0.40366   0.180 0.857236    
-## dis         -3.31397    0.45826  -7.232 2.13e-12 ***
-## rad          2.81997    0.61739   4.568 6.41e-06 ***
-## tax         -2.14959    0.68392  -3.143 0.001785 ** 
-## ptratio     -2.00056    0.31127  -6.427 3.38e-10 ***
-## black        0.84963    0.26386   3.220 0.001377 ** 
-## lstat       -3.86246    0.38346 -10.073  &lt; 2e-16 ***
+## (Intercept) 22.62330    0.23009  98.325  &lt; 2e-16 ***
+## crim        -0.93044    0.30571  -3.044  0.00248 ** 
+## zn           1.04759    0.35136   2.982  0.00303 ** 
+## indus        0.07992    0.46110   0.173  0.86247    
+## chas         0.71075    0.23901   2.974  0.00310 ** 
+## nox         -2.15330    0.48017  -4.484 9.33e-06 ***
+## rm           2.76972    0.31662   8.748  &lt; 2e-16 ***
+## age          0.02162    0.40619   0.053  0.95757    
+## dis         -3.22941    0.45288  -7.131 4.11e-12 ***
+## rad          2.65781    0.62775   4.234 2.80e-05 ***
+## tax         -1.90196    0.69383  -2.741  0.00637 ** 
+## ptratio     -2.02942    0.30843  -6.580 1.34e-10 ***
+## black        0.82451    0.27023   3.051  0.00242 ** 
+## lstat       -3.81627    0.39100  -9.760  &lt; 2e-16 ***
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
-## Residual standard error: 4.839 on 441 degrees of freedom
-## Multiple R-squared:  0.7385, Adjusted R-squared:  0.7308 
-## F-statistic: 95.79 on 13 and 441 DF,  p-value: &lt; 2.2e-16</code></pre>
+## Residual standard error: 4.908 on 441 degrees of freedom
+## Multiple R-squared:  0.7316, Adjusted R-squared:  0.7237 
+## F-statistic: 92.47 on 13 and 441 DF,  p-value: &lt; 2.2e-16</code></pre>
 <p>But, is this the model you want to use?</p>
 <div id="optional-interaction-terms-in-model" class="section level2">
 <h2><span class="header-section-number">3.1</span> (Optional) Interaction terms in model</h2>
@@ -556,18 +554,18 @@ lm(medv~crim*zn, data=Boston_train)</code></pre>
 <p>MSE of the regression, which is the square of ‘Residual standard error’ in the above summary. It is the sum of squared residuals(SSE) divided by degrees of freedom (n-p-1). In some textbooks the sum of squred residuals(SSE) is called residual sum of squares(RSS). MSE of the regression should be the unbiased estimator for variance of <span class="math inline">\(\epsilon\)</span>, the error term in the regression model.</p>
 <pre class="r"><code>model_summary &lt;- summary(model_1)
 (model_summary$sigma)^2</code></pre>
-<pre><code>## [1] 23.41186</code></pre>
+<pre><code>## [1] 24.08771</code></pre>
 <p><span class="math inline">\(R^2\)</span> of the model</p>
 <pre class="r"><code>model_summary$r.squared</code></pre>
-<pre><code>## [1] 0.7384673</code></pre>
+<pre><code>## [1] 0.731603</code></pre>
 <p>Adjusted-<span class="math inline">\(R^2\)</span> of the model, if you add a variable (or several in a group), SSE will decrease, <span class="math inline">\(R^2\)</span> will increase, but Adjusted-<span class="math inline">\(R^2\)</span> could go either way.</p>
 <pre class="r"><code>model_summary$adj.r.squared</code></pre>
-<pre><code>## [1] 0.7307577</code></pre>
+<pre><code>## [1] 0.723691</code></pre>
 <p>AIC and BIC of the model, these are information criteria. Smaller values indicate better fit.</p>
 <pre class="r"><code>AIC(model_1)</code></pre>
-<pre><code>## [1] 2741.74</code></pre>
+<pre><code>## [1] 2754.688</code></pre>
 <pre class="r"><code>BIC(model_1)</code></pre>
-<pre><code>## [1] 2803.544</code></pre>
+<pre><code>## [1] 2816.493</code></pre>
 <p>BIC, AIC, and Adjusted <span class="math inline">\(R^2\)</span> have complexity penalty in the definition, thus when comparing across different models they are better indicators on how well the model will perform on future data.</p>
 </div>
 <div id="out-of-sample-prediction-test-error" class="section level2">
@@ -579,54 +577,14 @@ pi &lt;- predict(object = model_1, newdata = Boston_test)</code></pre>
 <pre class="r"><code>pi &lt;- predict(model_1, Boston_test)</code></pre>
 <p>The most common measure is the Mean Squared Error (MSE): average of the squared differences between the predicted and actual values</p>
 <pre class="r"><code>mean((pi - Boston_test$medv)^2)</code></pre>
-<pre><code>## [1] 19.21214</code></pre>
+<pre><code>## [1] 16.67317</code></pre>
 <p>A less popular measure is the Mean Absolute Error (MAE). You can probably guess that here instead of taking the average of squared error, MAE is the average of absolute value of error.</p>
 <pre class="r"><code>mean(abs(pi - Boston_test$medv))</code></pre>
-<pre><code>## [1] 3.131235</code></pre>
+<pre><code>## [1] 2.825247</code></pre>
 <p>Note that if you ignore the second argument of predict(), it gives you the in-sample prediction on the training set:</p>
 <pre class="r"><code>predict(model_1)</code></pre>
 <p>Which is the same as</p>
 <pre class="r"><code>model_1$fitted.values</code></pre>
-</div>
-<div id="cross-validation" class="section level2">
-<h2><span class="header-section-number">4.3</span> Cross-validation</h2>
-<p>Instead of fitting a model on a pre-specified 90% training sample and evaluate the MSPE on the hold-out 10% testing sample, it is more reliable to use cross-validation for out-of-sample performance evaluation. For k-fold cross-validation, the dataset is divided into k parts (equal sample size). Each part serves as the testing sample in and the rest (k-1 together) serves as training sample. This training/testing procedure is iteratively performed k times. The CV score is usually the average of the metric of out-of-sample performance across k iterations.</p>
-<p>Note</p>
-<ol style="list-style-type: decimal">
-<li><p>We use the <strong>entire</strong> dataset for cross validation</p></li>
-<li><p>We need to use <code>glm()</code> instead of <code>lm()</code> to fit the model (if we want to use cv.glm function in boot package)</p></li>
-<li><p>The default cost is the Mean Squared Prediction Error (MSPE). If we want to use another measure we need to define a cost function.</p></li>
-</ol>
-<p>10-fold Cross Validation</p>
-<pre class="r"><code>library(boot)
-model.glm1 = glm(medv~., data = Boston)
-cv.glm(data = Boston, glmfit = model.glm1, K = 10)$delta[2]</code></pre>
-<pre><code>## [1] 23.39238</code></pre>
-<p>Comparing with model 2</p>
-<pre class="r"><code>model.glm2 = glm(medv~. -indus -age, data = Boston)
-cv.glm(data = Boston, glmfit = model.glm2, K = 10)$delta[2]</code></pre>
-<pre><code>## [1] 23.58984</code></pre>
-<p>LOOCV (Leave-one-out Cross Validation)</p>
-<pre class="r"><code>cv.glm(data = Boston, glmfit = model.glm1, K = nrow(Boston))$delta[2]</code></pre>
-<p>Now we define a MAD cost function as the CV score. The function takes 2 input vectors, pi = predicted values, r = actual values.</p>
-<pre class="r"><code>MAD_cost = function(pi, r){
-  return(mean(abs(pi-r)))
-}
-cv.glm(data = Boston, glmfit = model.glm1, cost = MAD_cost, K = 10)$delta[2]</code></pre>
-<pre><code>## [1] 3.376255</code></pre>
-<blockquote>
-<p><strong>Exercise</strong>: Do 10-fold cross-validation for all candidate models, and compare the CV score in terms of MSE and MAE.</p>
-</blockquote>
-</div>
-<div id="robust-linear-regression" class="section level2">
-<h2><span class="header-section-number">4.4</span> Robust Linear Regression</h2>
-<p>The traditional linear regression uses ordinary least square for the estimation, but we know that OLS is very sensitive to outliers, meaning that the estimation results can be severely affected by outliers. As an alternative, robust estimation can be used deal with this issue. Most robust estimator is called M-estimator (here is a good tutorial for <a href="http://www.statisticalconsultants.co.nz/blog/m-estimators.html">introduction</a>).</p>
-<p>In <code>MASS</code> package, function <code>rlm()</code> is designed for robust linear regression.</p>
-<pre class="r"><code>lm_rob= rlm(medv~., data = Boston_train)
-pred_rob= predict(lm_rob, newdata = Boston_test)
-mspe_rob= mean((pred_rob-Boston_test$medv)^2)
-mspe_rob</code></pre>
-<pre><code>## [1] 24.63311</code></pre>
 <p><a href="#header">go to top</a></p>
 </div>
 </div>

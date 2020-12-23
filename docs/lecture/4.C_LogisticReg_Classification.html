@@ -384,9 +384,7 @@ summary {
 <li><a href="#logistic-regression"><span class="toc-section-number">3</span> Logistic Regression</a><ul>
 <li><a href="#train-a-logistic-regression-model-with-all-variables"><span class="toc-section-number">3.1</span> Train a logistic regression model with all variables</a></li>
 <li><a href="#binary-classification"><span class="toc-section-number">3.2</span> Binary Classification</a><ul>
-<li><a href="#naive-choice-of-cut-off-probability"><span class="toc-section-number">3.2.1</span> Naive Choice of Cut-off probability</a></li>
-<li><a href="#optional-determine-optimal-cut-off-probability-using-grid-search-method"><span class="toc-section-number">3.2.2</span> (Optional) Determine Optimal cut-off Probability using Grid Search Method</a></li>
-<li><a href="#out-of-sample-classification"><span class="toc-section-number">3.2.3</span> Out-of-sample Classification</a></li>
+<li><a href="#out-of-sample-classification"><span class="toc-section-number">3.2.1</span> Out-of-sample Classification</a></li>
 </ul></li>
 </ul></li>
 <li><a href="#summary"><span class="toc-section-number">4</span> Summary</a><ul>
@@ -451,47 +449,47 @@ summary(credit.glm0)</code></pre>
 ## 
 ## Deviance Residuals: 
 ##     Min       1Q   Median       3Q      Max  
-## -3.2339  -0.6912  -0.5418  -0.2798   3.2510  
+## -3.2119  -0.6945  -0.5362  -0.2857   3.1783  
 ## 
 ## Coefficients:
 ##               Estimate Std. Error z value Pr(&gt;|z|)    
-## (Intercept) -1.098e+00  1.544e-01  -7.112 1.15e-12 ***
-## LIMIT_BAL   -6.400e-07  2.800e-07  -2.286  0.02227 *  
-## SEX2        -1.266e-01  5.489e-02  -2.307  0.02105 *  
-## EDUCATION2  -1.079e-01  6.347e-02  -1.699  0.08923 .  
-## EDUCATION3  -1.286e-01  8.504e-02  -1.512  0.13042    
-## EDUCATION4  -1.694e+00  4.112e-01  -4.120 3.79e-05 ***
-## MARRIAGE2   -1.381e-01  6.186e-02  -2.232  0.02560 *  
-## MARRIAGE3   -1.736e-01  2.446e-01  -0.710  0.47782    
-## AGE          6.638e-03  3.320e-03   1.999  0.04556 *  
-## PAY_0        6.151e-01  3.150e-02  19.525  &lt; 2e-16 ***
-## PAY_2        9.265e-02  3.617e-02   2.562  0.01042 *  
-## PAY_3        5.769e-02  4.029e-02   1.432  0.15212    
-## PAY_4        3.912e-02  4.503e-02   0.869  0.38492    
-## PAY_5        6.545e-02  4.816e-02   1.359  0.17415    
-## PAY_6       -3.591e-02  4.034e-02  -0.890  0.37332    
-## BILL_AMT1   -5.445e-06  1.946e-06  -2.798  0.00514 ** 
-## BILL_AMT2    2.590e-06  2.533e-06   1.023  0.30650    
-## BILL_AMT3    2.499e-06  2.186e-06   1.143  0.25312    
-## BILL_AMT4   -3.749e-06  2.418e-06  -1.550  0.12103    
-## BILL_AMT5    1.211e-06  2.912e-06   0.416  0.67754    
-## BILL_AMT6    2.122e-06  2.339e-06   0.907  0.36439    
-## PAY_AMT1    -1.138e-05  3.680e-06  -3.092  0.00199 ** 
-## PAY_AMT2    -9.060e-06  3.450e-06  -2.626  0.00863 ** 
-## PAY_AMT3    -4.333e-07  2.853e-06  -0.152  0.87932    
-## PAY_AMT4    -2.361e-06  2.769e-06  -0.853  0.39380    
-## PAY_AMT5    -4.284e-06  3.205e-06  -1.337  0.18131    
-## PAY_AMT6    -2.543e-06  2.262e-06  -1.124  0.26099    
+## (Intercept) -9.858e-01  1.541e-01  -6.395  1.6e-10 ***
+## LIMIT_BAL   -7.370e-07  2.856e-07  -2.581 0.009853 ** 
+## SEX2        -1.398e-01  5.468e-02  -2.557 0.010547 *  
+## EDUCATION2  -1.411e-01  6.340e-02  -2.225 0.026055 *  
+## EDUCATION3  -2.155e-01  8.530e-02  -2.526 0.011539 *  
+## EDUCATION4  -1.215e+00  3.349e-01  -3.629 0.000285 ***
+## MARRIAGE2   -1.649e-01  6.177e-02  -2.670 0.007584 ** 
+## MARRIAGE3    7.301e-02  2.333e-01   0.313 0.754312    
+## AGE          5.964e-03  3.340e-03   1.786 0.074175 .  
+## PAY_0        6.086e-01  3.159e-02  19.263  &lt; 2e-16 ***
+## PAY_2        5.337e-02  3.666e-02   1.456 0.145529    
+## PAY_3        6.588e-02  4.061e-02   1.622 0.104729    
+## PAY_4        4.426e-02  4.462e-02   0.992 0.321226    
+## PAY_5        9.988e-02  4.759e-02   2.099 0.035835 *  
+## PAY_6       -2.481e-02  4.024e-02  -0.617 0.537498    
+## BILL_AMT1   -6.028e-06  1.994e-06  -3.024 0.002495 ** 
+## BILL_AMT2    3.138e-06  2.587e-06   1.213 0.225142    
+## BILL_AMT3    6.307e-07  2.314e-06   0.273 0.785152    
+## BILL_AMT4   -3.211e-06  2.550e-06  -1.259 0.207950    
+## BILL_AMT5    3.317e-06  3.003e-06   1.105 0.269273    
+## BILL_AMT6    1.303e-06  2.353e-06   0.554 0.579853    
+## PAY_AMT1    -1.167e-05  3.724e-06  -3.134 0.001725 ** 
+## PAY_AMT2    -6.656e-06  3.283e-06  -2.028 0.042599 *  
+## PAY_AMT3    -3.616e-07  2.840e-06  -0.127 0.898680    
+## PAY_AMT4    -3.294e-06  2.864e-06  -1.150 0.250138    
+## PAY_AMT5    -6.935e-06  3.748e-06  -1.850 0.064304 .  
+## PAY_AMT6    -1.708e-06  2.131e-06  -0.801 0.422992    
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
 ## (Dispersion parameter for binomial family taken to be 1)
 ## 
-##     Null deviance: 10081  on 9599  degrees of freedom
-## Residual deviance:  8781  on 9573  degrees of freedom
-## AIC: 8835
+##     Null deviance: 10089  on 9599  degrees of freedom
+## Residual deviance:  8792  on 9573  degrees of freedom
+## AIC: 8846
 ## 
-## Number of Fisher Scoring iterations: 6</code></pre>
+## Number of Fisher Scoring iterations: 5</code></pre>
 <p>You have seen <code>glm()</code> before. In this lab, this is the main function used to build logistic regression model because it is a member of generalized linear model. In <code>glm()</code>, the only thing new is <code>family</code>. It specifies the distribution of your response variable. You may also specify the link function after the name of distribution, for example, <code>family=binomial(logit)</code> (default link is logit). You can also specify <code>family=binomial(link = &quot;probit&quot;)</code> to run probit regression. You may also use <code>glm()</code> to build many other generalized linear models.</p>
 </div>
 <div id="binary-classification" class="section level2">
@@ -503,89 +501,22 @@ summary(credit.glm0)</code></pre>
 table((pred.glm0.train &gt; 0.9)*1)</code></pre>
 <pre><code>## 
 ##    0    1 
-## 9576   24</code></pre>
+## 9580   20</code></pre>
 <pre class="r"><code>table((pred.glm0.train &gt; 0.5)*1)</code></pre>
 <pre><code>## 
 ##    0    1 
-## 8848  752</code></pre>
+## 8857  743</code></pre>
 <pre class="r"><code>table((pred.glm0.train &gt; 0.2)*1)</code></pre>
 <pre><code>## 
 ##    0    1 
-## 5195 4405</code></pre>
+## 5199 4401</code></pre>
 <pre class="r"><code>table((pred.glm0.train &gt; 0.0001)*1)</code></pre>
 <pre><code>## 
 ##    0    1 
-##    1 9599</code></pre>
+##    2 9598</code></pre>
 <p>Therefore, determine the optimal cut-off probability is crucial. The simplest way to determine the cut-off is to use the proportion of “1” in the original data. We will intriduce a more appropriate way to determine the optimal p-cut.</p>
-<div id="naive-choice-of-cut-off-probability" class="section level3">
-<h3><span class="header-section-number">3.2.1</span> Naive Choice of Cut-off probability</h3>
-<p>The simplest way is to choose the event proportion in training sample. This is roughly reasonable because the sample proportion is an estimate of mean probability of <span class="math inline">\(Y=1\)</span>.</p>
-<pre class="r"><code>pcut1&lt;- mean(credit.train$default)</code></pre>
-<p>Based on this cut-off probability, we can obtain the binary prediction (predicted classification) and the confusion matrix</p>
-<pre class="r"><code># get binary prediction
-class.glm0.train&lt;- (pred.glm0.train&gt;pcut1)*1
-# get confusion matrix
-table(credit.train$default, class.glm0.train, dnn = c(&quot;True&quot;, &quot;Predicted&quot;))</code></pre>
-<pre><code>##     Predicted
-## True    0    1
-##    0 5362 2140
-##    1  734 1364</code></pre>
-<p>In <code>table()</code> function, two vectors must be both binary in order to get confusion matrix (it is essentially a pivot table or contingency table), <code>dnn</code> is to specify the row and column name of this 2*2 table. The first input vector is TRUE, so the first name should be TRUE accordingly.</p>
-<p>Then it is easy to get different types of classification error rate, i.e., false positive rate (FPR), false negative rate (FNR), and overall misclassification rate (MR). <strong>Commonly, you can use overall MR as the cost (a criterion) to evaluate the model prediction.</strong></p>
-<pre class="r"><code># (equal-weighted) misclassification rate
-MR&lt;- mean(credit.train$default!=class.glm0.train)
-# False positive rate
-FPR&lt;- sum(credit.train$default==0 &amp; class.glm0.train==1)/sum(credit.train$default==0)
-# False negative rate (exercise)
-# FNR&lt;- </code></pre>
-</div>
-<div id="optional-determine-optimal-cut-off-probability-using-grid-search-method" class="section level3">
-<h3><span class="header-section-number">3.2.2</span> (Optional) Determine Optimal cut-off Probability using Grid Search Method</h3>
-<p>Recall the lecture, different p-cut results in different confusion matrix, hence different MR (or cost). You need to search all possible p-cut to find the one that provides minimum cost. The first step is to define a symmetric/asymmetric cost function (misclassification rate), as a function of cut-off. Think about what else is needed to calculate MR? The answer is observed <span class="math inline">\(Y\)</span> and predicted probability.</p>
-<pre class="r"><code># define a cost function with input &quot;obs&quot; being observed response 
-# and &quot;pi&quot; being predicted probability, and &quot;pcut&quot; being the threshold.
-costfunc = function(obs, pred.p, pcut){
-    weight1 = 5   # define the weight for &quot;true=1 but pred=0&quot; (FN)
-    weight0 = 1    # define the weight for &quot;true=0 but pred=1&quot; (FP)
-    c1 = (obs==1)&amp;(pred.p&lt;pcut)    # count for &quot;true=1 but pred=0&quot;   (FN)
-    c0 = (obs==0)&amp;(pred.p&gt;=pcut)   # count for &quot;true=0 but pred=1&quot;   (FP)
-    cost = mean(weight1*c1 + weight0*c0)  # misclassification with weight
-    return(cost) # you have to return to a value when you write R functions
-} # end of the function</code></pre>
-<p>Next, define a sequence of probability (you need to search the optimal p-cut from this sequence)</p>
-<pre class="r"><code># define a sequence from 0.01 to 1 by 0.01
-p.seq = seq(0.01, 1, 0.01) </code></pre>
-<p>Then, you need to calculate the cost (as you defined before) for each probability in the sequence p.seq.</p>
-<pre class="r"><code># write a loop for all p-cut to see which one provides the smallest cost
-# first, need to define a 0 vector in order to save the value of cost from all pcut
-cost = rep(0, length(p.seq))  
-for(i in 1:length(p.seq)){ 
-    cost[i] = costfunc(obs = credit.train$default, pred.p = pred.glm0.train, pcut = p.seq[i])  
-} # end of the loop</code></pre>
-<p>Last, draw a plot with cost against p.seq, and find the p-cut that gives you the minimum cost.</p>
-<pre class="r"><code># draw a plot with X axis being all pcut and Y axis being associated cost
-plot(p.seq, cost)</code></pre>
-<p><img src="data:image/png;base64,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" width="672" /></p>
-<pre class="r"><code># find the optimal pcut
-optimal.pcut.glm0 = p.seq[which(cost==min(cost))]</code></pre>
-<div id="use-the-optimal-cut-off-probability" class="section level4">
-<h4><span class="header-section-number">3.2.2.1</span> Use the optimal cut-off probability</h4>
-<p>Now let calculate MR, FPR, FNR, and cost based on the optimal cut-off.</p>
-<pre class="r"><code># step 1. get binary classification
-class.glm0.train.opt &lt;- (pred.glm0.train&gt;optimal.pcut.glm0)*1
-# step 2. get confusion matrix, MR, FPR, FNR
-table(credit.train$default, class.glm0.train.opt, dnn = c(&quot;True&quot;, &quot;Predicted&quot;))</code></pre>
-<pre><code>##     Predicted
-## True    0    1
-##    0 5787 1715
-##    1  811 1287</code></pre>
-<pre class="r"><code>MR &lt;- mean(credit.train$default!= class.glm0.train.opt)
-FPR &lt;- sum(credit.train$default==0 &amp; class.glm0.train.opt==1)/sum(credit.train$default==0)
-FNR &lt;- sum(credit.train$default==1 &amp; class.glm0.train.opt==0)/sum(credit.train$default==1)
-cost &lt;- costfunc(obs = credit.train$default, pred.p = pred.glm0.train, pcut = optimal.pcut.glm0)  </code></pre>
-</div>
 <div id="exercise-1" class="section level4">
-<h4><span class="header-section-number">3.2.2.2</span> <strong>Exercise 1:</strong></h4>
+<h4><span class="header-section-number">3.2.0.1</span> <strong>Exercise 1:</strong></h4>
 <blockquote>
 <ol style="list-style-type: decimal">
 <li>Change the weights to different values, and see how your optimal cut-off changes.</li>
@@ -597,12 +528,11 @@ cost &lt;- costfunc(obs = credit.train$default, pred.p = pred.glm0.train, pcut =
 </ol>
 </blockquote>
 </div>
-</div>
 <div id="out-of-sample-classification" class="section level3">
-<h3><span class="header-section-number">3.2.3</span> Out-of-sample Classification</h3>
+<h3><span class="header-section-number">3.2.1</span> Out-of-sample Classification</h3>
 <p>Everything you have done about classification so far is for training sample. Now let’s get to testing sample. Keep in mind the principle, <strong>testing sample is only used for evaluating your model’s prediction accuracy</strong>! NO NEED TO CHOOSE CUT-OFF PROBABILITY in this stage.</p>
 <div id="exercise-2" class="section level4">
-<h4><span class="header-section-number">3.2.3.1</span> <strong>Exercise 2:</strong></h4>
+<h4><span class="header-section-number">3.2.1.1</span> <strong>Exercise 2:</strong></h4>
 <blockquote>
 <ol style="list-style-type: decimal">
 <li>Calculate MR, FPR, FNR based on the optimal cut-off you get from training sample with weights (5:1)</li>

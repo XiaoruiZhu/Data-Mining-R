@@ -1,0 +1,104 @@
+---
+title: "Advanced Tree Models -- Boosting Tree"
+output: 
+  html_document: 
+    theme: readable
+    fig_caption: yes
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+In this lab, we will cover some state-of-the-art techniques in the framework of tree models. We use the same datasets as in previous lab, Boston Housing data and Credit Scoring data.
+
+```{r}
+# load Boston data
+library(MASS)
+data(Boston)
+index <- sample(nrow(Boston),nrow(Boston)*0.60)
+boston.train <- Boston[index,]
+boston.test <- Boston[-index,]
+
+# load credit card data
+credit.data <- read.csv("data/credit_default.csv", header=T)
+# convert categorical variables
+credit.data$SEX<- as.factor(credit.data$SEX)
+credit.data$EDUCATION<- as.factor(credit.data$EDUCATION)
+credit.data$MARRIAGE<- as.factor(credit.data$MARRIAGE)
+# random splitting
+index <- sample(nrow(credit.data),nrow(credit.data)*0.60)
+credit.train = credit.data[index,]
+credit.test = credit.data[-index,]
+```
+
+# Boosting
+
+Boosting builds a number of small trees, and each time, the response is the residual from last tree. It is a sequential procedure. We use `gbm` package to build boosted trees.
+
+## Boosting for regression trees
+
+```{r warning=FALSE, message=FALSE}
+library(gbm)
+# ?gbm
+boston.boost<- gbm(medv~., data = boston.train, distribution = "gaussian", n.trees = 10000, shrinkage = 0.01, interaction.depth = 8)
+summary(boston.boost)
+```
+
+Note that we need to specify `distribution = "gaussian"` if we are working on regression tree. The default is *Bernoulli* distribution for binary classification problem. `n.trees` is the number of small trees we fit. We need to choose this parameter carefully because it may results in overfitting if the number is too large. `shrinkage` is another tuning parameter that controls how much contribution each tree makes. `interaction.depth` is how many splits of each tree we want. All those tuning parameters can be chosen from cross-validation. The idea is that we don't want overfitting.
+
+The fitted boosted tree also gives the relation between response and each predictor.
+```{r}
+par(mfrow=c(1,2))
+plot(boston.boost, i="lstat")
+plot(boston.boost, i="rm")
+```
+
+Prediction on testing sample.
+```{r}
+boston.boost.pred.test<- predict(boston.boost, boston.test, n.trees = 10000)
+mean((boston.test$medv-boston.boost.pred.test)^2)
+```
+
+We can investigate how the testing error changes with different number of trees.
+```{r}
+ntree <- seq(100, 10000, 100)
+test.err <- rep(0, 13)
+
+predmat <- predict(boston.boost, newdata = boston.test, n.trees = ntree)
+err <- apply((predmat-boston.test$medv)^2, 2, mean)
+plot(ntree, err, type = 'l', col=2, lwd=2, xlab = "n.trees", ylab = "Test MSE")
+abline(h=min(test.err), lty=2)
+```
+
+The horizontal line is the best prediction error from random forests we obtained earlier.
+
+## Boosting for classification trees
+
+```{r, eval=FALSE}
+library(adabag)
+credit.train$default.payment.next.month= as.factor(credit.train$default.payment.next.month)
+credit.boost= boosting(default.payment.next.month~., data = credit.train, boos = T)
+save(credit.boost, file = "credit.boost.Rdata")
+
+# Training AUC
+pred.credit.boost= predict(credit.boost, newdata = credit.train)
+pred <- prediction(pred.credit.boost$prob[,2], credit.train$default.payment.next.month)
+perf <- performance(pred, "tpr", "fpr")
+plot(perf, colorize=TRUE)
+#Get the AUC
+unlist(slot(performance(pred, "auc"), "y.values"))
+
+pred.credit.boost= predict(credit.boost, newdata = credit.test)
+# Testing AUC
+pred <- prediction(pred.credit.boost$prob[,2], credit.test$default.payment.next.month)
+perf <- performance(pred, "tpr", "fpr")
+plot(perf, colorize=TRUE)
+#Get the AUC
+unlist(slot(performance(pred, "auc"), "y.values"))
+
+```

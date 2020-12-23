@@ -66,7 +66,7 @@ library(glmnet)
 glmnet does not take data frame as input, so we have to specify the x matrix and y vector.
 
 ```{r}
-lasso_fit = glmnet(x = as.matrix(Boston[, -c(which(colnames(Boston)=='medv'))]), y = Boston$medv, alpha = 1)
+lasso_fit <- glmnet(x = as.matrix(Boston[, -c(which(colnames(Boston)=='medv'))]), y = Boston$medv, alpha = 1)
 #lambda = 0.5
 coef(lasso_fit,s=0.5)
 #lambda = 1
@@ -89,7 +89,7 @@ Using 5-fold cross-validation to search optimal lambda:
 
 ```{r}
 #use 5-fold cross validation to pick lambda
-cv_lasso_fit = cv.glmnet(x = as.matrix(Boston[, -c(which(colnames(Boston)=='medv'))]), y = Boston$medv, alpha = 1, nfolds = 5)
+cv_lasso_fit <- cv.glmnet(x = as.matrix(Boston[, -c(which(colnames(Boston)=='medv'))]), y = Boston$medv, alpha = 1, nfolds = 5)
 plot(cv_lasso_fit)
 ```
 
@@ -100,7 +100,7 @@ cv_lasso_fit$lambda.min
 
 Given a selected _s_ you can use _predict()_ this way to get prediction:
 ```{r}
-Boston.insample.prediction = predict(lasso_fit, as.matrix(Boston[, -c(which(colnames(Boston)=='medv'))]), s = cv_lasso_fit$lambda.min)
+Boston.insample.prediction <- predict(lasso_fit, as.matrix(Boston[, -c(which(colnames(Boston)=='medv'))]), s = cv_lasso_fit$lambda.min)
 ```
 
 > **Exercise**: 
