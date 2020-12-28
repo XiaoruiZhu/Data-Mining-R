@@ -17,6 +17,66 @@ editor_options:
 
 There are two common implementations of GAMs in R.  The older version (originally made for S-PLUS) is available as the 'gam' package by Hastie and Tibshirani.  The newer version that we will use below is the 'mgcv' package from Simon Wood. The basic modeling procedure for both packages is similar (the function is gam for both; be wary of having both libraries loaded at the same time), but the behind-the-scenes computational approaches differ, as do the arguments for optimization and the model output. Expect the results to be slightly different when used with the same model structure on the same dataset.
 
+## GAM on Boston Housing dataset
+
+```{r echo=TRUE, message = FALSE,warning=FALSE, results='hide'}
+library(MASS)
+set.seed(1234)
+sample_index <- sample(nrow(Boston),nrow(Boston)*0.70)
+Boston_train <- Boston[sample_index,]
+Boston_test <- Boston[-sample_index,]
+str(Boston_train)
+```
+
+
+**Model and plots**
+
+
+```{r echo=TRUE, message = FALSE, warning=FALSE}
+library(mgcv)
+
+#create gam model
+Boston.gam <- gam(medv ~ s(crim)+s(zn)+s(indus)+chas+s(nox)
+                 +s(rm)+s(age)+s(dis)+rad+s(tax)+s(ptratio)
+                 +s(black)+s(lstat),data=Boston_train)
+
+summary(Boston.gam)
+
+plot(Boston.gam, pages=1)
+```
+
+
+**Model AIC/BIC and mean residual deviance**
+
+```{r echo=TRUE, message = FALSE,warning=FALSE, results="hide"}
+AIC(Boston.gam)
+BIC(Boston.gam)
+Boston.gam$deviance
+```
+
+
+**In-sample fit performance**
+
+```{r echo=TRUE, message = FALSE,warning=FALSE}
+#in-sample mse using df 
+Boston.gam.mse.train <- Boston.gam$dev/Boston.gam$df.residual 
+#Average Sum of Squared Error
+Boston.gam.mse.train <- Boston.gam$dev/nrow(Boston_train) 
+
+#using the predict() function
+pi <- predict(Boston.gam,Boston_train)
+mean((pi - Boston_train$medv)^2)
+```
+
+**out of sample performance**
+```{r echo=TRUE, message = FALSE,warning=FALSE}
+pi.out <- predict(Boston.gam,Boston_test)
+mean((pi.out - Boston_test$medv)^2)
+```
+
+[go to top](#header)
+
+
 ## GAM on Credit Score Data
 
 ```{r}
@@ -53,7 +113,6 @@ creditcost <- function(observed, predicted){
 ```
 
 ```{r, message=FALSE}
-library(mgcv)
 
 ## Create a formula for a model with a large number of variables:
 gam_formula <- as.formula(paste("Y~s(X2)+s(X3)+s(X4)+s(X5)+", paste(colnames(credit.train)[6:61], collapse= "+")))
@@ -226,64 +285,6 @@ plot(gam_mod, se=TRUE ,col="blue")
 
 ```{r echo=TRUE, message = FALSE,warning=FALSE}
 gam.check(gam_mod)
-```
-
-[go to top](#header)
-
-## GAM on Boston Housing dataset
-
-```{r echo=TRUE, message = FALSE,warning=FALSE, results='hide'}
-library(MASS)
-set.seed(1234)
-sample_index <- sample(nrow(Boston),nrow(Boston)*0.70)
-Boston_train <- Boston[sample_index,]
-Boston_test <- Boston[-sample_index,]
-str(Boston_train)
-```
-
-
-**Model and plots**
-
-
-```{r echo=TRUE, message = FALSE,warning=FALSE}
-#create gam model
-
-Boston.gam <- gam(medv ~ s(crim)+s(zn)+s(indus)+chas+s(nox)
-                 +s(rm)+s(age)+s(dis)+rad+s(tax)+s(ptratio)
-                 +s(black)+s(lstat),data=Boston_train)
-
-summary(Boston.gam)
-
-plot(Boston.gam, pages=1)
-```
-
-
-**Model AIC/BIC and mean residual deviance**
-
-```{r echo=TRUE, message = FALSE,warning=FALSE, results="hide"}
-AIC(Boston.gam)
-BIC(Boston.gam)
-Boston.gam$deviance
-```
-
-
-**In-sample fit performance**
-
-```{r echo=TRUE, message = FALSE,warning=FALSE}
-#in-sample mse using df 
-Boston.gam.mse.train <- Boston.gam$dev/Boston.gam$df.residual 
-#Average Sum of Squared Error
-Boston.gam.mse.train <- Boston.gam$dev/nrow(Boston_train) 
-
-#using the predict() function
-pi <- predict(Boston.gam,Boston_train)
-mean((pi - Boston_train$medv)^2)
-```
-
-**out of sample performance**
-```{r echo=TRUE, message = FALSE,warning=FALSE}
-pi.out <- predict(Boston.gam,Boston_test)
-mean((pi.out - Boston_test$medv)^2)
 ```
 
 [go to top](#header)

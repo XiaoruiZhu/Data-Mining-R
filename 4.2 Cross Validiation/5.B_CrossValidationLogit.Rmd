@@ -30,7 +30,7 @@ Note
 
 Refer to lecture slides and Elements of Statistical Learning book (section 7.10) for more advice on cross validation.
 ```{r}
-pcut = 0.5
+pcut <- 0.5
 #Symmetric cost
 cost1 <- function(r, pi, pcut){
   mean(((r==0)&(pi>pcut)) | ((r==1)&(pi<pcut)))
@@ -38,28 +38,27 @@ cost1 <- function(r, pi, pcut){
 
 #Asymmetric cost
 cost2 <- function(r, pi, pcut){
-  weight1 = 2
-  weight0 = 1
-  c1 = (r==1)&(pi<pcut) #logical vector - true if actual 1 but predict 0
-  c0 = (r==0)&(pi>pcut) #logical vector - true if actual 0 but predict 1
+  weight1 <- 2
+  weight0 <- 1
+  c1 <- (r==1)&(pi<pcut) #logical vector - true if actual 1 but predict 0
+  c0 <-(r==0)&(pi>pcut) #logical vector - true if actual 0 but predict 1
   return(mean(weight1*c1+weight0*c0))
 }
 ```
 
-We can use the same cost function as defined before, but you need to modify it such that there are only two input: observed $Y$ and predicted probability.
+We can use the same cost function as defined before, but you need to modify it such that there are only two input: observed $Y$ and predicted probability, so that the `cv.glm` can recognize it for cross-validation with asymmetric cost. 
+
 ```{r}
-costfunc = function(obs, pred.p){
-	weight1 = 5   # define the weight for "true=1 but pred=0" (FN)
-	weight0 = 1    # define the weight for "true=0 but pred=1" (FP)
-	c1 = (obs==1)&(pred.p<pcut)    # count for "true=1 but pred=0"   (FN)
-	c0 = (obs==0)&(pred.p>=pcut)   # count for "true=0 but pred=1"   (FP)
-	cost = mean(weight1*c1 + weight0*c0)  # misclassification with weight
-	return(cost) # you have to return to a value when you write R functions
-} # end of the function
-```
-Then you need to assign a value to pcut.
-```{r}
-pcut = 0.02  
+costfunc  <- function(obs, pred.p){
+    weight1 <- 5   # define the weight for "true=1 but pred=0" (FN)
+    weight0 <- 1    # define the weight for "true=0 but pred=1" (FP)
+    pcut <- 1/(1+weight1/weight0)
+    c1 <- (obs==1)&(pred.p < pcut)    # count for "true=1 but pred=0"   (FN)
+    c0 <- (obs==0)&(pred.p >= pcut)   # count for "true=0 but pred=1"   (FP)
+    cost <- mean(weight1*c1 + weight0*c0)  # misclassification with weight
+    return(cost) # you have to return to a value when you write R functions
+} # end of the 
+
 ```
 
 10-fold cross validation, note you should use the **full data** for cross-validation. In `cv.glm`, default cost function is the average squared error function.
@@ -74,7 +73,7 @@ credit.data$MARRIAGE<- as.factor(credit.data$MARRIAGE)
 
 library(boot)
 credit.glm1<- glm(default~. , family=binomial, data=credit.data);  
-cv.result = cv.glm(data=credit.data, glmfit=credit.glm1, cost=costfunc, K=10) 
+cv.result  <- cv.glm(data=credit.data, glmfit=credit.glm1, cost=costfunc, K=10) 
 cv.result$delta[2]
 ```
 

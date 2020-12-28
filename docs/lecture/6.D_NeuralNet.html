@@ -1722,12 +1722,11 @@ summary {
 <div id="TOC">
 <ul>
 <li><a href="#objective"><span class="toc-section-number">1</span> Objective</a></li>
-<li><a href="#credit-score-data"><span class="toc-section-number">2</span> Credit Score Data</a><ul>
-<li><a href="#load-data"><span class="toc-section-number">2.1</span> Load Data</a></li>
+<li><a href="#neural-networks-models"><span class="toc-section-number">2</span> Neural Networks Models</a><ul>
+<li><a href="#regression"><span class="toc-section-number">2.1</span> Regression</a></li>
+<li><a href="#classification"><span class="toc-section-number">2.2</span> Classification</a><ul>
+<li><a href="#credit-score-data"><span class="toc-section-number">2.2.1</span> Credit Score Data</a></li>
 </ul></li>
-<li><a href="#neural-networks-models"><span class="toc-section-number">3</span> Neural Networks Models</a><ul>
-<li><a href="#regression"><span class="toc-section-number">3.1</span> Regression</a></li>
-<li><a href="#classification"><span class="toc-section-number">3.2</span> Classification</a></li>
 </ul></li>
 </ul>
 </div>
@@ -1736,36 +1735,11 @@ summary {
 <h1><span class="header-section-number">1</span> Objective</h1>
 <p>This tutorial helps you to review various supervised learning techniques, introduce GAM, Neural Networks models, etc.</p>
 </div>
-<div id="credit-score-data" class="section level1">
-<h1><span class="header-section-number">2</span> Credit Score Data</h1>
-<div id="load-data" class="section level2">
-<h2><span class="header-section-number">2.1</span> Load Data</h2>
-<pre class="r"><code>credit.data &lt;- read.csv(&quot;data/credit0.csv&quot;, header=T)</code></pre>
-<p>We remove X9 and id from the data since we will not be using them for prediction.</p>
-<pre class="r"><code>credit.data$X9 = NULL
-credit.data$id = NULL
-credit.data$Y = as.factor(credit.data$Y)</code></pre>
-<p>Now split the data 90/10 as training/testing datasets:</p>
-<pre class="r"><code>id_train &lt;- sample(nrow(credit.data),nrow(credit.data)*0.90)
-credit.train = credit.data[id_train,]
-credit.test = credit.data[-id_train,]</code></pre>
-<p>The training dataset has 61 variables, 4500 obs.</p>
-<p>You are already familiar with the credit scoring set. Let’s define a cost function for benchmarking testing set performance. Note this is slightly different from the one we used for searching for optimal cut-off probability in logistic regression. Here the 2nd argument is the predict class instead of the predict probability (since many methods are not based on predict probability).</p>
-<pre class="r"><code>creditcost &lt;- function(observed, predicted){
-  weight1 = 10
-  weight0 = 1
-  c1 = (observed==1)&amp;(predicted == 0) #logical vector - true if actual 1 but predict 0
-  c0 = (observed==0)&amp;(predicted == 1) #logical vector - true if actual 0 but predict 1
-  return(mean(weight1*c1+weight0*c0))
-}</code></pre>
-<p><a href="#header">go to top</a></p>
-</div>
-</div>
 <div id="neural-networks-models" class="section level1">
-<h1><span class="header-section-number">3</span> Neural Networks Models</h1>
+<h1><span class="header-section-number">2</span> Neural Networks Models</h1>
 <p>Neural Networks method (in-sample and out-of-sample performance measure) is illustrated here. The package <a href="http://cran.r-project.org/web/packages/nnet/nnet.pdf"><strong>nnet</strong></a> is used for this purpose.</p>
 <div id="regression" class="section level2">
-<h2><span class="header-section-number">3.1</span> Regression</h2>
+<h2><span class="header-section-number">2.1</span> Regression</h2>
 <p><strong>Note</strong>:</p>
 <ul>
 <li>For regression problems add lineout = TRUE when training model. In addition, the response needs to be standardized to <span class="math inline">\([0, 1]\)</span> interval. It’s important normalize the response. If not, most of the times the algorithm will not converge. I chose to use the min-max method and scale the data in the interval [0,1].</li>
@@ -1792,39 +1766,54 @@ test.r &lt;- (test_$medv)*(max(Boston$medv)-min(Boston$medv))+min(Boston$medv)
 # MSE of testing set
 MSE.nn &lt;- sum((test.r - pr.nn_)^2)/nrow(test_)
 MSE.nn</code></pre>
-<pre><code>## [1] 11.92707</code></pre>
+<pre><code>## [1] 11.07069</code></pre>
 </div>
 <div id="classification" class="section level2">
-<h2><span class="header-section-number">3.2</span> Classification</h2>
+<h2><span class="header-section-number">2.2</span> Classification</h2>
 <p><strong>Note</strong>:</p>
 <ul>
 <li>For classification problems with nnet you need to code the response to <em>factor</em> first. In addition you want to add type = “class” for <em>predict()</em> function.</li>
 </ul>
+<div id="credit-score-data" class="section level3">
+<h3><span class="header-section-number">2.2.1</span> Credit Score Data</h3>
+<pre class="r"><code># credit.data &lt;- read.csv(&quot;data/credit0.csv&quot;, header=T)
+credit.data &lt;- read.csv(file = &quot;https://xiaoruizhu.github.io/Data-Mining-R/lecture/data/credit0.csv&quot;, header=T)</code></pre>
+<p>We remove X9 and id from the data since we will not be using them for prediction.</p>
+<pre class="r"><code>credit.data$X9 &lt;- NULL
+credit.data$id &lt;- NULL
+credit.data$Y &lt;- as.factor(credit.data$Y)</code></pre>
+<p>Now split the data 90/10 as training/testing datasets:</p>
+<pre class="r"><code>id_train &lt;- sample(nrow(credit.data),nrow(credit.data)*0.90)
+credit.train &lt;- credit.data[id_train,]
+credit.test &lt;- credit.data[-id_train,]</code></pre>
+<p>The training dataset has 61 variables, 4500 obs.</p>
+<p>You are already familiar with the credit scoring set. Let’s define a cost function for benchmarking testing set performance. Note this is slightly different from the one we used for searching for optimal cut-off probability in logistic regression. Here the 2nd argument is the predict class instead of the predict probability (since many methods are not based on predict probability).</p>
+<pre class="r"><code>creditcost &lt;- function(observed, predicted){
+  weight1 &lt;- 10
+  weight0 &lt;- 1
+  c1 &lt;- (observed==1)&amp;(predicted == 0) #logical vector - true if actual 1 but predict 0
+  c0 &lt;- (observed==0)&amp;(predicted == 1) #logical vector - true if actual 0 but predict 1
+  return(mean(weight1*c1+weight0*c0))
+}</code></pre>
 <pre class="r"><code>library(nnet)</code></pre>
-<pre class="r"><code>credit.nnet &lt;- nnet(Y~., data=credit.train, size=1, maxit=500)</code></pre>
-<pre><code>## # weights:  63
-## initial  value 2820.451699 
-## iter  10 value 932.809460
-## iter  20 value 876.228361
-## iter  30 value 866.304542
-## iter  40 value 854.596240
-## iter  50 value 842.543733
-## iter  60 value 840.710564
-## iter  70 value 840.706600
-## final  value 840.706561 
+<pre class="r"><code>credit.nnet &lt;- nnet(Y~., data=credit.train, size=5, maxit=500)</code></pre>
+<pre><code>## # weights:  311
+## initial  value 4069.751037 
+## final  value 1001.995878 
 ## converged</code></pre>
-<pre class="r"><code>prob.nnet= predict(credit.nnet,credit.test)
-pred.nnet = as.numeric(prob.nnet &gt; 0.08)
+<pre class="r"><code>prob.nnet &lt;- predict(credit.nnet, credit.test)
+pred.nnet &lt;- as.numeric(prob.nnet &gt; 0.1)
 table(credit.test$Y,pred.nnet, dnn=c(&quot;Observed&quot;,&quot;Predicted&quot;))</code></pre>
 <pre><code>##         Predicted
-## Observed   0   1
-##        0 240 231
-##        1   5  24</code></pre>
-<pre class="r"><code>mean(ifelse(credit.test$Y != pred.nnet, 1, 0))</code></pre>
-<pre><code>## [1] 0.472</code></pre>
-<pre class="r"><code>creditcost(credit.test$Y, pred.nnet)</code></pre>
-<pre><code>## [1] 0.562</code></pre>
+## Observed   0
+##        0 463
+##        1  37</code></pre>
+<pre class="r"><code>cat(&quot;Misclassification rate =&quot;, mean(ifelse(credit.test$Y != pred.nnet, 1, 0)))</code></pre>
+<pre><code>## Misclassification rate = 0.074</code></pre>
+<pre class="r"><code>cat(&quot;Asymmetric cost (with ratio 10:1) =&quot;, creditcost(credit.test$Y, pred.nnet))</code></pre>
+<pre><code>## Asymmetric cost (with ratio 10:1) = 0.74</code></pre>
 <p><a href="#header">go to top</a></p>
+</div>
 </div>
 </div>
 

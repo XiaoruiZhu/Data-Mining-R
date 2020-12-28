@@ -1,5 +1,5 @@
 ---
-title: "Regression and Variable Selection"
+title: "Linear regression and prediction"
 output: 
   html_document: 
     theme: readable
@@ -110,6 +110,33 @@ lm(medv~crim+zn+crim:zn, data=Boston_train)
 lm(medv~crim*zn, data=Boston_train)
 ```
 For now we will not investigate the interactions of variables.
+
+
+# Diagnostic Plots
+
+The diagnostic plots are not as important when regression is used in predictive (supervised) data mining as when it is used in economics. However it is still good to know:
+
+1. What the diagnostic plots should look like when no assumption is violated?
+
+2. If there is something wrong, what assumptions are possibly violated?
+
+3. What implications does it have on the analysis?
+
+4. (How) can I fix it?
+
+Roughly speaking, the table summarizes what you should look for in the following plots
+
+Plot Name  | Good  
+------------- | -------------
+Residual vs. Fitted  | No pattern, scattered around 0 line
+Normal Q-Q | Dots fall on dashed line 
+Residual vs. Leverage | No observation with large Cook's distance
+
+```{r}
+plot(model_1)
+```
+
+[go to top](#header)
 
 # Model Assessment 
 

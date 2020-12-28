@@ -26,47 +26,8 @@ library(glmnet)
 
 This tutorial helps you to review various supervised learning techniques, introduce GAM, Neural Networks models, etc.
 
-# Credit Score Data
-## Load Data
-
-```{r}
-credit.data <- read.csv("data/credit0.csv", header=T)
-```
-
-We remove X9 and id from the data since we will not be using them for prediction.
-```{r}
-credit.data$X9 = NULL
-credit.data$id = NULL
-credit.data$Y = as.factor(credit.data$Y)
-```
-
-Now split the data 90/10 as training/testing datasets:
-```{r}
-id_train <- sample(nrow(credit.data),nrow(credit.data)*0.90)
-credit.train = credit.data[id_train,]
-credit.test = credit.data[-id_train,]
-```
-
-The training dataset has 61 variables, 4500 obs. 
-
-You are already familiar with the credit scoring set. Let's define a cost function for benchmarking testing set performance. Note this is slightly different from the one we used for searching for optimal cut-off probability in logistic regression. Here the 2nd argument is the predict class instead of the predict probability (since many methods are not based on predict probability).
-
-```{r}
-creditcost <- function(observed, predicted){
-  weight1 = 10
-  weight0 = 1
-  c1 = (observed==1)&(predicted == 0) #logical vector - true if actual 1 but predict 0
-  c0 = (observed==0)&(predicted == 1) #logical vector - true if actual 0 but predict 1
-  return(mean(weight1*c1+weight0*c0))
-}
-```
-
-[go to top](#header)
-
 # Neural Networks Models
 Neural Networks method (in-sample and out-of-sample performance measure) is illustrated here. The package [**nnet**](http://cran.r-project.org/web/packages/nnet/nnet.pdf) is used for this purpose.
-
-
 
 ## Regression
 
@@ -111,21 +72,55 @@ __Note__:
 
 - For classification problems with nnet you need to code the response to _factor_ first. In addition you want to add type = "class" for _predict()_  function. 
 
+### Credit Score Data
+
+```{r}
+# credit.data <- read.csv("data/credit0.csv", header=T)
+credit.data <- read.csv(file = "https://xiaoruizhu.github.io/Data-Mining-R/lecture/data/credit0.csv", header=T)
+```
+
+We remove X9 and id from the data since we will not be using them for prediction.
+```{r}
+credit.data$X9 <- NULL
+credit.data$id <- NULL
+credit.data$Y <- as.factor(credit.data$Y)
+```
+
+Now split the data 90/10 as training/testing datasets:
+```{r}
+id_train <- sample(nrow(credit.data),nrow(credit.data)*0.90)
+credit.train <- credit.data[id_train,]
+credit.test <- credit.data[-id_train,]
+```
+
+The training dataset has 61 variables, 4500 obs. 
+
+You are already familiar with the credit scoring set. Let's define a cost function for benchmarking testing set performance. Note this is slightly different from the one we used for searching for optimal cut-off probability in logistic regression. Here the 2nd argument is the predict class instead of the predict probability (since many methods are not based on predict probability).
+
+```{r}
+creditcost <- function(observed, predicted){
+  weight1 <- 10
+  weight0 <- 1
+  c1 <- (observed==1)&(predicted == 0) #logical vector - true if actual 1 but predict 0
+  c0 <- (observed==0)&(predicted == 1) #logical vector - true if actual 0 but predict 1
+  return(mean(weight1*c1+weight0*c0))
+}
+```
+
 ```{r, message=FALSE}
 library(nnet)
 ```
 
 ```{r}
-credit.nnet <- nnet(Y~., data=credit.train, size=1, maxit=500)
+credit.nnet <- nnet(Y~., data=credit.train, size=5, maxit=500)
 ```
 
 ```{r}
-prob.nnet= predict(credit.nnet,credit.test)
-pred.nnet = as.numeric(prob.nnet > 0.08)
+prob.nnet <- predict(credit.nnet, credit.test)
+pred.nnet <- as.numeric(prob.nnet > 0.1)
 table(credit.test$Y,pred.nnet, dnn=c("Observed","Predicted"))
-mean(ifelse(credit.test$Y != pred.nnet, 1, 0))
-creditcost(credit.test$Y, pred.nnet)
+cat("Misclassification rate =", mean(ifelse(credit.test$Y != pred.nnet, 1, 0)))
+cat("Asymmetric cost (with ratio 10:1) =", creditcost(credit.test$Y, pred.nnet))
 ```
 
 [go to top](#header)
-

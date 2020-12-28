@@ -1,5 +1,5 @@
 ---
-title: "Classification Tree Models"
+title: "Classification Trees"
 output: 
   html_document: 
     theme: readable
@@ -10,9 +10,9 @@ output:
 
 In this lab we will go through the model building, validation, and interpretation of tree models. The focus will be on *rpart* package.
 
-# CART: classification and regression tree.
+# CART: classification and regression tree
 
-CART stands for classification and regression tree.
+CART stands for classification and regression trees:
 
 * Regression tree: response variable Y is numerical
 * Classification tree: response variable Y is categorical
@@ -23,9 +23,9 @@ Note that unlkie logistic regreesion, the response variable does not have to be 
 
 [go to top](#header)
 
-## Classification Tree (Credit Card Default data)
+## Classification Trees (Credit Card Default data)
 
-The classification tree is slightly more complicated to specify. What makes it more complicated is that we often have asymmetric cost function. In the credit scoring case it means that false negatives (predicting 0 when truth is 1, or giving out loans that end up in default) will cost more than false positives (predicting 1 when truth is 0, rejecting loans that you should not reject).
+The classification trees is slightly more complicated to specify. What makes it more complicated is that we often have asymmetric cost function. In the credit scoring case it means that false negatives (predicting 0 when truth is 1, or giving out loans that end up in default) will cost more than false positives (predicting 1 when truth is 0, rejecting loans that you should not reject).
 
 Here we make the assumption that false negative cost 10 times of false positive. In real life the cost structure should be carefully researched.
 
@@ -53,7 +53,7 @@ credit.rpart0 <- rpart(formula = default ~ ., data = credit.train, method = "cla
 credit.rpart <- rpart(formula = default ~ . , data = credit.train, method = "class", parms = list(loss=matrix(c(0,10,1,0), nrow = 2)))
 ```
 
-Note the following important differences from the regression tree:
+Note the following important differences from the regression trees:
 
 * The method = "class" is required if the response is not declared as factors.
 
@@ -86,7 +86,7 @@ credit.rpart
 prp(credit.rpart, extra = 1)
 ```
 
-### Prediction using classification tree
+### Prediction using classification trees
 For a binary classification problem, as you learned in logistic regression there are 2 types of predictions. One is the predicted class of response (0 or 1), and the second type is the probability of response being 1. We use an additional argument type="class" or type="prob" to get these:
 
 In-sample prediction (skipped)
@@ -168,7 +168,7 @@ Which model do you think is better?
 
 [go to top](#header)
 
-### ROC Curve and Cut-off Probability for Classification Tree
+### ROC Curve and Cut-off Probability for Classification trees
 
 Recall that ROC Curve gives you the trade-off between hit rate (1 - false positive) and false negative, and area under the curve (AUC) can be used as a measure of how good the binary classification model performs when you do not know the cost function.
 
@@ -229,7 +229,7 @@ If you know the cost structure of mis-classification, there is usually no need t
 
 ## Things to remember
 
-* Use `rpart()` to fit regression and classification tree.
+* Use `rpart()` to fit regression and classification trees.
 
 * Know how to interpret a tree.
 
