@@ -2,6 +2,7 @@
 
 This set of learning materials for undergraduate and graduate data mining class is currently maintained by [Xiaorui Zhu](https://homepages.uc.edu/~zhuxr/). Many materials are from Dr. Yan Yu's previous class notes. Thanks for the contribution from previous [Ph.D. students](#bottom) in Lindner College of Business. Thanks to Dr. Brittany Green for recording the videos. 
 
+
 ## Lecture and Lab Notes
 
 ### Introduction to Data Mining and R
