@@ -1,6 +1,6 @@
 # Data Mining in R
 
-This set of learning materials for undergraduate and graduate data mining class is currently maintained by Xiaorui Zhu(zhuxiaorui1989@gmail.com). Many materials are from Dr. Yan Yu's previous class notes. And lab notes are from four previous Ph.D. students [Ph.D. students](#footer) in Lindner College of Business. Thanks to Dr. Brittany Green for recording the videos. 
+This set of learning materials for undergraduate and graduate data mining class is currently maintained by [Xiaorui Zhu](https://homepages.uc.edu/~zhuxr/). Many materials are from Dr. Yan Yu's previous class notes. Thanks for the contribution from previous Ph.D. students [Ph.D. students](#bottom) in Lindner College of Business. Thanks to Dr. Brittany Green for recording the videos. 
 
 ## Lecture and Lab Notes
 
@@ -41,7 +41,7 @@ table th:nth-of-type(3) {
 | [3.A Linear regression and prediction](lecture/3.A_LinearReg.html)           |            | [3.A](lecture/3.A_Exercise.html)  |
 | [3.B Subset variable selection](lecture/3.B_SubsetVS.html)                   |            | [3.B](lecture/3.B_Exercise.html) |
 | [3.C LASSO variables veleciton](lecture/3.C_LASSO.html)                      |            | [3.C](lecture/3.C_Exercise.html) |
-| [3.D Monte Carlo simulation](lecture/3.D_Simulation.html)                      |          | [3.D](lecture/3.D_Exercise.html) |
+| [3.D Monte Carlo simulation](lecture/3.D_Simulation.html)                      |          |  |
 
 ### Logistic Regression
 
@@ -63,8 +63,8 @@ table th:nth-of-type(3) {
 
 | Lab Notes |  Video | Exercise |
 |:----------|:-------------:|------:|
-| [6.A Regression tree](lecture/5.A_RegTree.html)       |            | [6.A](lecture/5.A_Exercise.html)  |
-| [6.B Classification tree](lecture/5.B_ClassTree.html) |            | [6.B](lecture/5.B_Exercise.html) |
+| [6.A Regression Trees](lecture/5.A_RegTree.html)       |            | [6.A](lecture/5.A_Exercise.html)  |
+| [6.B Classification Trees](lecture/5.B_ClassTree.html) |            | [6.B](lecture/5.B_Exercise.html) |
 
 ### Advanced Tree Models: Bagging, Random Forests, and Boosting Tree
 
@@ -89,12 +89,17 @@ table th:nth-of-type(3) {
 | [9.B (Optional) Discriminant analysis](lecture/6.C_DiscriminantAnalysis.html)|            | [9.B](lecture/)  |
 | [9.C (Optional) Support vector machine (SVM)](lecture/6.E_SVM.html)          |            | [9.C](lecture/)  |
 
-### Unsupervised Learning: Clustering and Aassociation Rules
+### Unsupervised Learning: Clustering
 
 | Lab Notes |  Video | Exercise |
 |:----------|:-------------:|------:|
-| [10.A Clustering](lecture/7.A_Clustering.html)           |            | [10.A](lecture/) |
-| [10.B Association Rules](lecture/7.B_AssociationRules.html)|            | [10.B](lecture/)  |
+| [10 Clustering](lecture/7.A_Clustering.html)           |            | [10](lecture/) |
+
+### Unsupervised Learning: Aassociation Rules
+
+| Lab Notes |  Video | Exercise |
+|:----------|:-------------:|------:|
+| [11 Association Rules](lecture/7.B_AssociationRules.html)|            | [10.B](lecture/)  |
 
 ### Other Topics 1: Advanced Variable Selection
 
@@ -104,6 +109,8 @@ table th:nth-of-type(3) {
 
 [Basic Text Mining](lecture/Basic_Text_Mining.html)
 
+
+<a id="bottom"></a>
 
 Contributors: 
 - Tracy Zhou Wu, Ph.D. (2008). Executive Director/VP, JPMorgan Chase, Dallas, TX.  

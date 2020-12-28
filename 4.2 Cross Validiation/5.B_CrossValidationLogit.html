@@ -397,7 +397,7 @@ summary {
 <div id="cross-validation-for-logistic-regression-1" class="section level2">
 <h2><span class="header-section-number">1.1</span> Cross validation for logistic regression</h2>
 <p>Refer to lecture slides and Elements of Statistical Learning book (section 7.10) for more advice on cross validation.</p>
-<pre class="r"><code>pcut = 0.5
+<pre class="r"><code>pcut &lt;- 0.5
 #Symmetric cost
 cost1 &lt;- function(r, pi, pcut){
   mean(((r==0)&amp;(pi&gt;pcut)) | ((r==1)&amp;(pi&lt;pcut)))
@@ -405,23 +405,22 @@ cost1 &lt;- function(r, pi, pcut){
 
 #Asymmetric cost
 cost2 &lt;- function(r, pi, pcut){
-  weight1 = 2
-  weight0 = 1
-  c1 = (r==1)&amp;(pi&lt;pcut) #logical vector - true if actual 1 but predict 0
-  c0 = (r==0)&amp;(pi&gt;pcut) #logical vector - true if actual 0 but predict 1
+  weight1 &lt;- 2
+  weight0 &lt;- 1
+  c1 &lt;- (r==1)&amp;(pi&lt;pcut) #logical vector - true if actual 1 but predict 0
+  c0 &lt;-(r==0)&amp;(pi&gt;pcut) #logical vector - true if actual 0 but predict 1
   return(mean(weight1*c1+weight0*c0))
 }</code></pre>
-<p>We can use the same cost function as defined before, but you need to modify it such that there are only two input: observed <span class="math inline">\(Y\)</span> and predicted probability.</p>
-<pre class="r"><code>costfunc = function(obs, pred.p){
-    weight1 = 5   # define the weight for &quot;true=1 but pred=0&quot; (FN)
-    weight0 = 1    # define the weight for &quot;true=0 but pred=1&quot; (FP)
-    c1 = (obs==1)&amp;(pred.p&lt;pcut)    # count for &quot;true=1 but pred=0&quot;   (FN)
-    c0 = (obs==0)&amp;(pred.p&gt;=pcut)   # count for &quot;true=0 but pred=1&quot;   (FP)
-    cost = mean(weight1*c1 + weight0*c0)  # misclassification with weight
+<p>We can use the same cost function as defined before, but you need to modify it such that there are only two input: observed <span class="math inline">\(Y\)</span> and predicted probability, so that the <code>cv.glm</code> can recognize it for cross-validation with asymmetric cost.</p>
+<pre class="r"><code>costfunc  &lt;- function(obs, pred.p){
+    weight1 &lt;- 5   # define the weight for &quot;true=1 but pred=0&quot; (FN)
+    weight0 &lt;- 1    # define the weight for &quot;true=0 but pred=1&quot; (FP)
+    pcut &lt;- 1/(1+weight1/weight0)
+    c1 &lt;- (obs==1)&amp;(pred.p &lt; pcut)    # count for &quot;true=1 but pred=0&quot;   (FN)
+    c0 &lt;- (obs==0)&amp;(pred.p &gt;= pcut)   # count for &quot;true=0 but pred=1&quot;   (FP)
+    cost &lt;- mean(weight1*c1 + weight0*c0)  # misclassification with weight
     return(cost) # you have to return to a value when you write R functions
-} # end of the function</code></pre>
-<p>Then you need to assign a value to pcut.</p>
-<pre class="r"><code>pcut = 0.02  </code></pre>
+} # end of the </code></pre>
 <p>10-fold cross validation, note you should use the <strong>full data</strong> for cross-validation. In <code>cv.glm</code>, default cost function is the average squared error function.</p>
 <pre class="r"><code>credit.data &lt;- read.csv(file = &quot;https://xiaoruizhu.github.io/Data-Mining-R/lecture/data/credit_default.csv&quot;, header=T)
 library(dplyr)
@@ -432,9 +431,9 @@ credit.data$MARRIAGE&lt;- as.factor(credit.data$MARRIAGE)
 
 library(boot)
 credit.glm1&lt;- glm(default~. , family=binomial, data=credit.data);  
-cv.result = cv.glm(data=credit.data, glmfit=credit.glm1, cost=costfunc, K=10) 
+cv.result  &lt;- cv.glm(data=credit.data, glmfit=credit.glm1, cost=costfunc, K=10) 
 cv.result$delta[2]</code></pre>
-<pre><code>## [1] 0.7770667</code></pre>
+<pre><code>## [1] 0.678875</code></pre>
 <p>The first component of <code>delta</code> is the raw cross-validation estimate of prediction error. The second component is the adjusted cross-validation estimate. The adjustment is designed to compensate for the bias introduced by not using leave-one-out cross-validation.</p>
 <p>Keep in mind that CV-score is averaged model error. Here, it is the cost you have defined before. You may also use F-score for cross-validation, but again, you need to define the function of F-score. (Exercise!)</p>
 <p><a href="#header">go to top</a></p>

@@ -1,5 +1,5 @@
 ---
-title: "Regression Tree Models"
+title: "Regression Trees"
 output: 
   html_document: 
     theme: readable
@@ -10,20 +10,20 @@ output:
 
 In this lab we will go through the model building, validation, and interpretation of tree models. The focus will be on *rpart* package.
 
-# CART: classification and regression tree.
+# CART: classification and regression trees
 
-CART stands for classification and regression tree.
+CART stands for classification and regression trees:
 
-* Regression tree: response variable Y is numerical
-* Classification tree: response variable Y is categorical
+* Regression trees: response variable Y is numerical
+* Classification trees: response variable Y is categorical
 
-For the regression tree example, we will use the Boston Housing data. Recall the response variable is the housing price. For the classification tree example, we will use the credit scoring data. The response variable is whether the loan went to default.
+For the regression trees example, we will use the Boston Housing data. Recall the response variable is the housing price. For the classification trees example, we will use the credit scoring data. The response variable is whether the loan went to default.
 
-Note that unlkie logistic regreesion, the response variable does not have to be binary in case of classification tree. We can use classification tree on classification problems with more than 2 outcomes.
+Note that unlkie logistic regreesion, the response variable does not have to be binary in case of classification trees. We can use classification trees on classification problems with more than 2 outcomes.
 
 [go to top](#header)
 
-## Regression Tree (Boston Housing Data)
+## Regression Trees (Boston Housing Data)
 
 Let us load the data sets. Random sampled training and test datasets will lead to different results,
 
@@ -70,9 +70,9 @@ library(knitr)
 kable(boston.test[10,], digits=2, row.names = F)
 ```
 
-### Prediction using regression tree
+### Prediction using regression trees
 
-The in-sample and out-of-sample prediction for regression tree is also similar to *lm* and *glm* models.
+The in-sample and out-of-sample prediction for regression trees is also similar to *lm* and *glm* models.
 
 - In-sample prediction
 ```{r}
@@ -105,9 +105,9 @@ boston.test.pred.reg = predict(boston.reg, boston.test)
 mean((boston.test.pred.reg - boston.test$medv)^2)
 ```
 
-### Comparing the performance of regression tree with linear regression model in terms of prediction error (Exercise)
+### Comparing the performance of regression trees with linear regression model in terms of prediction error (Exercise)
 
-Calculate the mean squared error (MSE) and mean squared prediction error (MSPE) for linear regression model using all variables. Then compare the results. What is your conclusion? Further, try to compare the regression tree with the best linear regression model using some variable selection procedures.
+Calculate the mean squared error (MSE) and mean squared prediction error (MSPE) for linear regression model using all variables. Then compare the results. What is your conclusion? Further, try to compare the regression trees with the best linear regression model using some variable selection procedures.
 
 ```{r, eval=FALSE}
 boston.lm<- 
