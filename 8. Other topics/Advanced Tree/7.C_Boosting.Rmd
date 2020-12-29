@@ -1,5 +1,5 @@
 ---
-title: "Advanced Tree Models -- Boosting Tree"
+title: "Advanced Tree Models -- Boosting Trees"
 output: 
   html_document: 
     theme: readable

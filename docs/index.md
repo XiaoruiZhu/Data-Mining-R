@@ -40,9 +40,9 @@ table th:nth-of-type(3) {
 | Lab Notes |  Video | Exercise |
 |:----------|:-------------:|------:|
 | [3.A Linear regression and prediction](lecture/3.A_LinearReg.html)           |            | [3.A](lecture/3.A_Exercise.html)  |
-| [3.B Subset variable selection](lecture/3.B_SubsetVS.html)                   |            | [3.B](lecture/3.B_Exercise.html) |
-| [3.C LASSO variables veleciton](lecture/3.C_LASSO.html)                      |            | [3.C](lecture/3.C_Exercise.html) |
-| [3.D Monte Carlo simulation](lecture/3.D_Simulation.html)                      |          |  |
+| [3.B Subset variable selection](lecture/3.B_SubsetVS.html)                   |            | [3.B](lecture/3.B_Exercise.html)  |
+| [3.C LASSO variables selection](lecture/3.C_LASSO.html)                      |            | [3.C](lecture/3.C_Exercise.html)  |
+| [3.D Monte Carlo simulation](lecture/3.D_Simulation.html)                      |          |                                   |
 
 ### Logistic Regression
 
@@ -71,42 +71,38 @@ table th:nth-of-type(3) {
 
 | Lab Notes                                             |  Video     | Exercise                         |
 |:------------------------------------------------------|:----------:|---------------------------------:|
-| [7.A Bagging tree](lecture/7.A_Bagging.html)          |            | [7.A](lecture/) |
-| [7.B Random forests](lecture/7.B_RandomForests.html)  |            | [7.B](lecture/) |
-| [7.C Boosting tree](lecture/7.C_Boosting.html)        |            | [7.C](lecture/) |
+| [7.A Bagging tree](lecture/7.A_Bagging.html)          |            | [7.A](lecture/7.A_Exercise.html) |
+| [7.B Random forests](lecture/7.B_RandomForests.html)  |            | [7.B](lecture/7.B_Exercise.html) |
+| [7.C Boosting tree](lecture/7.C_Boosting.html)        |            | [7.C](lecture/7.C_Exercise.html) |
 
 ### Nonlinearity, Generalized Additive Models (GAM), and Nonparametric Smoothing
 
 | Lab Notes |  Video | Exercise |
 |:----------|:-------------:|------:|
-| [8.A Univariate Nonparametric Smoothing](lecture/6.A_BeyondLinearity.html)   |            | [8.A](lecture/)  |
-| [8.B Generalized additive model (GAM)](lecture/6.B_GAM.html)      |            | [8.B](lecture/) |
+| [8.A Univariate Nonparametric Smoothing](lecture/6.A_BeyondLinearity.html)   |            |  |
+| [8.B Generalized additive model (GAM)](lecture/6.B_GAM.html)      |            |  |
 
 ### Neural Network, LDA, and SVM 
 
 | Lab Notes |  Video | Exercise |
 |:----------|:-------------:|------:|
-| [9.A Neural network models](lecture/6.D_NeuralNet.html)           |            | [9.A](lecture/) |
-| [9.B (Optional) Discriminant analysis](lecture/6.C_DiscriminantAnalysis.html)|            | [9.B](lecture/)  |
-| [9.C (Optional) Support vector machine (SVM)](lecture/6.E_SVM.html)          |            | [9.C](lecture/)  |
+| [9.A Neural network models](lecture/6.D_NeuralNet.html)           |            |  |
+| [9.B (Optional) Discriminant analysis](lecture/6.C_DiscriminantAnalysis.html)|            |   |
+| [9.C (Optional) Support vector machine (SVM)](lecture/6.E_SVM.html)          |            |   |
 
 ### Unsupervised Learning: Clustering
 
 | Lab Notes |  Video | Exercise |
 |:----------|:-------------:|------:|
-| [10 Clustering](lecture/7.A_Clustering.html)           |            | [10](lecture/) |
+| [10 Clustering](lecture/10.A_Clustering.html)           |            |  |
 
 ### Unsupervised Learning: Aassociation Rules
 
 | Lab Notes |  Video | Exercise |
 |:----------|:-------------:|------:|
-| [11 Association Rules](lecture/7.B_AssociationRules.html)|            | [10.B](lecture/)  |
+| [11 Association Rules](lecture/10.B_AssociationRules.html)|            |  |
 
-### Other Topics 1: Advanced Variable Selection
-
-[Advanced Variable Selection Techniques](lecture/VS.html)
-
-### Other Topics 2: Basic Text Mining
+### Other Topics 1: Basic Text Mining
 
 [Basic Text Mining](lecture/Basic_Text_Mining.html)
 

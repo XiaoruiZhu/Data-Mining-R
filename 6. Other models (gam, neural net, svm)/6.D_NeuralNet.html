@@ -1757,7 +1757,7 @@ test_ &lt;- scaled[-index,]
 library(neuralnet)</code></pre>
 <pre class="r"><code>n &lt;- names(train_)
 f &lt;- as.formula(paste(&quot;medv ~&quot;, paste(n[!n %in% &quot;medv&quot;], collapse = &quot; + &quot;)))
-nn &lt;- neuralnet(f,data=train_,hidden=c(5,3),linear.output=T)
+nn &lt;- neuralnet(f,data=train_, hidden=c(5,3), linear.output=T)
 plot(nn)</code></pre>
 <pre class="r"><code>pr.nn &lt;- compute(nn,test_[,1:13])
 
@@ -1766,7 +1766,7 @@ test.r &lt;- (test_$medv)*(max(Boston$medv)-min(Boston$medv))+min(Boston$medv)
 # MSE of testing set
 MSE.nn &lt;- sum((test.r - pr.nn_)^2)/nrow(test_)
 MSE.nn</code></pre>
-<pre><code>## [1] 11.07069</code></pre>
+<pre><code>## [1] 11.82147</code></pre>
 </div>
 <div id="classification" class="section level2">
 <h2><span class="header-section-number">2.2</span> Classification</h2>
@@ -1798,20 +1798,20 @@ credit.test &lt;- credit.data[-id_train,]</code></pre>
 <pre class="r"><code>library(nnet)</code></pre>
 <pre class="r"><code>credit.nnet &lt;- nnet(Y~., data=credit.train, size=5, maxit=500)</code></pre>
 <pre><code>## # weights:  311
-## initial  value 4069.751037 
-## final  value 1001.995878 
+## initial  value 2834.331095 
+## final  value 1024.103419 
 ## converged</code></pre>
 <pre class="r"><code>prob.nnet &lt;- predict(credit.nnet, credit.test)
 pred.nnet &lt;- as.numeric(prob.nnet &gt; 0.1)
 table(credit.test$Y,pred.nnet, dnn=c(&quot;Observed&quot;,&quot;Predicted&quot;))</code></pre>
 <pre><code>##         Predicted
 ## Observed   0
-##        0 463
-##        1  37</code></pre>
+##        0 471
+##        1  29</code></pre>
 <pre class="r"><code>cat(&quot;Misclassification rate =&quot;, mean(ifelse(credit.test$Y != pred.nnet, 1, 0)))</code></pre>
-<pre><code>## Misclassification rate = 0.074</code></pre>
+<pre><code>## Misclassification rate = 0.058</code></pre>
 <pre class="r"><code>cat(&quot;Asymmetric cost (with ratio 10:1) =&quot;, creditcost(credit.test$Y, pred.nnet))</code></pre>
-<pre><code>## Asymmetric cost (with ratio 10:1) = 0.74</code></pre>
+<pre><code>## Asymmetric cost (with ratio 10:1) = 0.58</code></pre>
 <p><a href="#header">go to top</a></p>
 </div>
 </div>

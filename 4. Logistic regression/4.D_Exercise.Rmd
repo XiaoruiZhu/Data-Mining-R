@@ -13,6 +13,7 @@ output:
 editor_options: 
   chunk_output_type: console
 ---
+
 # **Exercise:** 
 
 > 1. Try forward and stepwise selection procedures to see if they deliver the same best model;

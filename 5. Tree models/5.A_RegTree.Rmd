@@ -85,7 +85,9 @@ boston.test.pred.tree = predict(boston.rpart,boston.test)
 ```
 
 We often denote MSE as training error, and MSPE as testing error when sample size is large. 
+
 **Exercise:** Calculate the mean squared error (MSE) for this tree model
+
 ```{r, eval=FALSE}
 MSE.tree<- 
 MSPE.tree <- 

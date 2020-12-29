@@ -52,7 +52,7 @@ library(neuralnet)
 ```{r, fig.width=7}
 n <- names(train_)
 f <- as.formula(paste("medv ~", paste(n[!n %in% "medv"], collapse = " + ")))
-nn <- neuralnet(f,data=train_,hidden=c(5,3),linear.output=T)
+nn <- neuralnet(f,data=train_, hidden=c(5,3), linear.output=T)
 plot(nn)
 ```
 
