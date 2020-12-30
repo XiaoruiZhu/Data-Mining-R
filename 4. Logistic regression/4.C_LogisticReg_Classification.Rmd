@@ -86,7 +86,6 @@ As we talked in the lecture, people may be more interested in the classification
 
 These tables illustrate the impact of choosing different cut-off probability. Choosing a large cut-off probability will result in few cases being predicted as 1, and chossing a small cut-off probability will result in many cases being predicted as 1.
 ```{r}
-
 pred_glm0_train <- predict(credit_glm0, type="response")
 
 table(credit_train$default, (pred_glm0_train > 0.9)*1, dnn=c("Truth","Predicted"))

@@ -21,36 +21,36 @@ Think about what kind of factors could affect people to fail to pay their credit
 
 We first load the credit scoring data. It is easy to load comma-separated values (CSV). 
 ```{r}
-credit.data <- read.csv(file = "https://xiaoruizhu.github.io/Data-Mining-R/lecture/data/credit_default.csv", header=T)
+credit_data <- read.csv(file = "https://xiaoruizhu.github.io/Data-Mining-R/lecture/data/credit_default.csv", header=T)
 ```
 
 Look at what information do we have.
 ```{r}
-colnames(credit.data)
+colnames(credit_data)
 ```
 
 Let's look at how many people were actually default in this sample.
 ```{r}
-mean(credit.data$default.payment.next.month)
+mean(credit_data$default.payment.next.month)
 ```
 
 The name of response variable is too long! I want to make it shorter by renaming. Recall the `rename()` function.
 ```{r message=FALSE}
 library(dplyr)
-credit.data<- rename(credit.data, default=default.payment.next.month)
+credit_data<- rename(credit_data, default=default.payment.next.month)
 ```
 
 How about the variable type and summary statistics?
 ```{r eval=FALSE}
-str(credit.data)    # structure - see variable type
-summary(credit.data) # summary statistics
+str(credit_data)    # structure - see variable type
+summary(credit_data) # summary statistics
 ```
 
 We see all variables are **int**, but we know that *SEX, EDUCATION, MARRIAGE* are categorical, we convert them to **factor**.
 ```{r}
-credit.data$SEX<- as.factor(credit.data$SEX)
-credit.data$EDUCATION<- as.factor(credit.data$EDUCATION)
-credit.data$MARRIAGE<- as.factor(credit.data$MARRIAGE)
+credit_data$SEX<- as.factor(credit_data$SEX)
+credit_data$EDUCATION<- as.factor(credit_data$EDUCATION)
+credit_data$MARRIAGE<- as.factor(credit_data$MARRIAGE)
 ```
 
 *We omit other EDA, but you shouldn't whenever you are doing data analysis.*
@@ -62,16 +62,16 @@ credit.data$MARRIAGE<- as.factor(credit.data$MARRIAGE)
 
 Randomly split the data to training (80%) and testing (20%) datasets:
 ```{r}
-index <- sample(nrow(credit.data),nrow(credit.data)*0.80)
-credit.train = credit.data[index,]
-credit.test = credit.data[-index,]
+index <- sample(nrow(credit_data),nrow(credit_data)*0.80)
+credit_train = credit_data[index,]
+credit_test = credit_data[-index,]
 ```
 
 ## Train a logistic regression model with all variables
 
 ```{r, warning=FALSE}
-credit.glm0<- glm(default~., family=binomial, data=credit.train)
-summary(credit.glm0)
+credit_glm0 <- glm(default~., family=binomial, data=credit_train)
+summary(credit_glm0)
 ```
 
 You have seen `glm()` before. In this lab, this is the main function used to build logistic regression model because it is a member of generalized linear model. In `glm()`, the only thing new is `family`. It specifies the distribution of your response variable. You may also specify the link function after the name of distribution, for example, `family=binomial(logit)` (default link is logit). You can also specify `family=binomial(link = "probit")` to run probit regression. You may also use `glm()` to build many other generalized linear models.
@@ -87,9 +87,9 @@ where the expected count is calculated by assuming row variable has nothing to d
 Here is a very good tutorial for Chi-square test https://www.youtube.com/watch?v=WXPBoFDqNVk. 
 
 ```{r}
-table.edu<- table(credit.data$EDUCATION, credit.data$default)
-table.edu
-chisq.test(table.edu)
+table_edu <- table(credit_data$EDUCATION, credit_data$default)
+table_edu
+chisq.test(table_edu)
 ```
 
 What we saw from above test result is that p-value < 0.05. What is your conclusion?
@@ -98,15 +98,17 @@ What we saw from above test result is that p-value < 0.05. What is your conclusi
 
 ## Get some criteria of model fitting
 
-You can simply extract some criteria of the model fitting, for example, Residual deviance (equivalent to SSE in linear regression model), AIC and BIC. Unlike linear regression models, there is no $R^2$ in logistic regression.
+You can simply extract some criteria of the model fitting, for example, Residual deviance (equivalent to SSE in linear regression model),  mean residual deviance, AIC and BIC. Unlike linear regression models, there is no $R^2$ in logistic regression.
+
 ```{r}
-credit.glm0$deviance
+# in-sample residual deviance
+credit_glm0$deviance
 
-#in-sample mean residual deviance using df 
-credit.glm0$dev/credit.glm0$df.residual 
+# in-sample mean residual deviance using df 
+credit_glm0$dev/credit_glm0$df.residual 
 
-AIC(credit.glm0)
-BIC(credit.glm0)
+AIC(credit_glm0)
+BIC(credit_glm0)
 ```
 
 ## Prediction
@@ -118,12 +120,12 @@ To get prediction from a logistic regression model, there are several steps you 
 1.The fitted model $\hat{\eta} = b_0 +b_1 x_1 + b_2 x_2 + ...$ gives you the estimated value before the inverse of link (logit in case of logistic regression). In logistic regression the $\hat{\eta}$ are called **log odds ratio**, which is $\log(P(y=1)/(1-P(y=1)))$. In R you use the *predict()* function to get a vector of all in-sample $\hat{\eta}$ (for each training obs).
 
 ```{r, fig.width=6, fig.height=4, fig.align='center'}
-hist(predict(credit.glm0))
+hist(predict(credit_glm0))
 ```
 
 2.For each $\hat{\eta}$, in order to get the P(y=1), we can apply the inverse of the link function (logit here) to $\hat{\eta}$. The equation is $P(y=1) =  1/ (1+exp(-\hat{\eta}))$. In R you use the *fitted()* function or *predict(,type="response") to get the **predicted probability** for each training ob.
 ```{r, fig.width=6, fig.height=4, fig.align='center'}
-pred_resp <- predict(credit.glm0,type="response")
+pred_resp <- predict(credit_glm0,type="response")
 hist(pred_resp)
 ```
 
@@ -132,9 +134,9 @@ hist(pred_resp)
 These tables illustrate the impact of choosing different cut-off probability. Choosing a large cut-off probability will result in few cases being predicted as 1, and chossing a small cut-off probability will result in many cases being predicted as 1.
 
 ```{r}
-table(predict(credit.glm0,type="response") > 0.5)
-table(predict(credit.glm0,type="response") > 0.2)
-table(predict(credit.glm0,type="response") > 0.0001)
+table(credit_train$default, (pred_resp > 0.5)*1, dnn=c("Truth","Predicted"))
+table(credit_train$default, (pred_resp > 0.2)*1, dnn=c("Truth","Predicted"))
+table(credit_train$default, (pred_resp > 0.0001)*1, dnn=c("Truth","Predicted"))
 ```
 
 # Summary

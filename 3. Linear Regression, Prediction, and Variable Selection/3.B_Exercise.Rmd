@@ -13,10 +13,11 @@ output:
 editor_options: 
   chunk_output_type: console
 ---
+
 # **Exercise:** 
 
 > 1. Sample 90% of the observation as the training set, then apply forward and backward selection approaches;
-> 2. Compare in-sample and out-of-sample performance between these reduced models.
+> 2. Compare out-of-sample MSPE between these reduced models.
 
 ```{r echo=FALSE, eval=FALSE}
 sample_index <- sample(nrow(Boston),nrow(Boston)*0.90)

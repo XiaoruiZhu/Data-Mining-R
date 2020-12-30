@@ -13,9 +13,10 @@ output:
 editor_options: 
   chunk_output_type: console
 ---
+
 # **Exercise:** 
 
-> 1. Compare Residual deviance (equivalent to SSE in linear regression model) AIC, and BIC of these two models.
+> 1. Compare mean residual deviance, AIC, and BIC of these two models.
 
 ```{r echo=FALSE, eval=FALSE}
 credit.glm0$deviance
