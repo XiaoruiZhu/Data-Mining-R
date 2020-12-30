@@ -384,9 +384,7 @@ summary {
 <li><a href="#logistic-regression"><span class="toc-section-number">3</span> Logistic Regression</a><ul>
 <li><a href="#train-a-logistic-regression-model-with-all-variables"><span class="toc-section-number">3.1</span> Train a logistic regression model with all variables</a></li>
 <li><a href="#binary-classification"><span class="toc-section-number">3.2</span> Binary Classification</a></li>
-<li><a href="#asymmetric-cost"><span class="toc-section-number">3.3</span> Asymmetric cost</a><ul>
-<li><a href="#out-of-sample-classification"><span class="toc-section-number">3.3.1</span> Out-of-sample Classification</a></li>
-</ul></li>
+<li><a href="#asymmetric-cost"><span class="toc-section-number">3.3</span> Asymmetric cost</a></li>
 </ul></li>
 <li><a href="#summary"><span class="toc-section-number">4</span> Summary</a><ul>
 <li><a href="#things-to-remember"><span class="toc-section-number">4.1</span> Things to remember</a></li>
@@ -450,45 +448,45 @@ summary(credit_glm0)</code></pre>
 ## 
 ## Deviance Residuals: 
 ##     Min       1Q   Median       3Q      Max  
-## -3.1706  -0.7071  -0.5481  -0.2817   3.0982  
+## -3.2058  -0.6914  -0.5384  -0.2840   3.4062  
 ## 
 ## Coefficients:
 ##               Estimate Std. Error z value Pr(&gt;|z|)    
-## (Intercept) -9.364e-01  1.534e-01  -6.104 1.04e-09 ***
-## LIMIT_BAL   -7.934e-07  2.818e-07  -2.815  0.00487 ** 
-## SEX2        -1.486e-01  5.411e-02  -2.746  0.00604 ** 
-## EDUCATION2  -1.769e-01  6.253e-02  -2.829  0.00467 ** 
-## EDUCATION3  -2.028e-01  8.446e-02  -2.401  0.01634 *  
-## EDUCATION4  -1.482e+00  3.651e-01  -4.060 4.91e-05 ***
-## MARRIAGE2   -1.611e-01  6.145e-02  -2.622  0.00874 ** 
-## MARRIAGE3   -3.611e-01  2.546e-01  -1.418  0.15620    
-## AGE          6.583e-03  3.305e-03   1.992  0.04635 *  
-## PAY_0        5.616e-01  3.151e-02  17.823  &lt; 2e-16 ***
-## PAY_2        9.125e-02  3.608e-02   2.529  0.01144 *  
-## PAY_3        8.369e-02  3.970e-02   2.108  0.03501 *  
-## PAY_4        3.521e-02  4.431e-02   0.795  0.42682    
-## PAY_5        3.833e-02  4.697e-02   0.816  0.41446    
-## PAY_6        1.684e-02  3.915e-02   0.430  0.66710    
-## BILL_AMT1   -5.426e-06  1.922e-06  -2.823  0.00475 ** 
-## BILL_AMT2    4.646e-06  2.411e-06   1.927  0.05392 .  
-## BILL_AMT3   -3.319e-07  2.162e-06  -0.154  0.87797    
-## BILL_AMT4   -4.600e-06  2.517e-06  -1.828  0.06762 .  
-## BILL_AMT5    2.818e-06  2.987e-06   0.943  0.34559    
-## BILL_AMT6    1.959e-06  2.336e-06   0.839  0.40171    
-## PAY_AMT1    -9.958e-06  3.401e-06  -2.928  0.00341 ** 
-## PAY_AMT2    -3.666e-06  2.937e-06  -1.248  0.21189    
-## PAY_AMT3    -2.448e-06  2.977e-06  -0.822  0.41082    
-## PAY_AMT4    -1.042e-05  3.622e-06  -2.876  0.00403 ** 
-## PAY_AMT5    -3.577e-06  3.182e-06  -1.124  0.26088    
-## PAY_AMT6    -1.454e-06  2.140e-06  -0.679  0.49688    
+## (Intercept) -1.121e+00  1.546e-01  -7.254 4.05e-13 ***
+## LIMIT_BAL   -6.400e-07  2.850e-07  -2.246 0.024734 *  
+## SEX2        -1.859e-01  5.479e-02  -3.392 0.000693 ***
+## EDUCATION2  -1.458e-01  6.371e-02  -2.288 0.022110 *  
+## EDUCATION3  -1.571e-01  8.569e-02  -1.833 0.066750 .  
+## EDUCATION4  -1.111e+00  3.211e-01  -3.459 0.000542 ***
+## MARRIAGE2   -1.073e-01  6.194e-02  -1.732 0.083265 .  
+## MARRIAGE3   -1.078e-01  2.354e-01  -0.458 0.646884    
+## AGE          8.754e-03  3.339e-03   2.622 0.008742 ** 
+## PAY_0        5.925e-01  3.204e-02  18.491  &lt; 2e-16 ***
+## PAY_2        9.521e-02  3.650e-02   2.608 0.009104 ** 
+## PAY_3        5.593e-02  4.042e-02   1.384 0.166383    
+## PAY_4        3.441e-02  4.491e-02   0.766 0.443534    
+## PAY_5        6.466e-02  4.797e-02   1.348 0.177660    
+## PAY_6       -2.083e-03  4.034e-02  -0.052 0.958817    
+## BILL_AMT1   -7.118e-06  2.099e-06  -3.390 0.000698 ***
+## BILL_AMT2    4.958e-06  2.605e-06   1.903 0.057043 .  
+## BILL_AMT3    2.472e-06  2.149e-06   1.150 0.249951    
+## BILL_AMT4   -7.760e-06  2.614e-06  -2.969 0.002989 ** 
+## BILL_AMT5    5.805e-06  2.829e-06   2.052 0.040167 *  
+## BILL_AMT6    9.366e-07  2.151e-06   0.435 0.663297    
+## PAY_AMT1    -1.345e-05  3.805e-06  -3.535 0.000408 ***
+## PAY_AMT2    -6.792e-06  3.115e-06  -2.180 0.029222 *  
+## PAY_AMT3    -3.325e-07  3.044e-06  -0.109 0.913019    
+## PAY_AMT4    -6.189e-06  2.974e-06  -2.081 0.037472 *  
+## PAY_AMT5    -4.425e-06  3.347e-06  -1.322 0.186157    
+## PAY_AMT6    -9.097e-07  2.111e-06  -0.431 0.666451    
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
 ## (Dispersion parameter for binomial family taken to be 1)
 ## 
-##     Null deviance: 10222  on 9599  degrees of freedom
-## Residual deviance:  8932  on 9573  degrees of freedom
-## AIC: 8986
+##     Null deviance: 10035.0  on 9599  degrees of freedom
+## Residual deviance:  8763.1  on 9573  degrees of freedom
+## AIC: 8817.1
 ## 
 ## Number of Fisher Scoring iterations: 5</code></pre>
 <p>You have seen <code>glm()</code> before. In this lab, this is the main function used to build logistic regression model because it is a member of generalized linear model. In <code>glm()</code>, the only thing new is <code>family</code>. It specifies the distribution of your response variable. You may also specify the link function after the name of distribution, for example, <code>family=binomial(logit)</code> (default link is logit). You can also specify <code>family=binomial(link = &quot;probit&quot;)</code> to run probit regression. You may also use <code>glm()</code> to build many other generalized linear models.</p>
@@ -502,29 +500,31 @@ summary(credit_glm0)</code></pre>
 table(credit_train$default, (pred_glm0_train &gt; 0.9)*1, dnn=c(&quot;Truth&quot;,&quot;Predicted&quot;))</code></pre>
 <pre><code>##      Predicted
 ## Truth    0    1
-##     0 7436   10
-##     1 2140   14</code></pre>
+##     0 7509   11
+##     1 2068   12</code></pre>
 <pre class="r"><code>table(credit_train$default, (pred_glm0_train &gt; 0.5)*1, dnn=c(&quot;Truth&quot;,&quot;Predicted&quot;))</code></pre>
 <pre><code>##      Predicted
 ## Truth    0    1
-##     0 7229  217
-##     1 1589  565</code></pre>
+##     0 7325  195
+##     1 1552  528</code></pre>
 <pre class="r"><code>table(credit_train$default, (pred_glm0_train &gt; 0.2)*1, dnn=c(&quot;Truth&quot;,&quot;Predicted&quot;))</code></pre>
 <pre><code>##      Predicted
 ## Truth    0    1
-##     0 4342 3104
-##     1  608 1546</code></pre>
+##     0 4673 2847
+##     1  631 1449</code></pre>
 <pre class="r"><code>table(credit_train$default, (pred_glm0_train &gt; 0.0001)*1, dnn=c(&quot;Truth&quot;,&quot;Predicted&quot;))</code></pre>
 <pre><code>##      Predicted
 ## Truth    0    1
-##     0    2 7444
-##     1    0 2154</code></pre>
+##     0    2 7518
+##     1    0 2080</code></pre>
 <p>Therefore, determine the optimal cut-off probability is crucial. The simplest way to determine the cut-off is to use the proportion of “1” in the original data. We will intriduce a more appropriate way to determine the optimal p-cut.</p>
 </div>
 <div id="asymmetric-cost" class="section level2">
 <h2><span class="header-section-number">3.3</span> Asymmetric cost</h2>
 <p>In the case of givng loan to someone, the cost function can indicate the trade off between the risk of giving loan to someone who cannot pay (predict 0, truth 1), and risk of rejecting someone who qualifys (predict 1, truth 0). Given different business situation, one may need to have asymmetric costs for false positive and false negative. Meanwhile, when you want a binary classification decision rule, you need to choose different cut-off probability. Choosing a large cut-off probability will result in few cases being predicted as 1, and chossing a small cut-off probability will result in many cases being predicted as 1.</p>
-<p>The symmetric cost function and asymmetric cost function with 5:1 cost ratio:</p>
+<ol style="list-style-type: decimal">
+<li>The symmetric cost function and asymmetric cost function with 5:1 cost ratio:</li>
+</ol>
 <pre class="r"><code>#Symmetric cost
 cost1 &lt;- function(r, pi, pcut){
   mean(((r==0)&amp;(pi&gt;pcut)) | ((r==1)&amp;(pi&lt;pcut)))
@@ -541,11 +541,13 @@ cost2 &lt;- function(r, pi, pcut){
 <pre class="r"><code>pcut &lt;- 1/(5+1)
 #Symmetric cost
 cost1(r = credit_train$default, pi = pred_glm0_train, pcut)</code></pre>
-<pre><code>## [1] 0.4791667</code></pre>
+<pre><code>## [1] 0.464375</code></pre>
 <pre class="r"><code>#Asymmetric cost
 cost2(r = credit_train$default, pi = pred_glm0_train, pcut)</code></pre>
-<pre><code>## [1] 0.68125</code></pre>
-<p>Symmetric cost and asymmetric cost with different cut-off probability:</p>
+<pre><code>## [1] 0.666875</code></pre>
+<ol start="2" style="list-style-type: decimal">
+<li>(Optional) Symmetric cost and asymmetric cost with different cut-off probability:</li>
+</ol>
 <pre class="r"><code>pcuts &lt;- costs1 &lt;- costs2 &lt;- matrix(c(0.9,0.5,0.2,0.0001), nrow = 4, ncol = 1)
 
 costs1[] &lt;- vapply(X = pcuts, FUN = cost1, FUN.VALUE = numeric(1), 
@@ -557,37 +559,23 @@ All_costs &lt;- as.matrix(cbind(costs1, costs2))
 dimnames(All_costs) &lt;- list(c(0.9,0.5,0.2,0.0001), c(&quot;Symm cost&quot;, &quot;Asym cost&quot;))
 All_costs</code></pre>
 <pre><code>##       Symm cost Asym cost
-## 0.9   0.2239583 1.1156250
-## 0.5   0.1881250 0.8502083
-## 0.2   0.3866667 0.6400000
-## 1e-04 0.7754167 0.7754167</code></pre>
-<div id="exercise-1" class="section level4">
-<h4><span class="header-section-number">3.3.0.1</span> <strong>Exercise 1:</strong></h4>
-<blockquote>
-<ol style="list-style-type: decimal">
-<li>Change the weights to different values, and see how your optimal cut-off changes.</li>
-<li>obtain confusion matrix and calculate the (asymmetric) cost based on the optimal cut-off.</li>
-<li>Find optimal cut-off probability using symmetric cost.</li>
-<li>Calculate MR and cost, what do you find?</li>
-<li>Further, rewrite the cost function to make the weights (or the ratio of two weights) as input parameter. <!-- > 6. Use F-score to determine the optimal cut-off. --></li>
-</ol>
-</blockquote>
-</div>
-<div id="out-of-sample-classification" class="section level3">
-<h3><span class="header-section-number">3.3.1</span> Out-of-sample Classification</h3>
-<p>Everything you have done about classification so far is for training sample. Now let’s get to testing sample. Keep in mind the principle, <strong>testing sample is only used for evaluating your model’s prediction accuracy</strong>! NO NEED TO CHOOSE CUT-OFF PROBABILITY in this stage.</p>
-<div id="exercise-2" class="section level4">
-<h4><span class="header-section-number">3.3.1.1</span> <strong>Exercise 2:</strong></h4>
-<blockquote>
-<ol style="list-style-type: decimal">
-<li>Calculate MR, FPR, FNR based on the optimal cut-off you get from training sample with weights (5:1)</li>
-<li>Calculate asymetric cost based on the optimal cut-off you get from training sample with weights (5:1)</li>
-<li>Calculate above statistics based on the cut-off you get from training sample with symmetric weights (1:1)</li>
-</ol>
-</blockquote>
-<hr />
-</div>
-</div>
+## 0.9   0.2165625 1.0782292
+## 0.5   0.1819792 0.8286458
+## 0.2   0.3622917 0.6252083
+## 1e-04 0.7831250 0.7831250</code></pre>
+<!-- #### **Exercise 1:**  -->
+<!-- > 1. Change the weights to different values, and see how your optimal cut-off changes. -->
+<!-- > 2. obtain confusion matrix and calculate the (asymmetric) cost based on the optimal cut-off.  -->
+<!-- > 3. Find optimal cut-off probability using symmetric cost.  -->
+<!-- > 4. Calculate MR and cost, what do you find? -->
+<!-- > 5. Further, rewrite the cost function to make the weights (or the ratio of two weights) as input parameter. -->
+<p>&lt;!– <!-- > 6. Use F-score to determine the optimal cut-off. --> –&gt;</p>
+<!-- ### Out-of-sample Classification -->
+<!-- Everything you have done about classification so far is for training sample. Now let's get to testing sample. Keep in mind the principle, **testing sample is only used for evaluating your model's prediction accuracy**! NO NEED TO CHOOSE CUT-OFF PROBABILITY in this stage. -->
+<!-- #### **Exercise 2:**  -->
+<!-- > 1. Calculate MR, FPR, FNR based on the optimal cut-off you get from training sample with weights (5:1) -->
+<!-- > 2. Calculate asymetric cost based on the optimal cut-off you get from training sample with weights (5:1) -->
+<!-- > 3. Calculate above statistics based on the cut-off you get from training sample with symmetric weights (1:1)  -->
 </div>
 </div>
 <div id="summary" class="section level1">
@@ -598,7 +586,6 @@ All_costs</code></pre>
 <li><p>Know how to use glm() to build logistic regression;</p></li>
 <li><p>Know how to get ROC and AUC based on predicted probability;</p></li>
 <li><p>Know how to get PR curve and AUC based on predicted probability;</p></li>
-<li><p>Know how to find optimal cut-off;</p></li>
 <li><p>Know how to do binary classification, and calculation of MR, FPR, FNR, and cost;</p></li>
 <li><p>Know how to use LASSO for logistic regression</p></li>
 </ul>
@@ -611,7 +598,7 @@ All_costs</code></pre>
 <li><p>Prediction (ROC, AUC; PR, AUC)</p></li>
 <li><p>Model comparison using AUC</p></li>
 <li><p>Find optimal cut-off based on training sample</p></li>
-<li><p>Classification – Obtain the confusion matrix and calculate the MR, asymmetric cost, FPR, Precision, Recall, and F-score for both training and testing sample based on (1) naive cut-off determined by sample proportion; (2) optimal cut-off determined by asymmetric cost; (3) optimal cut-off determined by F-score.</p></li>
+<li><p>Classification – Obtain the confusion matrix and calculate the MR, asymmetric cost, FPR, Precision, and Recall.</p></li>
 <li><p>Build new models by Variable Selection</p></li>
 <li><p>Calculate all criteria</p></li>
 <li><p>Comprehensive comparison</p></li>

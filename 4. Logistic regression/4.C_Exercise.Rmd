@@ -16,7 +16,7 @@ editor_options:
 
 # **Exercise:**
 
-> 1. When the cutoff probability equals to 0.8, create a confusion matrix.
+> 1. When the cutoff probability equals to 0.1, create a confusion matrix.
 
 <!-- # **Exercise 1:**  -->
 

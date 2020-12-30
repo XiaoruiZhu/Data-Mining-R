@@ -16,7 +16,7 @@ editor_options:
 
 # **Exercise:** 
 
-> 1. Compare mean residual deviance, AIC, and BIC of these two models.
+> 1. Compare AIC and BIC of these two models.
 
 ```{r echo=FALSE, eval=FALSE}
 credit.glm0$deviance
