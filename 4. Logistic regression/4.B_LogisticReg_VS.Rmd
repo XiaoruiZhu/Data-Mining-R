@@ -100,16 +100,8 @@ credit.glm.back.BIC$deviance
 AIC(credit.glm.back.BIC)
 BIC(credit.glm.back.BIC)
 ```
+
 **Exercise:** Try forward and stepwise selection procedures to see if they deliver the same best model.
-
-#### Exercise:
-
-* Get ROC curve and AUC for both training and testing sample
-
-* Using training sample, find the optimal cut-off by grid search method with asymmetric cost (weights ratio = 5:1)
-
-* Calculate MR, FPR, FNR, the asymmetric cost for both taining and testing sample.
-
 
 **************************
 

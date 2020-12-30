@@ -20,7 +20,7 @@ editor_options:
 ```{r echo=TRUE, eval=FALSE}
 HighDim <- read.csv(file = "https://xiaoruizhu.github.io/Data-Mining-R/lecture/data/HighDim.csv")
 ```
-> Fit a model with first five variables. 
+> Can we do subset variable selection? 
 > How about LASSO variable selection?
 
 ```{r , eval=FALSE, echo=FALSE}

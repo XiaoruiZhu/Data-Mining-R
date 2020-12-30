@@ -16,7 +16,7 @@ editor_options:
 
 # **Exercise:** 
 
-> 1. Conduct 2-fold CV to calculate the mean square error of LASSO selected model, full model, and a reduced model with indus and rm only. 
+> 1. Conduct 2-fold CV to calculate the mean square error of full model, and a reduced model with indus and rm only. 
 
 
 ```{r, echo=FALSE, message=FALSE, eval=FALSE}

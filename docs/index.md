@@ -80,7 +80,7 @@ table th:nth-of-type(3) {
 | Lab Notes |  Video | Exercise |
 |:----------|:-------------:|------:|
 | [8.A Univariate Nonparametric Smoothing](lecture/6.A_BeyondLinearity.html)   |            |  |
-| [8.B Generalized additive model (GAM)](lecture/6.B_GAM.html)      |            |  |
+| [8.B Generalized additive model (GAM)](lecture/6.B_GAM.html)                 |            | [8.B](lecture/6.B_Exercise.html) |
 
 ### Neural Network, LDA, and SVM 
 

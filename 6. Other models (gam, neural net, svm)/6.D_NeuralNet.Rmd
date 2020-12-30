@@ -66,61 +66,56 @@ MSE_nn <- sum((test_r - pr_nn_org)^2)/nrow(test_Boston)
 MSE_nn
 ```
 
-## Classification
+<!-- ## Classification -->
 
-__Note__: 
+<!-- __Note__:  -->
 
-- For classification problems with nnet you need to code the response to _factor_ first. In addition you want to add type = "class" for _predict()_  function. 
+<!-- - For classification problems with nnet you need to code the response to _factor_ first. In addition you want to add type = "class" for _predict()_  function.  -->
 
-### Credit Score Data
+<!-- ### Credit Scoring Data -->
 
-```{r}
-# credit_data <- read.csv("data/credit0.csv", header=T)
-credit_data <- read.csv(file = "https://xiaoruizhu.github.io/Data-Mining-R/lecture/data/credit0.csv", header=T)
-```
+<!-- ```{r} -->
+<!-- credit_data <- read.csv(file = "https://xiaoruizhu.github.io/Data-Mining-R/lecture/data/credit_default.csv", header=T) -->
 
-We remove X9 and id from the data since we will not be using them for prediction.
-```{r}
-credit_data$X9 <- NULL
-credit_data$id <- NULL
-credit_data$Y <- as.factor(credit_data$Y)
-```
+<!-- # rename -->
+<!-- library(dplyr) -->
+<!-- credit_data<- rename(credit_data, default=default.payment.next.month) -->
+<!-- # convert categorical data to factor -->
+<!-- credit_data$SEX<- as.factor(credit_data$SEX) -->
+<!-- credit_data$EDUCATION<- as.factor(credit_data$EDUCATION) -->
+<!-- credit_data$MARRIAGE<- as.factor(credit_data$MARRIAGE) -->
+<!-- ``` -->
 
-Now split the data 90/10 as training/testing datasets:
-```{r}
-id_train <- sample(nrow(credit_data),nrow(credit_data)*0.90)
-credit_train <- credit_data[id_train,]
-credit_test <- credit_data[-id_train,]
-```
+<!-- ```{r} -->
+<!-- index <- sample(nrow(credit_data),nrow(credit_data)*0.90) -->
+<!-- credit_train = credit_data[index,] -->
+<!-- credit_test = credit_data[-index,] -->
+<!-- ``` -->
 
-The training dataset has 61 variables, 4500 obs. 
 
-You are already familiar with the credit scoring set. Let's define a cost function for benchmarking testing set performance. Note this is slightly different from the one we used for searching for optimal cut-off probability in logistic regression. Here the 2nd argument is the predict class instead of the predict probability (since many methods are not based on predict probability).
+<!-- You are already familiar with the credit scoring set. Let's define a cost function for benchmarking testing set performance. Note this is slightly different from the one we used for searching for optimal cut-off probability in logistic regression. Here the 2nd argument is the predict class instead of the predict probability (since many methods are not based on predict probability). -->
 
-```{r}
-creditcost <- function(observed, predicted){
-  weight1 <- 10
-  weight0 <- 1
-  c1 <- (observed==1)&(predicted == 0) #logical vector - true if actual 1 but predict 0
-  c0 <- (observed==0)&(predicted == 1) #logical vector - true if actual 0 but predict 1
-  return(mean(weight1*c1+weight0*c0))
-}
-```
+<!-- ```{r} -->
+<!-- creditcost <- function(observed, predicted){ -->
+<!--   weight1 <- 5 -->
+<!--   weight0 <- 1 -->
+<!--   c1 <- (observed==1)&(predicted == 0) #logical vector - true if actual 1 but predict 0 -->
+<!--   c0 <- (observed==0)&(predicted == 1) #logical vector - true if actual 0 but predict 1 -->
+<!--   return(mean(weight1*c1+weight0*c0)) -->
+<!-- } -->
+<!-- ``` -->
 
-```{r, message=FALSE}
-library(nnet)
-```
+<!-- ```{r, message=FALSE} -->
+<!-- library(nnet) -->
+<!-- credit_nnet <- nnet(default~., data=credit_train, size=20, maxit=5000) -->
+<!-- ``` -->
 
-```{r}
-credit_nnet <- nnet(Y~., data=credit_train, size=5, maxit=500)
-```
-
-```{r}
-prob_nnet <- predict(credit_nnet, credit_test)
-pred_nnet <- as.numeric(prob_nnet > 0.1)
-table(credit_test$Y,pred_nnet, dnn=c("Observed","Predicted"))
-cat("Misclassification rate =", mean(ifelse(credit_test$Y != pred_nnet, 1, 0)))
-cat("Asymmetric cost (with ratio 10:1) =", creditcost(credit_test$Y, pred_nnet))
-```
+<!-- ```{r} -->
+<!-- prob_nnet <- predict(credit_nnet, credit_test) -->
+<!-- pred_nnet <- as.numeric(prob_nnet > 0.05) -->
+<!-- table(credit_test$default,pred_nnet, dnn=c("Observed","Predicted")) -->
+<!-- cat("Misclassification rate =", mean(ifelse(credit_test$default != pred_nnet, 1, 0))) -->
+<!-- cat("Asymmetric cost (with ratio 10:1) =", creditcost(credit_test$default, pred_nnet)) -->
+<!-- ``` -->
 
 [go to top](#header)

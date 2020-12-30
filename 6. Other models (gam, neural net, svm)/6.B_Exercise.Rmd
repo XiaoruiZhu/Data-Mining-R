@@ -1,0 +1,19 @@
+---
+title: "Generalized Additive Model"
+output: 
+  html_document: 
+    theme: readable
+    fig_caption: yes
+    number_sections: yes
+    toc: yes
+    code_folding: show
+    df_print: paged
+editor_options: 
+  chunk_output_type: console
+---
+
+# **Exercise:** 
+
+> 1. In the lab notes, is the `LIMIT_BAL` variable nonlinearly associated with the `default` status? 
+> 2. What about the `AGE`?
+

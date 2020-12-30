@@ -101,6 +101,10 @@ What we saw from above test result is that p-value < 0.05. What is your conclusi
 You can simply extract some criteria of the model fitting, for example, Residual deviance (equivalent to SSE in linear regression model), AIC and BIC. Unlike linear regression models, there is no $R^2$ in logistic regression.
 ```{r}
 credit.glm0$deviance
+
+#in-sample mean residual deviance using df 
+credit.glm0$dev/credit.glm0$df.residual 
+
 AIC(credit.glm0)
 BIC(credit.glm0)
 ```

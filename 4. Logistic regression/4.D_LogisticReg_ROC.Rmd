@@ -21,36 +21,36 @@ Think about what kind of factors could affect people to fail to pay their credit
 
 We first load the credit scoring data. It is easy to load comma-separated values (CSV). 
 ```{r}
-credit.data <- read.csv(file = "https://xiaoruizhu.github.io/Data-Mining-R/lecture/data/credit_default.csv", header=T)
+credit_data <- read.csv(file = "https://xiaoruizhu.github.io/Data-Mining-R/lecture/data/credit_default.csv", header=T)
 ```
 
 Look at what information do we have.
 ```{r}
-colnames(credit.data)
+colnames(credit_data)
 ```
 
 Let's look at how many people were actually default in this sample.
 ```{r}
-mean(credit.data$default.payment.next.month)
+mean(credit_data$default.payment.next.month)
 ```
 
 The name of response variable is too long! I want to make it shorter by renaming. Recall the `rename()` function.
 ```{r message=FALSE}
 library(dplyr)
-credit.data<- rename(credit.data, default=default.payment.next.month)
+credit_data<- rename(credit_data, default=default.payment.next.month)
 ```
 
 How about the variable type and summary statistics?
 ```{r eval=FALSE}
-str(credit.data)    # structure - see variable type
-summary(credit.data) # summary statistics
+str(credit_data)    # structure - see variable type
+summary(credit_data) # summary statistics
 ```
 
 We see all variables are **int**, but we know that *SEX, EDUCATION, MARRIAGE* are categorical, we convert them to **factor**.
 ```{r}
-credit.data$SEX<- as.factor(credit.data$SEX)
-credit.data$EDUCATION<- as.factor(credit.data$EDUCATION)
-credit.data$MARRIAGE<- as.factor(credit.data$MARRIAGE)
+credit_data$SEX<- as.factor(credit_data$SEX)
+credit_data$EDUCATION<- as.factor(credit_data$EDUCATION)
+credit_data$MARRIAGE<- as.factor(credit_data$MARRIAGE)
 ```
 
 *We omit other EDA, but you shouldn't whenever you are doing data analysis.*
@@ -62,16 +62,16 @@ credit.data$MARRIAGE<- as.factor(credit.data$MARRIAGE)
 
 Randomly split the data to training (80%) and testing (20%) datasets:
 ```{r}
-index <- sample(nrow(credit.data),nrow(credit.data)*0.80)
-credit.train = credit.data[index,]
-credit.test = credit.data[-index,]
+index <- sample(nrow(credit_data),nrow(credit_data)*0.80)
+credit_train = credit_data[index,]
+credit_test = credit_data[-index,]
 ```
 
 ## Train a logistic regression model with all variables
 
 ```{r, warning=FALSE}
-credit.glm0<- glm(default~., family=binomial, data=credit.train)
-summary(credit.glm0)
+credit_glm0<- glm(default~., family=binomial, data=credit_train)
+summary(credit_glm0)
 ```
 
 You have seen `glm()` before. In this lab, this is the main function used to build logistic regression model because it is a member of generalized linear model. In `glm()`, the only thing new is `family`. It specifies the distribution of your response variable. You may also specify the link function after the name of distribution, for example, `family=binomial(logit)` (default link is logit). You can also specify `family=binomial(link = "probit")` to run probit regression. You may also use `glm()` to build many other generalized linear models.
@@ -85,12 +85,12 @@ To get prediction from a logistic regression model, there are several steps you 
 1.The fitted model $\hat{\eta} = b_0 +b_1 x_1 + b_2 x_2 + ...$ gives you the estimated value before the inverse of link (logit in case of logistic regression). In logistic regression the $\hat{\eta}$ are called **log odds ratio**, which is $\log(P(y=1)/(1-P(y=1)))$. In R you use the *predict()* function to get a vector of all in-sample $\hat{\eta}$ (for each training obs).
 
 ```{r, fig.width=6, fig.height=4, fig.align='center'}
-hist(predict(credit.glm0))
+hist(predict(credit_glm0))
 ```
 
 2.For each $\hat{\eta}$, in order to get the P(y=1), we can apply the inverse of the link function (logit here) to $\hat{\eta}$. The equation is $P(y=1) =  1/ (1+exp(-\hat{\eta}))$. In R you use the *fitted()* function or *predict(,type="response") to get the **predicted probability** for each training ob.
 ```{r, fig.width=6, fig.height=4, fig.align='center'}
-pred_resp <- predict(credit.glm0,type="response")
+pred_resp <- predict(credit_glm0,type="response")
 hist(pred_resp)
 ```
 
@@ -99,14 +99,14 @@ hist(pred_resp)
 These tables illustrate the impact of choosing different cut-off probability. Choosing a large cut-off probability will result in few cases being predicted as 1, and chossing a small cut-off probability will result in many cases being predicted as 1.
 
 ```{r}
-table(predict(credit.glm0,type="response") > 0.5)
-table(predict(credit.glm0,type="response") > 0.2)
-table(predict(credit.glm0,type="response") > 0.0001)
+table(credit_train$default, (pred_resp > 0.5)*1, dnn=c("Truth","Predicted"))
+table(credit_train$default, (pred_resp > 0.2)*1, dnn=c("Truth","Predicted"))
+table(credit_train$default, (pred_resp > 0.0001)*1, dnn=c("Truth","Predicted"))
 ```
 
 ### In-sample prediction (less important)
 ```{r}
-pred.glm0.train<- predict(credit.glm0, type="response")
+pred_glm0_train<- predict(credit_glm0, type="response")
 ```
 
 (**IMPORTANT!!!**) You have to specify `type="response"` in order to get probability outcome, which is what we want. Otherwise, what it produces is the linear predictor term $\beta_0+\beta_1X_1+\beta_2X_2+\dotso$. Recall the lecture, how is this linear predictor related to probability?
@@ -126,7 +126,7 @@ install.packages('ROCR')
 ```
 ```{r, message=FALSE, warning=FALSE, fig.width=6, fig.height=5, fig.align='center'}
 library(ROCR)
-pred <- prediction(pred.glm0.train, credit.train$default)
+pred <- prediction(pred_glm0_train, credit_train$default)
 perf <- performance(pred, "tpr", "fpr")
 plot(perf, colorize=TRUE)
 #Get the AUC
@@ -138,14 +138,14 @@ Be careful that the function `prediction()` is different from `predict()`. It is
 
 ### Out-of-sample prediction (more important)
 ```{r}
-pred.glm0.test<- predict(credit.glm0, newdata = credit.test, type="response")
+pred_glm0_test<- predict(credit_glm0, newdata = credit_test, type="response")
 ```
 
 For out-of-sample prediction, you have to specify `newdata="testing sample name"`.
 
 #### ROC Curve
 ```{r, message=FALSE, warning=FALSE, fig.width=6, fig.height=5, fig.align='center'}
-pred <- prediction(pred.glm0.test, credit.test$default)
+pred <- prediction(pred_glm0_test, credit_test$default)
 perf <- performance(pred, "tpr", "fpr")
 plot(perf, colorize=TRUE)
 #Get the AUC
@@ -161,8 +161,8 @@ install.packages("PRROC")
 ```
 ```{r message=FALSE, warning=FALSE, figures-side, fig.show="hold", out.width="50%"}
 library(PRROC)
-score1= pred.glm0.train[credit.train$default==1]
-score0= pred.glm0.train[credit.train$default==0]
+score1= pred_glm0_train[credit_train$default==1]
+score0= pred_glm0_train[credit_train$default==0]
 roc= roc.curve(score1, score0, curve = T)
 roc$auc
 pr= pr.curve(score1, score0, curve = T)
@@ -170,8 +170,8 @@ pr
 plot(pr, main="In-sample PR curve")
 
 # Out-of-sample prediction: 
-score1.test= pred.glm0.test[credit.test$default==1]
-score0.test= pred.glm0.test[credit.test$default==0]
+score1.test= pred_glm0_test[credit_test$default==1]
+score0.test= pred_glm0_test[credit_test$default==0]
 roc.test= roc.curve(score1.test, score0.test, curve = T)
 roc.test$auc
 pr.test= pr.curve(score1.test, score0.test, curve = T)

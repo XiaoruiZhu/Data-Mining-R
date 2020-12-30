@@ -16,7 +16,4 @@ editor_options:
 
 # **Exercise:** 
 
-> 1. Try forward and LASSO selection procedures to see if they deliver the same best model;
-> 2. Get ROC curve and AUC for both full model and the best model you obtained;
-> 3. Calculate MR, FPR, FNR, the asymmetric cost for both full model and the best model you obtained.
-
+> 1. Try forward and stepwise selection procedures to see if they deliver the same best model, using BIC criteria.

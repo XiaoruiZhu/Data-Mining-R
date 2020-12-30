@@ -383,8 +383,9 @@ summary {
 <li><a href="#credit-card-default-data"><span class="toc-section-number">2</span> Credit Card Default Data</a></li>
 <li><a href="#logistic-regression"><span class="toc-section-number">3</span> Logistic Regression</a><ul>
 <li><a href="#train-a-logistic-regression-model-with-all-variables"><span class="toc-section-number">3.1</span> Train a logistic regression model with all variables</a></li>
-<li><a href="#binary-classification"><span class="toc-section-number">3.2</span> Binary Classification</a><ul>
-<li><a href="#out-of-sample-classification"><span class="toc-section-number">3.2.1</span> Out-of-sample Classification</a></li>
+<li><a href="#binary-classification"><span class="toc-section-number">3.2</span> Binary Classification</a></li>
+<li><a href="#asymmetric-cost"><span class="toc-section-number">3.3</span> Asymmetric cost</a><ul>
+<li><a href="#out-of-sample-classification"><span class="toc-section-number">3.3.1</span> Out-of-sample Classification</a></li>
 </ul></li>
 </ul></li>
 <li><a href="#summary"><span class="toc-section-number">4</span> Summary</a><ul>
@@ -402,9 +403,9 @@ summary {
 <h1><span class="header-section-number">2</span> Credit Card Default Data</h1>
 <p>We will use a Credit Card Default Data for this lab and illustration. The details of the data can be found at <a href="http://archive.ics.uci.edu/ml/datasets/default+of+credit+card+clients" class="uri">http://archive.ics.uci.edu/ml/datasets/default+of+credit+card+clients</a>. Think about what kind of factors could affect people to fail to pay their credit balance.</p>
 <p>We first load the credit scoring data. It is easy to load comma-separated values (CSV).</p>
-<pre class="r"><code>credit.data &lt;- read.csv(file = &quot;https://xiaoruizhu.github.io/Data-Mining-R/lecture/data/credit_default.csv&quot;, header=T)</code></pre>
+<pre class="r"><code>credit_data &lt;- read.csv(file = &quot;https://xiaoruizhu.github.io/Data-Mining-R/lecture/data/credit_default.csv&quot;, header=T)</code></pre>
 <p>Look at what information do we have.</p>
-<pre class="r"><code>colnames(credit.data)</code></pre>
+<pre class="r"><code>colnames(credit_data)</code></pre>
 <pre><code>##  [1] &quot;LIMIT_BAL&quot;                  &quot;SEX&quot;                       
 ##  [3] &quot;EDUCATION&quot;                  &quot;MARRIAGE&quot;                  
 ##  [5] &quot;AGE&quot;                        &quot;PAY_0&quot;                     
@@ -418,76 +419,76 @@ summary {
 ## [21] &quot;PAY_AMT4&quot;                   &quot;PAY_AMT5&quot;                  
 ## [23] &quot;PAY_AMT6&quot;                   &quot;default.payment.next.month&quot;</code></pre>
 <p>Let’s look at how many people were actually default in this sample.</p>
-<pre class="r"><code>mean(credit.data$default.payment.next.month)</code></pre>
+<pre class="r"><code>mean(credit_data$default.payment.next.month)</code></pre>
 <pre><code>## [1] 0.2193333</code></pre>
 <p>The name of response variable is too long! I want to make it shorter by renaming. Recall the <code>rename()</code> function.</p>
 <pre class="r"><code>library(dplyr)
-credit.data&lt;- rename(credit.data, default=default.payment.next.month)</code></pre>
+credit_data&lt;- rename(credit_data, default=default.payment.next.month)</code></pre>
 <p>How about the variable type and summary statistics?</p>
-<pre class="r"><code>str(credit.data)    # structure - see variable type
-summary(credit.data) # summary statistics</code></pre>
+<pre class="r"><code>str(credit_data)    # structure - see variable type
+summary(credit_data) # summary statistics</code></pre>
 <p>We see all variables are <strong>int</strong>, but we know that <em>SEX, EDUCATION, MARRIAGE</em> are categorical, we convert them to <strong>factor</strong>.</p>
-<pre class="r"><code>credit.data$SEX&lt;- as.factor(credit.data$SEX)
-credit.data$EDUCATION&lt;- as.factor(credit.data$EDUCATION)
-credit.data$MARRIAGE&lt;- as.factor(credit.data$MARRIAGE)</code></pre>
+<pre class="r"><code>credit_data$SEX&lt;- as.factor(credit_data$SEX)
+credit_data$EDUCATION&lt;- as.factor(credit_data$EDUCATION)
+credit_data$MARRIAGE&lt;- as.factor(credit_data$MARRIAGE)</code></pre>
 <p><em>We omit other EDA, but you shouldn’t whenever you are doing data analysis.</em></p>
 <p><a href="#header">go to top</a></p>
 </div>
 <div id="logistic-regression" class="section level1">
 <h1><span class="header-section-number">3</span> Logistic Regression</h1>
 <p>Randomly split the data to training (80%) and testing (20%) datasets:</p>
-<pre class="r"><code>index &lt;- sample(nrow(credit.data),nrow(credit.data)*0.80)
-credit.train = credit.data[index,]
-credit.test = credit.data[-index,]</code></pre>
+<pre class="r"><code>index &lt;- sample(nrow(credit_data),nrow(credit_data)*0.80)
+credit_train = credit_data[index,]
+credit_test = credit_data[-index,]</code></pre>
 <div id="train-a-logistic-regression-model-with-all-variables" class="section level2">
 <h2><span class="header-section-number">3.1</span> Train a logistic regression model with all variables</h2>
-<pre class="r"><code>credit.glm0&lt;- glm(default~., family=binomial, data=credit.train)
-summary(credit.glm0)</code></pre>
+<pre class="r"><code>credit_glm0&lt;- glm(default~., family=binomial, data=credit_train)
+summary(credit_glm0)</code></pre>
 <pre><code>## 
 ## Call:
-## glm(formula = default ~ ., family = binomial, data = credit.train)
+## glm(formula = default ~ ., family = binomial, data = credit_train)
 ## 
 ## Deviance Residuals: 
 ##     Min       1Q   Median       3Q      Max  
-## -3.2119  -0.6945  -0.5362  -0.2857   3.1783  
+## -3.1706  -0.7071  -0.5481  -0.2817   3.0982  
 ## 
 ## Coefficients:
 ##               Estimate Std. Error z value Pr(&gt;|z|)    
-## (Intercept) -9.858e-01  1.541e-01  -6.395  1.6e-10 ***
-## LIMIT_BAL   -7.370e-07  2.856e-07  -2.581 0.009853 ** 
-## SEX2        -1.398e-01  5.468e-02  -2.557 0.010547 *  
-## EDUCATION2  -1.411e-01  6.340e-02  -2.225 0.026055 *  
-## EDUCATION3  -2.155e-01  8.530e-02  -2.526 0.011539 *  
-## EDUCATION4  -1.215e+00  3.349e-01  -3.629 0.000285 ***
-## MARRIAGE2   -1.649e-01  6.177e-02  -2.670 0.007584 ** 
-## MARRIAGE3    7.301e-02  2.333e-01   0.313 0.754312    
-## AGE          5.964e-03  3.340e-03   1.786 0.074175 .  
-## PAY_0        6.086e-01  3.159e-02  19.263  &lt; 2e-16 ***
-## PAY_2        5.337e-02  3.666e-02   1.456 0.145529    
-## PAY_3        6.588e-02  4.061e-02   1.622 0.104729    
-## PAY_4        4.426e-02  4.462e-02   0.992 0.321226    
-## PAY_5        9.988e-02  4.759e-02   2.099 0.035835 *  
-## PAY_6       -2.481e-02  4.024e-02  -0.617 0.537498    
-## BILL_AMT1   -6.028e-06  1.994e-06  -3.024 0.002495 ** 
-## BILL_AMT2    3.138e-06  2.587e-06   1.213 0.225142    
-## BILL_AMT3    6.307e-07  2.314e-06   0.273 0.785152    
-## BILL_AMT4   -3.211e-06  2.550e-06  -1.259 0.207950    
-## BILL_AMT5    3.317e-06  3.003e-06   1.105 0.269273    
-## BILL_AMT6    1.303e-06  2.353e-06   0.554 0.579853    
-## PAY_AMT1    -1.167e-05  3.724e-06  -3.134 0.001725 ** 
-## PAY_AMT2    -6.656e-06  3.283e-06  -2.028 0.042599 *  
-## PAY_AMT3    -3.616e-07  2.840e-06  -0.127 0.898680    
-## PAY_AMT4    -3.294e-06  2.864e-06  -1.150 0.250138    
-## PAY_AMT5    -6.935e-06  3.748e-06  -1.850 0.064304 .  
-## PAY_AMT6    -1.708e-06  2.131e-06  -0.801 0.422992    
+## (Intercept) -9.364e-01  1.534e-01  -6.104 1.04e-09 ***
+## LIMIT_BAL   -7.934e-07  2.818e-07  -2.815  0.00487 ** 
+## SEX2        -1.486e-01  5.411e-02  -2.746  0.00604 ** 
+## EDUCATION2  -1.769e-01  6.253e-02  -2.829  0.00467 ** 
+## EDUCATION3  -2.028e-01  8.446e-02  -2.401  0.01634 *  
+## EDUCATION4  -1.482e+00  3.651e-01  -4.060 4.91e-05 ***
+## MARRIAGE2   -1.611e-01  6.145e-02  -2.622  0.00874 ** 
+## MARRIAGE3   -3.611e-01  2.546e-01  -1.418  0.15620    
+## AGE          6.583e-03  3.305e-03   1.992  0.04635 *  
+## PAY_0        5.616e-01  3.151e-02  17.823  &lt; 2e-16 ***
+## PAY_2        9.125e-02  3.608e-02   2.529  0.01144 *  
+## PAY_3        8.369e-02  3.970e-02   2.108  0.03501 *  
+## PAY_4        3.521e-02  4.431e-02   0.795  0.42682    
+## PAY_5        3.833e-02  4.697e-02   0.816  0.41446    
+## PAY_6        1.684e-02  3.915e-02   0.430  0.66710    
+## BILL_AMT1   -5.426e-06  1.922e-06  -2.823  0.00475 ** 
+## BILL_AMT2    4.646e-06  2.411e-06   1.927  0.05392 .  
+## BILL_AMT3   -3.319e-07  2.162e-06  -0.154  0.87797    
+## BILL_AMT4   -4.600e-06  2.517e-06  -1.828  0.06762 .  
+## BILL_AMT5    2.818e-06  2.987e-06   0.943  0.34559    
+## BILL_AMT6    1.959e-06  2.336e-06   0.839  0.40171    
+## PAY_AMT1    -9.958e-06  3.401e-06  -2.928  0.00341 ** 
+## PAY_AMT2    -3.666e-06  2.937e-06  -1.248  0.21189    
+## PAY_AMT3    -2.448e-06  2.977e-06  -0.822  0.41082    
+## PAY_AMT4    -1.042e-05  3.622e-06  -2.876  0.00403 ** 
+## PAY_AMT5    -3.577e-06  3.182e-06  -1.124  0.26088    
+## PAY_AMT6    -1.454e-06  2.140e-06  -0.679  0.49688    
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
 ## (Dispersion parameter for binomial family taken to be 1)
 ## 
-##     Null deviance: 10089  on 9599  degrees of freedom
-## Residual deviance:  8792  on 9573  degrees of freedom
-## AIC: 8846
+##     Null deviance: 10222  on 9599  degrees of freedom
+## Residual deviance:  8932  on 9573  degrees of freedom
+## AIC: 8986
 ## 
 ## Number of Fisher Scoring iterations: 5</code></pre>
 <p>You have seen <code>glm()</code> before. In this lab, this is the main function used to build logistic regression model because it is a member of generalized linear model. In <code>glm()</code>, the only thing new is <code>family</code>. It specifies the distribution of your response variable. You may also specify the link function after the name of distribution, for example, <code>family=binomial(logit)</code> (default link is logit). You can also specify <code>family=binomial(link = &quot;probit&quot;)</code> to run probit regression. You may also use <code>glm()</code> to build many other generalized linear models.</p>
@@ -496,43 +497,87 @@ summary(credit.glm0)</code></pre>
 <h2><span class="header-section-number">3.2</span> Binary Classification</h2>
 <p>As we talked in the lecture, people may be more interested in the classification results. But we have to define a cut-off probability first.</p>
 <p>These tables illustrate the impact of choosing different cut-off probability. Choosing a large cut-off probability will result in few cases being predicted as 1, and chossing a small cut-off probability will result in many cases being predicted as 1.</p>
-<pre class="r"><code>pred.glm0.train &lt;- predict(credit.glm0, type=&quot;response&quot;)
+<pre class="r"><code>pred_glm0_train &lt;- predict(credit_glm0, type=&quot;response&quot;)
 
-table((pred.glm0.train &gt; 0.9)*1)</code></pre>
-<pre><code>## 
-##    0    1 
-## 9580   20</code></pre>
-<pre class="r"><code>table((pred.glm0.train &gt; 0.5)*1)</code></pre>
-<pre><code>## 
-##    0    1 
-## 8857  743</code></pre>
-<pre class="r"><code>table((pred.glm0.train &gt; 0.2)*1)</code></pre>
-<pre><code>## 
-##    0    1 
-## 5199 4401</code></pre>
-<pre class="r"><code>table((pred.glm0.train &gt; 0.0001)*1)</code></pre>
-<pre><code>## 
-##    0    1 
-##    2 9598</code></pre>
+table(credit_train$default, (pred_glm0_train &gt; 0.9)*1, dnn=c(&quot;Truth&quot;,&quot;Predicted&quot;))</code></pre>
+<pre><code>##      Predicted
+## Truth    0    1
+##     0 7436   10
+##     1 2140   14</code></pre>
+<pre class="r"><code>table(credit_train$default, (pred_glm0_train &gt; 0.5)*1, dnn=c(&quot;Truth&quot;,&quot;Predicted&quot;))</code></pre>
+<pre><code>##      Predicted
+## Truth    0    1
+##     0 7229  217
+##     1 1589  565</code></pre>
+<pre class="r"><code>table(credit_train$default, (pred_glm0_train &gt; 0.2)*1, dnn=c(&quot;Truth&quot;,&quot;Predicted&quot;))</code></pre>
+<pre><code>##      Predicted
+## Truth    0    1
+##     0 4342 3104
+##     1  608 1546</code></pre>
+<pre class="r"><code>table(credit_train$default, (pred_glm0_train &gt; 0.0001)*1, dnn=c(&quot;Truth&quot;,&quot;Predicted&quot;))</code></pre>
+<pre><code>##      Predicted
+## Truth    0    1
+##     0    2 7444
+##     1    0 2154</code></pre>
 <p>Therefore, determine the optimal cut-off probability is crucial. The simplest way to determine the cut-off is to use the proportion of “1” in the original data. We will intriduce a more appropriate way to determine the optimal p-cut.</p>
+</div>
+<div id="asymmetric-cost" class="section level2">
+<h2><span class="header-section-number">3.3</span> Asymmetric cost</h2>
+<p>In the case of givng loan to someone, the cost function can indicate the trade off between the risk of giving loan to someone who cannot pay (predict 0, truth 1), and risk of rejecting someone who qualifys (predict 1, truth 0). Given different business situation, one may need to have asymmetric costs for false positive and false negative. Meanwhile, when you want a binary classification decision rule, you need to choose different cut-off probability. Choosing a large cut-off probability will result in few cases being predicted as 1, and chossing a small cut-off probability will result in many cases being predicted as 1.</p>
+<p>The symmetric cost function and asymmetric cost function with 5:1 cost ratio:</p>
+<pre class="r"><code>#Symmetric cost
+cost1 &lt;- function(r, pi, pcut){
+  mean(((r==0)&amp;(pi&gt;pcut)) | ((r==1)&amp;(pi&lt;pcut)))
+}
+
+#Asymmetric cost
+cost2 &lt;- function(r, pi, pcut){
+  weight1 &lt;- 5
+  weight0 &lt;- 1
+  c1 &lt;- (r==1)&amp;(pi&lt;pcut) #logical vector - true if actual 1 but predict 0
+  c0 &lt;-(r==0)&amp;(pi&gt;pcut) #logical vector - true if actual 0 but predict 1
+  return(mean(weight1*c1+weight0*c0))
+}</code></pre>
+<pre class="r"><code>pcut &lt;- 1/(5+1)
+#Symmetric cost
+cost1(r = credit_train$default, pi = pred_glm0_train, pcut)</code></pre>
+<pre><code>## [1] 0.4791667</code></pre>
+<pre class="r"><code>#Asymmetric cost
+cost2(r = credit_train$default, pi = pred_glm0_train, pcut)</code></pre>
+<pre><code>## [1] 0.68125</code></pre>
+<p>Symmetric cost and asymmetric cost with different cut-off probability:</p>
+<pre class="r"><code>pcuts &lt;- costs1 &lt;- costs2 &lt;- matrix(c(0.9,0.5,0.2,0.0001), nrow = 4, ncol = 1)
+
+costs1[] &lt;- vapply(X = pcuts, FUN = cost1, FUN.VALUE = numeric(1), 
+                   r = credit_train$default, pi = pred_glm0_train)
+costs2[] &lt;- vapply(X = pcuts, FUN = cost2, FUN.VALUE = numeric(1), 
+                   r = credit_train$default, pi = pred_glm0_train)
+
+All_costs &lt;- as.matrix(cbind(costs1, costs2))
+dimnames(All_costs) &lt;- list(c(0.9,0.5,0.2,0.0001), c(&quot;Symm cost&quot;, &quot;Asym cost&quot;))
+All_costs</code></pre>
+<pre><code>##       Symm cost Asym cost
+## 0.9   0.2239583 1.1156250
+## 0.5   0.1881250 0.8502083
+## 0.2   0.3866667 0.6400000
+## 1e-04 0.7754167 0.7754167</code></pre>
 <div id="exercise-1" class="section level4">
-<h4><span class="header-section-number">3.2.0.1</span> <strong>Exercise 1:</strong></h4>
+<h4><span class="header-section-number">3.3.0.1</span> <strong>Exercise 1:</strong></h4>
 <blockquote>
 <ol style="list-style-type: decimal">
 <li>Change the weights to different values, and see how your optimal cut-off changes.</li>
 <li>obtain confusion matrix and calculate the (asymmetric) cost based on the optimal cut-off.</li>
 <li>Find optimal cut-off probability using symmetric cost.</li>
 <li>Calculate MR and cost, what do you find?</li>
-<li>Further, rewrite the cost function to make the weights (or the ratio of two weights) as input parameter.</li>
-<li>Use F-score to determine the optimal cut-off.</li>
+<li>Further, rewrite the cost function to make the weights (or the ratio of two weights) as input parameter. <!-- > 6. Use F-score to determine the optimal cut-off. --></li>
 </ol>
 </blockquote>
 </div>
 <div id="out-of-sample-classification" class="section level3">
-<h3><span class="header-section-number">3.2.1</span> Out-of-sample Classification</h3>
+<h3><span class="header-section-number">3.3.1</span> Out-of-sample Classification</h3>
 <p>Everything you have done about classification so far is for training sample. Now let’s get to testing sample. Keep in mind the principle, <strong>testing sample is only used for evaluating your model’s prediction accuracy</strong>! NO NEED TO CHOOSE CUT-OFF PROBABILITY in this stage.</p>
 <div id="exercise-2" class="section level4">
-<h4><span class="header-section-number">3.2.1.1</span> <strong>Exercise 2:</strong></h4>
+<h4><span class="header-section-number">3.3.1.1</span> <strong>Exercise 2:</strong></h4>
 <blockquote>
 <ol style="list-style-type: decimal">
 <li>Calculate MR, FPR, FNR based on the optimal cut-off you get from training sample with weights (5:1)</li>

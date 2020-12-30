@@ -16,7 +16,6 @@ editor_options:
 
 # **Exercise:** 
 
-> 1. Conduct 5-fold CV and LOOCV (Leave-one-out Cross Validation) to calculate the MAE;
-> 2. Try LASSO variable selection on the `credit_default.csv` data and calculate the MAE by 10-fold cross-validation. 
+> 1. Conduct 5-fold CV and LOOCV (Leave-one-out Cross Validation) to calculate the MAE.
 
 
