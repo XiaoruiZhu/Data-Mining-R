@@ -41,29 +41,29 @@ maxs <- apply(Boston, 2, max)
 mins <- apply(Boston, 2, min)
 
 scaled <- as.data.frame(scale(Boston, center = mins, scale = maxs - mins))
-index <- sample(1:nrow(Boston),round(0.75*nrow(Boston)))
+index <- sample(1:nrow(Boston),round(0.9*nrow(Boston)))
 
-train_ <- scaled[index,]
-test_ <- scaled[-index,]
+train_Boston <- scaled[index,]
+test_Boston <- scaled[-index,]
 
 library(neuralnet)
 ```
 
 ```{r, fig.width=7}
-n <- names(train_)
+n <- names(train_Boston)
 f <- as.formula(paste("medv ~", paste(n[!n %in% "medv"], collapse = " + ")))
-nn <- neuralnet(f,data=train_, hidden=c(5,3), linear.output=T)
+nn <- neuralnet(f,data=train_Boston, hidden=c(5,3), linear.output=T)
 plot(nn)
 ```
 
 ```{r}
-pr.nn <- compute(nn,test_[,1:13])
+pr_nn <- compute(nn, test_Boston[,1:13])
 
-pr.nn_ <- pr.nn$net.result*(max(Boston$medv)-min(Boston$medv))+min(Boston$medv)
-test.r <- (test_$medv)*(max(Boston$medv)-min(Boston$medv))+min(Boston$medv)
+pr_nn_org <- pr_nn$net.result*(max(Boston$medv)-min(Boston$medv))+min(Boston$medv)
+test_r <- (test_Boston$medv)*(max(Boston$medv)-min(Boston$medv))+min(Boston$medv)
 # MSE of testing set
-MSE.nn <- sum((test.r - pr.nn_)^2)/nrow(test_)
-MSE.nn
+MSE_nn <- sum((test_r - pr_nn_org)^2)/nrow(test_Boston)
+MSE_nn
 ```
 
 ## Classification
@@ -75,22 +75,22 @@ __Note__:
 ### Credit Score Data
 
 ```{r}
-# credit.data <- read.csv("data/credit0.csv", header=T)
-credit.data <- read.csv(file = "https://xiaoruizhu.github.io/Data-Mining-R/lecture/data/credit0.csv", header=T)
+# credit_data <- read.csv("data/credit0.csv", header=T)
+credit_data <- read.csv(file = "https://xiaoruizhu.github.io/Data-Mining-R/lecture/data/credit0.csv", header=T)
 ```
 
 We remove X9 and id from the data since we will not be using them for prediction.
 ```{r}
-credit.data$X9 <- NULL
-credit.data$id <- NULL
-credit.data$Y <- as.factor(credit.data$Y)
+credit_data$X9 <- NULL
+credit_data$id <- NULL
+credit_data$Y <- as.factor(credit_data$Y)
 ```
 
 Now split the data 90/10 as training/testing datasets:
 ```{r}
-id_train <- sample(nrow(credit.data),nrow(credit.data)*0.90)
-credit.train <- credit.data[id_train,]
-credit.test <- credit.data[-id_train,]
+id_train <- sample(nrow(credit_data),nrow(credit_data)*0.90)
+credit_train <- credit_data[id_train,]
+credit_test <- credit_data[-id_train,]
 ```
 
 The training dataset has 61 variables, 4500 obs. 
@@ -112,15 +112,15 @@ library(nnet)
 ```
 
 ```{r}
-credit.nnet <- nnet(Y~., data=credit.train, size=5, maxit=500)
+credit_nnet <- nnet(Y~., data=credit_train, size=5, maxit=500)
 ```
 
 ```{r}
-prob.nnet <- predict(credit.nnet, credit.test)
-pred.nnet <- as.numeric(prob.nnet > 0.1)
-table(credit.test$Y,pred.nnet, dnn=c("Observed","Predicted"))
-cat("Misclassification rate =", mean(ifelse(credit.test$Y != pred.nnet, 1, 0)))
-cat("Asymmetric cost (with ratio 10:1) =", creditcost(credit.test$Y, pred.nnet))
+prob_nnet <- predict(credit_nnet, credit_test)
+pred_nnet <- as.numeric(prob_nnet > 0.1)
+table(credit_test$Y,pred_nnet, dnn=c("Observed","Predicted"))
+cat("Misclassification rate =", mean(ifelse(credit_test$Y != pred_nnet, 1, 0)))
+cat("Asymmetric cost (with ratio 10:1) =", creditcost(credit_test$Y, pred_nnet))
 ```
 
 [go to top](#header)

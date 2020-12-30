@@ -17,15 +17,12 @@ credit.test.pred.tree1<-
 table()
 ```
 
-```{r}
 
-```
-
-> 2. If the cost ratio of false negative to false positive is 10 to 1, calculate the out-of-sample prediction
+> 2. If the cost ratio of false negative to false positive is 5 to 1, calculate the out-of-sample prediction
 
 ```{r, echo=FALSE, eval=FALSE}
 cost <- function(r, pi){
-  weight1 = 10
+  weight1 = 5
   weight0 = 1
   c1 = (r==1)&(pi==0) #logical vector - true if actual 1 but predict 0
   c0 = (r==0)&(pi==1) #logical vector - true if actual 0 but predict 1

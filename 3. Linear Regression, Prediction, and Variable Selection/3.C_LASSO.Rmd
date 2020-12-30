@@ -100,7 +100,7 @@ cv_lasso_fit$lambda.min
 
 Given a selected _s_ you can use _predict()_ this way to get prediction:
 ```{r}
-Boston.insample.prediction <- predict(lasso_fit, as.matrix(Boston[, -c(which(colnames(Boston)=='medv'))]), s = cv_lasso_fit$lambda.min)
+Boston_IS_pred <- predict(lasso_fit, as.matrix(Boston[, -c(which(colnames(Boston)=='medv'))]), s = cv_lasso_fit$lambda.min)
 ```
 
 > **Exercise**: 

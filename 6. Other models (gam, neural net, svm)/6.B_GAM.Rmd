@@ -77,34 +77,36 @@ mean((pi.out - Boston_test$medv)^2)
 [go to top](#header)
 
 
-## GAM on Credit Score Data
+## GAM on Credit Scoring Data
 
-```{r}
-credit.data <- read.csv("data/credit0.csv", header=T)
-```
+```{r , message=FALSE}
+credit_data <- read.csv(file = "https://xiaoruizhu.github.io/Data-Mining-R/lecture/data/credit_default.csv", header=T)
 
-We remove X9 and id from the data since we will not be using them for prediction.
-```{r}
-credit.data$X9 = NULL
-credit.data$id = NULL
-credit.data$Y = as.factor(credit.data$Y)
+# rename
+library(dplyr)
+credit_data<- rename(credit_data, default=default.payment.next.month)
+# convert categorical data to factor
+credit_data$SEX<- as.factor(credit_data$SEX)
+credit_data$EDUCATION<- as.factor(credit_data$EDUCATION)
+credit_data$MARRIAGE<- as.factor(credit_data$MARRIAGE)
+
 ```
 
 Now split the data 90/10 as training/testing datasets:
 
 ```{r}
-id_train <- sample(nrow(credit.data),nrow(credit.data)*0.90)
-credit.train = credit.data[id_train,]
-credit.test = credit.data[-id_train,]
+index <- sample(nrow(credit_data),nrow(credit_data)*0.90)
+credit_train = credit_data[index,]
+credit_test = credit_data[-index,]
 ```
 
-The training dataset has 61 variables, 4500 obs. 
+The training dataset has 24 variables, 10800 obs. 
 
 You are already familiar with the credit scoring set. Let's define a cost function for benchmarking testing set performance. Note this is slightly different from the one we used for searching for optimal cut-off probability in logistic regression. Here the 2nd argument is the predict class instead of the predict probability (since many methods are not based on predict probability).
 
 ```{r}
 creditcost <- function(observed, predicted){
-  weight1 = 10
+  weight1 = 5
   weight0 = 1
   c1 = (observed==1)&(predicted == 0) #logical vector - true if actual 1 but predict 0
   c0 = (observed==0)&(predicted == 1) #logical vector - true if actual 0 but predict 1
@@ -113,46 +115,39 @@ creditcost <- function(observed, predicted){
 ```
 
 ```{r, message=FALSE}
-
 ## Create a formula for a model with a large number of variables:
-gam_formula <- as.formula(paste("Y~s(X2)+s(X3)+s(X4)+s(X5)+", paste(colnames(credit.train)[6:61], collapse= "+")))
+gam_formula <- as.formula(paste("default~s(LIMIT_BAL)+s(AGE)+s(PAY_0)+s(BILL_AMT1)+s(PAY_AMT1)+", 
+                                paste(colnames(credit_train)[c(2:4)], collapse= "+")))
 
-credit.gam <- gam(formula = gam_formula, family=binomial,data=credit.train);
-summary(credit.gam)
+credit_gam <- gam(formula = gam_formula, family=binomial,data=credit_train);
+summary(credit_gam)
 
-plot(credit.gam, shade=TRUE,seWithMean=TRUE,scale=0, pages = 1)
-# vis.gam(credit.gam)
-vis.gam(credit.gam, view=c("X3","X5"), theta= -90) # different view 
-
-```
-
-Model AIC/BIC and mean residual deviance
-```{r}
-AIC(credit.gam)
-BIC(credit.gam)
-credit.gam$deviance
+plot(credit_gam, shade=TRUE, seWithMean=TRUE, scale=0, pages = 1)
+# vis.gam(credit_gam)
+vis.gam(credit_gam, view=c("LIMIT_BAL","AGE"), theta= 140) # different view 
 ```
 
 ### In-sample fit performance
 In order to see the in-sample fit performance, you may look into the confusion matrix by using commands as following. 
 
 ```{r}
-pcut.gam <- .08
-prob.gam.in<-predict(credit.gam,credit.train,type="response")
-pred.gam.in<-(prob.gam.in>=pcut.gam)*1
-table(credit.train$Y,pred.gam.in,dnn=c("Observed","Predicted"))
+pcut_gam <- .15
+prob_gam_in <-predict(credit_gam,credit_train,type="response")
+pred_gam_in <- (prob_gam_in>=pcut_gam)*1
+table(credit_train$default, pred_gam_in,dnn=c("Observed","Predicted"))
 ```
 
 Likewise, misclassification rate is another thing you can check:
 
 ```{r}
-mean(ifelse(credit.train$Y != pred.gam.in, 1, 0))
+mean(ifelse(credit_train$default != pred_gam_in, 1, 0))
 ```
 
-Training model AIC and BIC:
+Training model AIC, BIC, and mean residual deviance:
 ```{r}
-AIC(credit.gam)
-BIC(credit.gam)
+AIC(credit_gam)
+BIC(credit_gam)
+credit_gam$deviance
 ```
 
 ### Search for optimal cut-off probability
@@ -162,11 +157,11 @@ The following code does a grid search from pcut = 0.01 to pcut = 0.99 with the o
 ```{r, fig.width=7}
 #define the searc grid from 0.01 to 0.20
 searchgrid = seq(0.01, 0.20, 0.01)
-#result.gam is a 99x2 matrix, the 1st col stores the cut-off p, the 2nd column stores the cost
-result.gam = cbind(searchgrid, NA)
+#result_gam is a 99x2 matrix, the 1st col stores the cut-off p, the 2nd column stores the cost
+result_gam = cbind(searchgrid, NA)
 #in the cost function, both r and pi are vectors, r=Observed, pi=predicted probability
 cost1 <- function(r, pi){
-  weight1 = 10
+  weight1 = 5
   weight0 = 1
   c1 = (r==1)&(pi<pcut) #logical vector - true if actual 1 but predict 0
   c0 = (r==0)&(pi>pcut) #logical vector - true if actual 0 but predict 1
@@ -175,30 +170,32 @@ cost1 <- function(r, pi){
 
 for(i in 1:length(searchgrid))
 {
-  pcut <- result.gam[i,1]
+  pcut <- result_gam[i,1]
   #assign the cost to the 2nd col
-  result.gam[i,2] <- cost1(credit.train$Y, predict(credit.gam,type="response"))
+  result_gam[i,2] <- cost1(credit_train$default, predict(credit_gam,type="response"))
 }
-plot(result.gam, ylab="Cost in Training Set")
-index.min<-which.min(result.gam[,2])#find the index of minimum value
-result.gam[index.min,2] #min cost
-result.gam[index.min,1] #optimal cutoff probability
+plot(result_gam, ylab="Cost in Training Set")
+index_min <- which.min(result_gam[,2])#find the index of minimum value
+result_gam[index_min,2] #min cost
+result_gam[index_min,1] #optimal cutoff probability
 ```
 
 ### Out-of-sample fit performance
 ```{r}
-pcut <-  result.gam[index.min,1] 
-prob.gam.out<-predict(credit.gam,credit.test,type="response")
-pred.gam.out<-(prob.gam.out>=pcut)*1
-table(credit.test$Y,pred.gam.out,dnn=c("Observed","Predicted"))
+pcut <-  result_gam[index_min,1] 
+prob_gam_out <- predict(credit_gam, credit_test,type="response")
+pred_gam_out <- (prob_gam_out>=pcut)*1
+table(credit_test$default, pred_gam_out,dnn=c("Observed","Predicted"))
 ```
-mis-classifciation rate is
+
+The mis-classifciation rate is
 ```{r}
-mean(ifelse(credit.test$Y != pred.gam.out, 1, 0))
+mean(ifelse(credit_test$default != pred_gam_out, 1, 0))
 ```
-Cost associated with misclassification is
+
+The cost associated with misclassification is
 ```{r}
-creditcost(credit.test$Y, pred.gam.out)
+creditcost(credit_test$default, pred_gam_out)
 ```
 
 [go to top](#header)

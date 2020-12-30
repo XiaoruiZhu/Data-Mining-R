@@ -28,7 +28,7 @@ Note
 
 ## Cross validation for linear model
 
-### 5-fold Cross Validation
+### 10-fold Cross Validation
 
 The `cv.glm` is the cross validation approach in R for glm (more details of arguments are in help doc). By comparing the cross-validation estimate of prediction error, we can tell the full model outperforms the model with only `indus` and `rm` in terms of prediction error. 
 
@@ -37,13 +37,13 @@ library(MASS)
 data(Boston); #this data is in MASS package
 library(boot)
 model_full <- glm(medv~., data = Boston)
-cv.glm(data = Boston, glmfit = model_full, K = 5)$delta[2]
+cv.glm(data = Boston, glmfit = model_full, K = 10)$delta[2]
 
 model_2 <- glm(medv~indus + rm, data = Boston)
-cv.glm(data = Boston, glmfit = model_2, K = 5)$delta[2]
+cv.glm(data = Boston, glmfit = model_2, K = 10)$delta[2]
 ```
 
-### 5-fold Cross Validation Using MAE
+### 10-fold Cross Validation Using MAE
 
 Here we need to define a MAE cost function. The function takes 2 input vectors, pi =  predicted values, r = actual values.
 
@@ -52,9 +52,9 @@ MAE_cost <- function(pi, r){
   return(mean(abs(pi-r)))
 }
 
-cv.glm(data = Boston, glmfit = model_full, cost = MAE_cost, K = 5)$delta[2]
+cv.glm(data = Boston, glmfit = model_full, cost = MAE_cost, K = 10)$delta[2]
 
-cv.glm(data = Boston, glmfit = model_2, cost = MAE_cost, K = 5)$delta[2]
+cv.glm(data = Boston, glmfit = model_2, cost = MAE_cost, K = 10)$delta[2]
 ```
 
 ### LOOCV (Leave-one-out Cross Validation)
@@ -70,13 +70,13 @@ cv.glm(data = Boston, glmfit = model_2, K = nrow(Boston))$delta[2]
 
 ### Cross Validation for search optimal tuning parameter in LASSO 
 
-Using 5-fold cross-validation to search optimal lambda: 
+Using 10-fold cross-validation to search optimal lambda: 
 
 ```{r message=FALSE}
 library(glmnet)
 lasso_fit  <- glmnet(x = as.matrix(Boston[, -c(which(colnames(Boston)=='medv'))]), y = Boston$medv, alpha = 1)
-#use 5-fold cross validation to pick lambda
-cv_lasso_fit = cv.glmnet(x = as.matrix(Boston[, -c(which(colnames(Boston)=='medv'))]), y = Boston$medv, alpha = 1, nfolds = 5)
+#use 10-fold cross validation to pick lambda
+cv_lasso_fit = cv.glmnet(x = as.matrix(Boston[, -c(which(colnames(Boston)=='medv'))]), y = Boston$medv, alpha = 1, nfolds = 10)
 plot(cv_lasso_fit)
 ```
 
@@ -94,9 +94,9 @@ MAE_cost(pred_IS, Boston$medv)
 
 | Model                      |  MAE            | Best   |
 |:---------------------------|:---------------:|-------:|
-| LASSO selected             |   3.259         |   $\checkmark$     |
-| Full model                 |   3.396         |        |
-| Reduced model (indus, rm)   |   4.249         |        |
+| LASSO selected             |   3.26         |   $\checkmark$     |
+| Full model                 |   3.38         |        |
+| Reduced model (indus, rm)   |   4.29         |        |
 
 The LASSO selected model outperforms the full model and the reduced model in terms of the MAE. 
 

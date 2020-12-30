@@ -48,7 +48,7 @@ boston.test.pred.reg = predict(boston.reg, boston.test)
 mean((boston.test.pred.reg - boston.test$medv)^2)
 ```
 
-> 4. Comparing the performance (MSE, MSPE) of regression tree with linear regression model in terms of prediction error.
+> 4. Compare the performance (MSE, MSPE) of regression tree with linear regression model in terms of prediction error.
 
 ```{r, echo=FALSE, eval=FALSE}
 boston.lm <- 

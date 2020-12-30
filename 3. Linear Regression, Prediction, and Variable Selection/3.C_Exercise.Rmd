@@ -58,9 +58,6 @@ test_lm_3 <- lm(Y ~ X1+ X2+X3+0, data = myData)
 summary(test_lm_3)
 ```
 
-
-
-
 [go to top](#header)
 
 

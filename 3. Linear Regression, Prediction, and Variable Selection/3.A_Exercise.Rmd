@@ -15,8 +15,8 @@ editor_options:
 ---
 # **Exercise:** 
 
-> 1. Manually compare two models: the full model with all covariates and a model without crim and zn;
-> 2. Compare MSE, R2, and MSPE of these two models.
+> 1. For Boston housing data, manually compare two models: the full model with all covariates and a model without crim and zn;
+> 2. Compare MSE, $R^2$, and MSPE of these two models.
 
 ```{r echo=FALSE, eval=FALSE}
 ##########################################################################################

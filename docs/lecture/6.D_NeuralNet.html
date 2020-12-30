@@ -1749,24 +1749,24 @@ maxs &lt;- apply(Boston, 2, max)
 mins &lt;- apply(Boston, 2, min)
 
 scaled &lt;- as.data.frame(scale(Boston, center = mins, scale = maxs - mins))
-index &lt;- sample(1:nrow(Boston),round(0.75*nrow(Boston)))
+index &lt;- sample(1:nrow(Boston),round(0.9*nrow(Boston)))
 
-train_ &lt;- scaled[index,]
-test_ &lt;- scaled[-index,]
+train_Boston &lt;- scaled[index,]
+test_Boston &lt;- scaled[-index,]
 
 library(neuralnet)</code></pre>
-<pre class="r"><code>n &lt;- names(train_)
+<pre class="r"><code>n &lt;- names(train_Boston)
 f &lt;- as.formula(paste(&quot;medv ~&quot;, paste(n[!n %in% &quot;medv&quot;], collapse = &quot; + &quot;)))
-nn &lt;- neuralnet(f,data=train_, hidden=c(5,3), linear.output=T)
+nn &lt;- neuralnet(f,data=train_Boston, hidden=c(5,3), linear.output=T)
 plot(nn)</code></pre>
-<pre class="r"><code>pr.nn &lt;- compute(nn,test_[,1:13])
+<pre class="r"><code>pr_nn &lt;- compute(nn, test_Boston[,1:13])
 
-pr.nn_ &lt;- pr.nn$net.result*(max(Boston$medv)-min(Boston$medv))+min(Boston$medv)
-test.r &lt;- (test_$medv)*(max(Boston$medv)-min(Boston$medv))+min(Boston$medv)
+pr_nn_org &lt;- pr_nn$net.result*(max(Boston$medv)-min(Boston$medv))+min(Boston$medv)
+test_r &lt;- (test_Boston$medv)*(max(Boston$medv)-min(Boston$medv))+min(Boston$medv)
 # MSE of testing set
-MSE.nn &lt;- sum((test.r - pr.nn_)^2)/nrow(test_)
-MSE.nn</code></pre>
-<pre><code>## [1] 11.82147</code></pre>
+MSE_nn &lt;- sum((test_r - pr_nn_org)^2)/nrow(test_Boston)
+MSE_nn</code></pre>
+<pre><code>## [1] 7.801917</code></pre>
 </div>
 <div id="classification" class="section level2">
 <h2><span class="header-section-number">2.2</span> Classification</h2>
@@ -1776,16 +1776,16 @@ MSE.nn</code></pre>
 </ul>
 <div id="credit-score-data" class="section level3">
 <h3><span class="header-section-number">2.2.1</span> Credit Score Data</h3>
-<pre class="r"><code># credit.data &lt;- read.csv(&quot;data/credit0.csv&quot;, header=T)
-credit.data &lt;- read.csv(file = &quot;https://xiaoruizhu.github.io/Data-Mining-R/lecture/data/credit0.csv&quot;, header=T)</code></pre>
+<pre class="r"><code># credit_data &lt;- read.csv(&quot;data/credit0.csv&quot;, header=T)
+credit_data &lt;- read.csv(file = &quot;https://xiaoruizhu.github.io/Data-Mining-R/lecture/data/credit0.csv&quot;, header=T)</code></pre>
 <p>We remove X9 and id from the data since we will not be using them for prediction.</p>
-<pre class="r"><code>credit.data$X9 &lt;- NULL
-credit.data$id &lt;- NULL
-credit.data$Y &lt;- as.factor(credit.data$Y)</code></pre>
+<pre class="r"><code>credit_data$X9 &lt;- NULL
+credit_data$id &lt;- NULL
+credit_data$Y &lt;- as.factor(credit_data$Y)</code></pre>
 <p>Now split the data 90/10 as training/testing datasets:</p>
-<pre class="r"><code>id_train &lt;- sample(nrow(credit.data),nrow(credit.data)*0.90)
-credit.train &lt;- credit.data[id_train,]
-credit.test &lt;- credit.data[-id_train,]</code></pre>
+<pre class="r"><code>id_train &lt;- sample(nrow(credit_data),nrow(credit_data)*0.90)
+credit_train &lt;- credit_data[id_train,]
+credit_test &lt;- credit_data[-id_train,]</code></pre>
 <p>The training dataset has 61 variables, 4500 obs.</p>
 <p>You are already familiar with the credit scoring set. Let’s define a cost function for benchmarking testing set performance. Note this is slightly different from the one we used for searching for optimal cut-off probability in logistic regression. Here the 2nd argument is the predict class instead of the predict probability (since many methods are not based on predict probability).</p>
 <pre class="r"><code>creditcost &lt;- function(observed, predicted){
@@ -1796,22 +1796,23 @@ credit.test &lt;- credit.data[-id_train,]</code></pre>
   return(mean(weight1*c1+weight0*c0))
 }</code></pre>
 <pre class="r"><code>library(nnet)</code></pre>
-<pre class="r"><code>credit.nnet &lt;- nnet(Y~., data=credit.train, size=5, maxit=500)</code></pre>
+<pre class="r"><code>credit_nnet &lt;- nnet(Y~., data=credit_train, size=5, maxit=500)</code></pre>
 <pre><code>## # weights:  311
-## initial  value 2834.331095 
-## final  value 1024.103419 
+## initial  value 3534.682206 
+## iter  10 value 1026.855047
+## final  value 1026.848652 
 ## converged</code></pre>
-<pre class="r"><code>prob.nnet &lt;- predict(credit.nnet, credit.test)
-pred.nnet &lt;- as.numeric(prob.nnet &gt; 0.1)
-table(credit.test$Y,pred.nnet, dnn=c(&quot;Observed&quot;,&quot;Predicted&quot;))</code></pre>
+<pre class="r"><code>prob_nnet &lt;- predict(credit_nnet, credit_test)
+pred_nnet &lt;- as.numeric(prob_nnet &gt; 0.1)
+table(credit_test$Y,pred_nnet, dnn=c(&quot;Observed&quot;,&quot;Predicted&quot;))</code></pre>
 <pre><code>##         Predicted
 ## Observed   0
-##        0 471
-##        1  29</code></pre>
-<pre class="r"><code>cat(&quot;Misclassification rate =&quot;, mean(ifelse(credit.test$Y != pred.nnet, 1, 0)))</code></pre>
-<pre><code>## Misclassification rate = 0.058</code></pre>
-<pre class="r"><code>cat(&quot;Asymmetric cost (with ratio 10:1) =&quot;, creditcost(credit.test$Y, pred.nnet))</code></pre>
-<pre><code>## Asymmetric cost (with ratio 10:1) = 0.58</code></pre>
+##        0 472
+##        1  28</code></pre>
+<pre class="r"><code>cat(&quot;Misclassification rate =&quot;, mean(ifelse(credit_test$Y != pred_nnet, 1, 0)))</code></pre>
+<pre><code>## Misclassification rate = 0.056</code></pre>
+<pre class="r"><code>cat(&quot;Asymmetric cost (with ratio 10:1) =&quot;, creditcost(credit_test$Y, pred_nnet))</code></pre>
+<pre><code>## Asymmetric cost (with ratio 10:1) = 0.56</code></pre>
 <p><a href="#header">go to top</a></p>
 </div>
 </div>

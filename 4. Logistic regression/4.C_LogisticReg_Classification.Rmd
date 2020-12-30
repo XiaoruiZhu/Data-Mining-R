@@ -25,36 +25,36 @@ Think about what kind of factors could affect people to fail to pay their credit
 
 We first load the credit scoring data. It is easy to load comma-separated values (CSV). 
 ```{r}
-credit.data <- read.csv(file = "https://xiaoruizhu.github.io/Data-Mining-R/lecture/data/credit_default.csv", header=T)
+credit_data <- read.csv(file = "https://xiaoruizhu.github.io/Data-Mining-R/lecture/data/credit_default.csv", header=T)
 ```
 
 Look at what information do we have.
 ```{r}
-colnames(credit.data)
+colnames(credit_data)
 ```
 
 Let's look at how many people were actually default in this sample.
 ```{r}
-mean(credit.data$default.payment.next.month)
+mean(credit_data$default.payment.next.month)
 ```
 
 The name of response variable is too long! I want to make it shorter by renaming. Recall the `rename()` function.
 ```{r message=FALSE}
 library(dplyr)
-credit.data<- rename(credit.data, default=default.payment.next.month)
+credit_data<- rename(credit_data, default=default.payment.next.month)
 ```
 
 How about the variable type and summary statistics?
 ```{r eval=FALSE}
-str(credit.data)    # structure - see variable type
-summary(credit.data) # summary statistics
+str(credit_data)    # structure - see variable type
+summary(credit_data) # summary statistics
 ```
 
 We see all variables are **int**, but we know that *SEX, EDUCATION, MARRIAGE* are categorical, we convert them to **factor**.
 ```{r}
-credit.data$SEX<- as.factor(credit.data$SEX)
-credit.data$EDUCATION<- as.factor(credit.data$EDUCATION)
-credit.data$MARRIAGE<- as.factor(credit.data$MARRIAGE)
+credit_data$SEX<- as.factor(credit_data$SEX)
+credit_data$EDUCATION<- as.factor(credit_data$EDUCATION)
+credit_data$MARRIAGE<- as.factor(credit_data$MARRIAGE)
 ```
 
 *We omit other EDA, but you shouldn't whenever you are doing data analysis.*
@@ -66,16 +66,16 @@ credit.data$MARRIAGE<- as.factor(credit.data$MARRIAGE)
 
 Randomly split the data to training (80%) and testing (20%) datasets:
 ```{r}
-index <- sample(nrow(credit.data),nrow(credit.data)*0.80)
-credit.train = credit.data[index,]
-credit.test = credit.data[-index,]
+index <- sample(nrow(credit_data),nrow(credit_data)*0.80)
+credit_train = credit_data[index,]
+credit_test = credit_data[-index,]
 ```
 
 ## Train a logistic regression model with all variables
 
 ```{r, warning=FALSE}
-credit.glm0<- glm(default~., family=binomial, data=credit.train)
-summary(credit.glm0)
+credit_glm0<- glm(default~., family=binomial, data=credit_train)
+summary(credit_glm0)
 ```
 
 You have seen `glm()` before. In this lab, this is the main function used to build logistic regression model because it is a member of generalized linear model. In `glm()`, the only thing new is `family`. It specifies the distribution of your response variable. You may also specify the link function after the name of distribution, for example, `family=binomial(logit)` (default link is logit). You can also specify `family=binomial(link = "probit")` to run probit regression. You may also use `glm()` to build many other generalized linear models.
@@ -87,12 +87,12 @@ As we talked in the lecture, people may be more interested in the classification
 These tables illustrate the impact of choosing different cut-off probability. Choosing a large cut-off probability will result in few cases being predicted as 1, and chossing a small cut-off probability will result in many cases being predicted as 1.
 ```{r}
 
-pred.glm0.train <- predict(credit.glm0, type="response")
+pred_glm0_train <- predict(credit_glm0, type="response")
 
-table((pred.glm0.train > 0.9)*1)
-table((pred.glm0.train > 0.5)*1)
-table((pred.glm0.train > 0.2)*1)
-table((pred.glm0.train > 0.0001)*1)
+table((pred_glm0_train > 0.9)*1)
+table((pred_glm0_train > 0.5)*1)
+table((pred_glm0_train > 0.2)*1)
+table((pred_glm0_train > 0.0001)*1)
 ```
 Therefore, determine the optimal cut-off probability is crucial. The simplest way to determine the cut-off is to use the proportion of "1" in the original data. We will intriduce a more appropriate way to determine the optimal p-cut.
 

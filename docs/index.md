@@ -41,24 +41,24 @@ table th:nth-of-type(3) {
 |:----------|:-------------:|------:|
 | [3.A Linear regression and prediction](lecture/3.A_LinearReg.html)           |            | [3.A](lecture/3.A_Exercise.html)  |
 | [3.B Subset variable selection](lecture/3.B_SubsetVS.html)                   |            | [3.B](lecture/3.B_Exercise.html)  |
-| [3.C LASSO variables selection](lecture/3.C_LASSO.html)                      |            | [3.C](lecture/3.C_Exercise.html)  |
+| [3.C LASSO variable selection](lecture/3.C_LASSO.html)                      |            | [3.C](lecture/3.C_Exercise.html)  |
 | [3.D Monte Carlo simulation](lecture/3.D_Simulation.html)                      |          |                                   |
 
 ### Logistic Regression
 
 | Lab Notes |  Video | Exercise |
 |:----------|:-------------:|------:|
-| [4.A Logistic regression](lecture/4.A_LogisticReg.html)                                         |            | [4.A](lecture/4.A_Exercise.html)  |
-| [4.B Logistic regression, prediction and ROC](lecture/4.B_LogisticReg_ROC.html)                 |            | [4.B](lecture/4.B_Exercise.html) |
-| [4.C Logistic Regression for binary classification](lecture/4.C_LogisticReg_Classification.html)|            | [4.C](lecture/4.C_Exercise.html) |
-| [4.D Logistic regression and variable selection](lecture/4.D_LogisticReg_VS.html)               |            | [4.D](lecture/4.D_Exercise.html) |
+| [4.A Logistic regression and prediction](lecture/4.A_LogisticReg.html)                            |            | [4.A](lecture/4.A_Exercise.html) |
+| [4.B Logistic regression and variable selection](lecture/4.B_LogisticReg_VS.html)                 |            | [4.B](lecture/4.B_Exercise.html) |
+| [4.C Logistic Regression for binary classification](lecture/4.C_LogisticReg_Classification.html)  |            | [4.C](lecture/4.C_Exercise.html) |
+| [4.D Logistic regression and ROC](lecture/4.D_LogisticReg_ROC.html)                               |            | [4.D](lecture/4.D_Exercise.html) |
 
 ### Cross Validation
 
 | Lab Notes |  Video | Exercise |
 |:----------|:-------------:|------:|
-| [5.A Cross validation](lecture/5.A_CrossValidation.html)                      |            |   |
-| [5.B Cross validation (Logit model)](lecture/5.B_CrossValidationLogit.html)   |            |   |
+| [5.A Cross validation](lecture/5.A_CrossValidation.html)                      |            | [5.A](lecture/5.A_CV_Exercise.html)  |
+| [5.B Cross validation (Logit model)](lecture/5.B_CrossValidationLogit.html)   |            | [5.B](lecture/5.B_CV_Exercise.html) |
 
 ### Tree Models
 
