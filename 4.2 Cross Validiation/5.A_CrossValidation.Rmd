@@ -92,14 +92,6 @@ pred_IS <- predict(lasso_fit, as.matrix(Boston[, -c(which(colnames(Boston)=='med
 MAE_cost(pred_IS, Boston$medv)
 ```
 
-| Model                      |  MAE            | Best   |
-|:---------------------------|:---------------:|-------:|
-| LASSO selected             |   3.26         |   $\checkmark$     |
-| Full model                 |   3.38         |        |
-| Reduced model (indus, rm)   |   4.29         |        |
-
-The LASSO selected model outperforms the full model and the reduced model in terms of the MAE. 
-
 ### (Optional) Supplementary package: DAAG 
 
 Another package DAAG also does cross validation. It prints out the performance in each fold and gives you a plot at the end. But currently I cannot figure out how to get the cross-validation error programmatically.
