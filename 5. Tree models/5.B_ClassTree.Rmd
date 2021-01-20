@@ -19,7 +19,7 @@ CART stands for classification and regression trees:
 
 For the regression tree example, we will use the Boston Housing data. Recall the response variable is the housing price. For the classification tree example, we will use the credit scoring data. The response variable is whether the loan went to default.
 
-Note that unlkie logistic regreesion, the response variable does not have to be binary in case of classification tree. We can use classification tree on classification problems with more than 2 outcomes.
+Note that unlike logistic regression, the response variable does not have to be binary in case of classification tree. We can use classification tree on classification problems with more than 2 outcomes.
 
 [go to top](#header)
 
@@ -60,7 +60,7 @@ Note the following important differences from the regression trees:
 
 * The parms argument, which is a list. The most import element is the loss matrix. The diagonal elements are 0, and off-diagonal elements tells you the loss(cost) of classifying something wrong. For binary classification, the numbers in c() specify the cost in this sequence: `c(0, False Negative, False Positive, 0)`. If you have symmetric cost, you can ignore the parms argument.
 
-However, this tree with defaul cost minimizes the symmetric cost, which is misclassification rate. We can take a look at the confusion matrix. 
+However, this tree with default cost minimizes the symmetric cost, which is misclassification rate. We can take a look at the confusion matrix. 
 ```{r}
 pred0 <- predict(credit_rpart0, type="class")
 table(credit_train$default, pred0, dnn = c("True", "Pred"))
@@ -90,8 +90,6 @@ prp(credit_rpart, extra = 1)
 ### Prediction using classification trees
 For a binary classification problem, as you learned in logistic regression there are 2 types of predictions. One is the predicted class of response (0 or 1), and the second type is the probability of response being 1. We use an additional argument type="class" or type="prob" to get these:
 
-In-sample prediction (skipped)
-
 In-sample prediction
 ```{r}
 credit_train.pred.tree1<- predict(credit_rpart, credit_train, type="class")
@@ -116,7 +114,7 @@ cost <- function(r, pi){
   c0 = (r==0)&(pi==1) #logical vector - true if actual 0 but predict 1
   return(mean(weight1*c1+weight0*c0))
 }
-cost(credit_train$Y,credit_train.pred.tree1)
+cost(credit_train$default, credit_train.pred.tree1)
 ```
 
 **Exercise:** Out-of-sample prediction
@@ -129,17 +127,6 @@ table()
 **Exercise:** Try `type="prob"` in prediction, what can you say about these predicted probabilities?
 
 ### Calculate the actual cost using a self-defined cost function.
-
-We can get the expected loss for this tree model by defining a cost function that has the correct weights:
-```{r}
-cost <- function(r, pi){
-  weight1 = 5
-  weight0 = 1
-  c1 = (r==1)&(pi==0) #logical vector - true if actual 1 but predict 0
-  c0 = (r==0)&(pi==1) #logical vector - true if actual 0 but predict 1
-  return(mean(weight1*c1+weight0*c0))
-}
-```
 
 Calculate the cost for training sample using above cost function
 ```{r}
@@ -173,7 +160,7 @@ Which model do you think is better?
 
 Recall that ROC Curve gives you the trade-off between hit rate (1 - false positive) and false negative, and area under the curve (AUC) can be used as a measure of how good the binary classification model performs when you do not know the cost function.
 
-To get ROC curve, we get the predicted probability of Y being 1 from the fitted tree. The additional cp parameter controls the complexity of tree. Here we change it from its default 0.01 to a smaller value to grow a more complex tree than just the root node (if you use the default the tree you get will tell you to clasify everything as 0). More discussion on this in the next section. 
+To get ROC curve, we get the predicted probability of Y being 1 from the fitted tree. The additional cp parameter controls the complexity of tree. Here we change it from its default 0.01 to a smaller value to grow a more complex tree than just the root node (if you use the default the tree you get will tell you to classify everything as 0). More discussion on this in the next section. 
 
 ```{r}
 credit_rpart <- rpart(formula = default ~ ., data = credit_train, method = "class", parms = list(loss=matrix(c(0,5,1,0), nrow = 2)))
