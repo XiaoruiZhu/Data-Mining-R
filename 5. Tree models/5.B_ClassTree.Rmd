@@ -75,7 +75,10 @@ Therefore, for most applications (very unbalanced data), we often have asymmetri
 Here we make the assumption that false negative cost 5 times of false positive. In real life the cost structure should be carefully researched.
 
 ```{r}
-credit_rpart <- rpart(formula = default ~ . , data = credit_train, method = "class", parms = list(loss=matrix(c(0,5,1,0), nrow = 2)))
+credit_rpart <- rpart(formula = default ~ . , 
+                      data = credit_train, 
+                      method = "class", 
+                      parms = list(loss=matrix(c(0,5,1,0), nrow = 2)))
 ```
 
 For more advanced controls, you should carefully read the help document for the rpart function.
@@ -107,14 +110,16 @@ Usually if you want a hassle-free model, using type="class" is enough **given th
 
 We can get the expected loss for this tree model by defining a cost function that has the correct weights:
 ```{r}
-cost <- function(r, pi){
-  weight1 = 5
-  weight0 = 1
-  c1 = (r==1)&(pi==0) #logical vector - true if actual 1 but predict 0
-  c0 = (r==0)&(pi==1) #logical vector - true if actual 0 but predict 1
+cost <- function(r, phat){
+  weight1 <- 5
+  weight0 <- 1
+  pcut <- weight0/(weight1+weight0) 
+  c1 <- (r==1)&(phat<pcut) #logical vector - true if actual 1 but predict 0
+  c0 <-(r==0)&(phat>pcut) #logical vector - true if actual 0 but predict 1
   return(mean(weight1*c1+weight0*c0))
 }
-cost(credit_train$default, credit_train.pred.tree1)
+
+cost(credit_train$default, predict(credit_rpart, credit_train, type="prob"))
 ```
 
 **Exercise:** Out-of-sample prediction
@@ -128,31 +133,29 @@ table()
 
 ### Calculate the actual cost using a self-defined cost function.
 
-Calculate the cost for training sample using above cost function
+Calculate the cost for testing sample using above cost function
 ```{r}
-cost(credit_train$default,credit_train.pred.tree1)
+cost(credit_test$default,  predict(credit_rpart, credit_test, type="prob"))
 ```
-
-**Exercise:** Calculate the cost for testing sample.
 
 
 ### Comparing this classification tree with logistic regression
-We can compare this model's out-of-sample performance with the logistic regression model with all variables in it. Recall that when we search for the optimal cut-off using the same cost function we get optimal cut-off at about 0.21.
+We can compare this model's out-of-sample performance with the logistic regression model with all variables in it. 
 
 ```{r, warning=FALSE}
 #Fit logistic regression model
-credit.glm<- glm(default~., data = credit_train, family=binomial)
+credit.glm <- glm(default~., 
+                  data = credit_train, 
+                  family=binomial)
 #Get binary prediction
-credit_test.pred.glm<- as.numeric(predict(credit.glm, credit_test, type="response")>0.21)
+credit_test.pred.glm <- predict(credit.glm, credit_test, type="response")
 #Calculate cost using test set
-cost(credit_test$default,credit_test.pred.glm)
+cost(credit_test$default, credit_test.pred.glm)
 #Confusion matrix
-table(credit_test$default, credit_test.pred.glm, dnn=c("Truth","Predicted"))
+table(credit_test$default, as.numeric(credit_test.pred.glm>1/6), dnn=c("Truth","Predicted"))
 ```
 
-**Exercise:** Comparison for in-sample performance.
-
-Which model do you think is better?
+**Exercise:** Comparison for in-sample performance. Which model do you think is better?
 
 [go to top](#header)
 
@@ -163,7 +166,10 @@ Recall that ROC Curve gives you the trade-off between hit rate (1 - false positi
 To get ROC curve, we get the predicted probability of Y being 1 from the fitted tree. The additional cp parameter controls the complexity of tree. Here we change it from its default 0.01 to a smaller value to grow a more complex tree than just the root node (if you use the default the tree you get will tell you to classify everything as 0). More discussion on this in the next section. 
 
 ```{r}
-credit_rpart <- rpart(formula = default ~ ., data = credit_train, method = "class", parms = list(loss=matrix(c(0,5,1,0), nrow = 2)))
+credit_rpart <- rpart(formula = default ~ .,
+                      data = credit_train, 
+                      method = "class",
+                      parms = list(loss=matrix(c(0,5,1,0), nrow = 2)))
 #Probability of getting 1
 credit_test.prob.rpart = predict(credit_rpart,credit_test, type="prob")
 ```
@@ -196,7 +202,7 @@ credit_test.pred.rpart = as.numeric(credit_test.prob.rpart[,2] > 1/(5+1))
 table(credit_test$default, credit_test.pred.rpart, dnn=c("Truth","Predicted"))
 ```
 
-If you know the cost structure of mis-classification, there is usually no need to search for an optimal cut-off probability as we did in the logistic regression. You can refer to the last section on specifying a loss matrix, rpart will automatically generate decision rules with your cost structure taken into consideration.
+You can refer to the last section on specifying a loss matrix, rpart will automatically generate decision rules with your cost structure taken into consideration.
 
 **Exercise:** Draw the ROC curve for training sample.
 
