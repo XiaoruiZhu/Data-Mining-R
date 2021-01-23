@@ -20,7 +20,7 @@ In this lab, we will cover some state-of-the-art techniques in the framework of 
 # load Boston data
 library(MASS)
 data(Boston)
-index <- sample(nrow(Boston),nrow(Boston)*0.60)
+index <- sample(nrow(Boston),nrow(Boston)*0.9)
 boston.train <- Boston[index,]
 boston.test <- Boston[-index,]
 
@@ -31,9 +31,9 @@ credit.data$SEX<- as.factor(credit.data$SEX)
 credit.data$EDUCATION<- as.factor(credit.data$EDUCATION)
 credit.data$MARRIAGE<- as.factor(credit.data$MARRIAGE)
 # random splitting
-index <- sample(nrow(credit.data),nrow(credit.data)*0.60)
-credit.train = credit.data[index,]
-credit.test = credit.data[-index,]
+index <- sample(nrow(credit.data),nrow(credit.data)*0.9)
+credit_train = credit.data[index,]
+credit_test = credit.data[-index,]
 ```
 
 # Random Forests
@@ -92,16 +92,19 @@ matplot(cbind(test.err, oob.err), pch=15, col = c("red", "blue"), type = "b", yl
 legend("topright", legend = c("test Error", "OOB Error"), pch = 15, col = c("red", "blue"))
 ```
 
-#### Exercise: Create a plot displaying the test error across `ntree=`1, ..., 500, and `mtry=` 1, ..., 13. (You can draw 13 lines in different color representing each $m$).
+> Exercise: 
+>
+> Create a plot displaying the test error across `ntree=`1, ..., 500, and `mtry=` 1, ..., 13. (You can draw 13 lines in different color representing each $m$).
 
 ## Random Forest for Classification
 
 ```{r}
-credit.rf <- randomForest(as.factor(default.payment.next.month)~., data = credit.train)
-credit.rf
+credit_rf <- randomForest(as.factor(default.payment.next.month)~., 
+                          data = credit_train)
+credit_rf
 costMatrix <- matrix(c(0,100,1,0), nrow=2)
 credit_asy_rf <- randomForest(as.factor(default.payment.next.month)~.,
-                              data=credit.train, 
+                              data=credit_train, 
                               importance=TRUE, ntree=500, 
                               parms = list(loss=costMatrix))
 credit_asy_rf
@@ -109,45 +112,70 @@ credit_asy_rf
 
 We can again easily plot the error rate vs. ntree. However, as far as I know, `randomForest` does not support asymmetric loss either. So it always uses the overall misclassification rate as the error.
 ```{r}
-plot(credit.rf, lwd=rep(2, 3))
+plot(credit_rf, lwd=rep(2, 3))
 legend("right", legend = c("OOB Error", "FPR", "FNR"), lwd=rep(2, 3), lty = c(1,2,3), col = c("black", "red", "green"))
 ```
 
-As we can see, the FNR is very high, just as the confusion matrix. For prediction purpose, nevertheless, we can use `type="prob"` to get predicted probability and then find optimal cut-off. Let's do in-sample prediction and find optimal cut-off.
+As we can see, the FNR is very high, just as the confusion matrix. 
+
 ```{r}
-credit.rf.pred<- predict(credit.rf, type = "prob")[,2]
-costfunc = function(obs, pred.p, pcut){
+credit_rf_pred <- predict(credit_rf, type = "prob")[,2]
+costfunc = function(obs, pred_p){
     weight1 = 5   # define the weight for "true=1 but pred=0" (FN)
     weight0 = 1    # define the weight for "true=0 but pred=1" (FP)
-    c1 = (obs==1)&(pred.p<pcut)    # count for "true=1 but pred=0"   (FN)
-    c0 = (obs==0)&(pred.p>=pcut)   # count for "true=0 but pred=1"   (FP)
+    pcut <- weight0/(weight0+weight1) # use the weights to decide pcut
+    c1 = (obs==1)&(pred_p<pcut)    # count for "true=1 but pred=0"   (FN)
+    c0 = (obs==0)&(pred_p>=pcut)   # count for "true=0 but pred=1"   (FP)
     cost = mean(weight1*c1 + weight0*c0)  # misclassification with weight
     return(cost) # you have to return to a value when you write R functions
 } 
-p.seq = seq(0.01, 0.5, 0.01)
-cost = rep(0, length(p.seq))  
-for(i in 1:length(p.seq)){ 
-    cost[i] = costfunc(obs = credit.train$default.payment.next.month, pred.p = credit.rf.pred, pcut = p.seq[i])  
-}
-plot(p.seq, cost)
 ```
 
-ROC curve and AUC is can be obtained based on the probability prediction. (Not sure why Bagging does not work.)
+```{r, eval=FALSE, echo=FALSE}
+credit_rf_pred <- predict(credit_rf, type = "prob")[,2]
+costfunc = function(obs, pred_p){
+    weight1 = 5   # define the weight for "true=1 but pred=0" (FN)
+    weight0 = 1    # define the weight for "true=0 but pred=1" (FP)
+    pcut <- weight0/(weight0+weight1) # use the weights to decide pcut
+    c1 = (obs==1)&(pred_p<pcut)    # count for "true=1 but pred=0"   (FN)
+    c0 = (obs==0)&(pred_p>=pcut)   # count for "true=0 but pred=1"   (FP)
+    cost = mean(weight1*c1 + weight0*c0)  # misclassification with weight
+    return(cost) # you have to return to a value when you write R functions
+} 
+
+p_seq = seq(0.01, 0.5, 0.01)
+cost = rep(0, length(p_seq))  
+for(i in 1:length(p_seq)){ 
+    cost[i] = costfunc(obs = credit_train$default.payment.next.month, pred_p = credit_rf_pred, pcut = p_seq[i])  
+}
+plot(p_seq, cost)
+```
+
+ROC curve and AUC can be obtained based on the probability prediction. 
 ```{r, message=FALSE, warning=FALSE, fig.width=6, fig.height=5}
 library(ROCR)
-pred <- prediction(credit.rf.pred, credit.train$default.payment.next.month)
+pred <- prediction(credit_rf_pred, credit_train$default.payment.next.month)
 perf <- performance(pred, "tpr", "fpr")
 plot(perf, colorize=TRUE)
 #Get the AUC
 unlist(slot(performance(pred, "auc"), "y.values"))
 ```
 
-Create the confusion matrix based on the optimal cutoff probability.
+Create the confusion matrix based on the optimal cutoff probability from asymmetric cost (pcut=1/6).
+
+```{r, eval=FALSE, echo=FALSE}
+## out-of-sample
+optimal_pcut= p_seq[which(cost==min(cost))]
+credit_rf_pred.test<- predict(credit_rf, newdata=credit_test, type = "prob")[,2]
+credit_rf_class_test<- (credit_rf_pred.test>optimal_pcut)*1
+table(credit_test$default.payment.next.month, credit_rf_class_test, dnn = c("True", "Pred"))
+```
+
 ```{r}
 ## out-of-sample
-optimal.pcut= p.seq[which(cost==min(cost))]
-credit.rf.pred.test<- predict(credit.rf, newdata=credit.test, type = "prob")[,2]
-credit.rf.class.test<- (credit.rf.pred.test>optimal.pcut)*1
-table(credit.test$default.payment.next.month, credit.rf.class.test, dnn = c("True", "Pred"))
+pcut <- 1/6
+credit_rf_pred.test <- predict(credit_rf, newdata=credit_test, type = "prob")[,2]
+credit_rf_class_test <- (credit_rf_pred.test>pcut)*1
+table(credit_test$default.payment.next.month, credit_rf_class_test, dnn = c("True", "Pred"))
 ```
 
