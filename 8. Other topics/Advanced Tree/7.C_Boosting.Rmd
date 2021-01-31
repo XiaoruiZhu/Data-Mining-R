@@ -21,19 +21,19 @@ In this lab, we will cover some state-of-the-art techniques in the framework of 
 library(MASS)
 data(Boston)
 index <- sample(nrow(Boston),nrow(Boston)*0.60)
-boston.train <- Boston[index,]
-boston.test <- Boston[-index,]
+boston_train <- Boston[index,]
+boston_test <- Boston[-index,]
 
 # load credit card data
-credit.data <- read.csv("data/credit_default.csv", header=T)
+credit_data <- read.csv(file = "https://xiaoruizhu.github.io/Data-Mining-R/lecture/data/credit_default.csv", header=T)
 # convert categorical variables
-credit.data$SEX<- as.factor(credit.data$SEX)
-credit.data$EDUCATION<- as.factor(credit.data$EDUCATION)
-credit.data$MARRIAGE<- as.factor(credit.data$MARRIAGE)
+credit_data$SEX<- as.factor(credit_data$SEX)
+credit_data$EDUCATION<- as.factor(credit_data$EDUCATION)
+credit_data$MARRIAGE<- as.factor(credit_data$MARRIAGE)
 # random splitting
-index <- sample(nrow(credit.data),nrow(credit.data)*0.60)
-credit.train = credit.data[index,]
-credit.test = credit.data[-index,]
+index <- sample(nrow(credit_data),nrow(credit_data)*0.60)
+credit_train = credit_data[index,]
+credit_test = credit_data[-index,]
 ```
 
 # Boosting
@@ -45,8 +45,13 @@ Boosting builds a number of small trees, and each time, the response is the resi
 ```{r warning=FALSE, message=FALSE}
 library(gbm)
 # ?gbm
-boston.boost<- gbm(medv~., data = boston.train, distribution = "gaussian", n.trees = 10000, shrinkage = 0.01, interaction.depth = 8)
-summary(boston.boost)
+boston_boost<- gbm(formula = medv~., 
+                   data = boston_train, 
+                   distribution = "gaussian", 
+                   n.trees = 10000, 
+                   shrinkage = 0.01, 
+                   interaction.depth = 8)
+summary(boston_boost)
 ```
 
 Note that we need to specify `distribution = "gaussian"` if we are working on regression tree. The default is *Bernoulli* distribution for binary classification problem. `n.trees` is the number of small trees we fit. We need to choose this parameter carefully because it may results in overfitting if the number is too large. `shrinkage` is another tuning parameter that controls how much contribution each tree makes. `interaction.depth` is how many splits of each tree we want. All those tuning parameters can be chosen from cross-validation. The idea is that we don't want overfitting.
@@ -54,14 +59,14 @@ Note that we need to specify `distribution = "gaussian"` if we are working on re
 The fitted boosted tree also gives the relation between response and each predictor.
 ```{r}
 par(mfrow=c(1,2))
-plot(boston.boost, i="lstat")
-plot(boston.boost, i="rm")
+plot(boston_boost, i="lstat")
+plot(boston_boost, i="rm")
 ```
 
 Prediction on testing sample.
 ```{r}
-boston.boost.pred.test<- predict(boston.boost, boston.test, n.trees = 10000)
-mean((boston.test$medv-boston.boost.pred.test)^2)
+boston_boost_pred_test<- predict(boston_boost, boston_test, n.trees = 10000)
+mean((boston_test$medv-boston_boost_pred_test)^2)
 ```
 
 We can investigate how the testing error changes with different number of trees.
@@ -69,8 +74,8 @@ We can investigate how the testing error changes with different number of trees.
 ntree <- seq(100, 10000, 100)
 test.err <- rep(0, 13)
 
-predmat <- predict(boston.boost, newdata = boston.test, n.trees = ntree)
-err <- apply((predmat-boston.test$medv)^2, 2, mean)
+predmat <- predict(boston_boost, newdata = boston_test, n.trees = ntree)
+err <- apply((predmat-boston_test$medv)^2, 2, mean)
 plot(ntree, err, type = 'l', col=2, lwd=2, xlab = "n.trees", ylab = "Test MSE")
 abline(h=min(test.err), lty=2)
 ```
@@ -81,21 +86,21 @@ The horizontal line is the best prediction error from random forests we obtained
 
 ```{r, eval=FALSE}
 library(adabag)
-credit.train$default.payment.next.month= as.factor(credit.train$default.payment.next.month)
-credit.boost= boosting(default.payment.next.month~., data = credit.train, boos = T)
-save(credit.boost, file = "credit.boost.Rdata")
+credit_train$default.payment.next.month= as.factor(credit_train$default.payment.next.month)
+credit_boost= boosting(default.payment.next.month~., data = credit_train, boos = T)
+save(credit_boost, file = "credit_boost.Rdata")
 
 # Training AUC
-pred.credit.boost= predict(credit.boost, newdata = credit.train)
-pred <- prediction(pred.credit.boost$prob[,2], credit.train$default.payment.next.month)
+pred_credit_boost= predict(credit_boost, newdata = credit_train)
+pred <- prediction(pred_credit_boost$prob[,2], credit_train$default.payment.next.month)
 perf <- performance(pred, "tpr", "fpr")
 plot(perf, colorize=TRUE)
 #Get the AUC
 unlist(slot(performance(pred, "auc"), "y.values"))
 
-pred.credit.boost= predict(credit.boost, newdata = credit.test)
+pred_credit_boost= predict(credit_boost, newdata = credit_test)
 # Testing AUC
-pred <- prediction(pred.credit.boost$prob[,2], credit.test$default.payment.next.month)
+pred <- prediction(pred_credit_boost$prob[,2], credit_test$default.payment.next.month)
 perf <- performance(pred, "tpr", "fpr")
 plot(perf, colorize=TRUE)
 #Get the AUC

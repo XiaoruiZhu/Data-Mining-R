@@ -21,19 +21,19 @@ In this lab, we will cover some state-of-the-art techniques in the framework of 
 library(MASS)
 data(Boston)
 index <- sample(nrow(Boston),nrow(Boston)*0.9)
-boston.train <- Boston[index,]
-boston.test <- Boston[-index,]
+boston_train <- Boston[index,]
+boston_test <- Boston[-index,]
 
 # load credit card data
-credit.data <- read.csv("data/credit_default.csv", header=T)
+credit_data <- read.csv(file = "https://xiaoruizhu.github.io/Data-Mining-R/lecture/data/credit_default.csv", header=T)
 # convert categorical variables
-credit.data$SEX<- as.factor(credit.data$SEX)
-credit.data$EDUCATION<- as.factor(credit.data$EDUCATION)
-credit.data$MARRIAGE<- as.factor(credit.data$MARRIAGE)
+credit_data$SEX<- as.factor(credit_data$SEX)
+credit_data$EDUCATION<- as.factor(credit_data$EDUCATION)
+credit_data$MARRIAGE<- as.factor(credit_data$MARRIAGE)
 # random splitting
-index <- sample(nrow(credit.data),nrow(credit.data)*0.9)
-credit_train = credit.data[index,]
-credit_test = credit.data[-index,]
+index <- sample(nrow(credit_data),nrow(credit_data)*0.9)
+credit_train = credit_data[index,]
+credit_test = credit_data[-index,]
 ```
 
 # Random Forests
@@ -46,49 +46,47 @@ We start with Boston Housing data.
 
 ```{r warning=FALSE, message=FALSE}
 library(randomForest)
-boston.rf<- randomForest(medv~., data = boston.train, importance=TRUE)
-boston.rf
-costMatrix <- matrix(c(0,10,1,0), nrow=2)
-mod_rf <- randomForest(medv~., data=boston.train, 
-                       importance=TRUE, ntree=500, 
-                       parms = list(loss=costMatrix))
+boston_rf<- randomForest(medv~., data = boston_train, importance=TRUE)
+boston_rf
 
+mod_rf <- randomForest(medv~., data=boston_train, 
+                       importance=TRUE, ntree=500)
 ```
 
 By default, $m=p/3$ for regression tree, and $m=\sqrt{p}$ for classification problem. You can change it by specifying `mtry=`. You can also specify number of trees by `ntree=`. The default is 500.
 The argument `importance=TRUE` allows us to see the variable imporatance.
 
 ```{r}
-boston.rf$importance
+boston_rf$importance
 mod_rf$importance
 ```
 
 The MSR is MSE of *out-of-bag* prediction (recall the OOB in bagging).  The fitted randomForest actually saves all OOB errors for each `ntree` value from 1 to 500. We can make a plot to see how the OOB error changes with different `ntree`. 
 
 ```{r}
-plot(boston.rf$mse, type='l', col=2, lwd=2, xlab = "ntree", ylab = "OOB Error")
+plot(boston_rf$mse, type='l', col=2, lwd=2, xlab = "ntree", ylab = "OOB Error")
 plot(mod_rf$mse, type='l', col=2, lwd=2, xlab = "ntree", ylab = "OOB Error")
 ```
 
 Prediction on the testing sample.
 ```{r}
-boston.rf.pred<- predict(boston.rf, boston.test)
-mean((boston.test$medv-boston.rf.pred)^2)
+boston_rf_pred<- predict(boston_rf, boston_test)
+mean((boston_test$medv-boston_rf_pred)^2)
 ```
 
 
 As we mentioned before, the number of candidate predictors in each split is $m\approx \sqrt{p}=\sqrt{13}\approx 4$. We can also specify $m$ with argument `mtry`. Now let's see how the OOB error and testing error changes with `mtry`.
 
 ```{r}
-oob.err<- rep(0, 13)
-test.err<- rep(0, 13)
+oob_err <- rep(0, 13)
+test.err <- rep(0, 13)
 for(i in 1:13){
-  fit<- randomForest(medv~., data = boston.train, mtry=i)
-  oob.err[i]<- fit$mse[500]
-  test.err[i]<- mean((boston.test$medv-predict(fit, boston.test))^2)
+  fit<- randomForest(medv~., data = boston_train, mtry=i)
+  oob_err[i]<- fit$mse[500]
+  test.err[i]<- mean((boston_test$medv-predict(fit, boston_test))^2)
   cat(i, " ")
 }
-matplot(cbind(test.err, oob.err), pch=15, col = c("red", "blue"), type = "b", ylab = "MSE", xlab = "mtry")
+matplot(cbind(test.err, oob_err), pch=15, col = c("red", "blue"), type = "b", ylab = "MSE", xlab = "mtry")
 legend("topright", legend = c("test Error", "OOB Error"), pch = 15, col = c("red", "blue"))
 ```
 
@@ -102,11 +100,9 @@ legend("topright", legend = c("test Error", "OOB Error"), pch = 15, col = c("red
 credit_rf <- randomForest(as.factor(default.payment.next.month)~., 
                           data = credit_train)
 credit_rf
-costMatrix <- matrix(c(0,100,1,0), nrow=2)
 credit_asy_rf <- randomForest(as.factor(default.payment.next.month)~.,
                               data=credit_train, 
-                              importance=TRUE, ntree=500, 
-                              parms = list(loss=costMatrix))
+                              importance=TRUE, ntree=500)
 credit_asy_rf
 ```
 
@@ -118,18 +114,6 @@ legend("right", legend = c("OOB Error", "FPR", "FNR"), lwd=rep(2, 3), lty = c(1,
 
 As we can see, the FNR is very high, just as the confusion matrix. 
 
-```{r}
-credit_rf_pred <- predict(credit_rf, type = "prob")[,2]
-costfunc = function(obs, pred_p){
-    weight1 = 5   # define the weight for "true=1 but pred=0" (FN)
-    weight0 = 1    # define the weight for "true=0 but pred=1" (FP)
-    pcut <- weight0/(weight0+weight1) # use the weights to decide pcut
-    c1 = (obs==1)&(pred_p<pcut)    # count for "true=1 but pred=0"   (FN)
-    c0 = (obs==0)&(pred_p>=pcut)   # count for "true=0 but pred=1"   (FP)
-    cost = mean(weight1*c1 + weight0*c0)  # misclassification with weight
-    return(cost) # you have to return to a value when you write R functions
-} 
-```
 
 ```{r, eval=FALSE, echo=FALSE}
 credit_rf_pred <- predict(credit_rf, type = "prob")[,2]
@@ -153,6 +137,7 @@ plot(p_seq, cost)
 
 ROC curve and AUC can be obtained based on the probability prediction. 
 ```{r, message=FALSE, warning=FALSE, fig.width=6, fig.height=5}
+credit_rf_pred <- predict(credit_rf, type = "prob")[,2]
 library(ROCR)
 pred <- prediction(credit_rf_pred, credit_train$default.payment.next.month)
 perf <- performance(pred, "tpr", "fpr")
@@ -166,16 +151,16 @@ Create the confusion matrix based on the optimal cutoff probability from asymmet
 ```{r, eval=FALSE, echo=FALSE}
 ## out-of-sample
 optimal_pcut= p_seq[which(cost==min(cost))]
-credit_rf_pred.test<- predict(credit_rf, newdata=credit_test, type = "prob")[,2]
-credit_rf_class_test<- (credit_rf_pred.test>optimal_pcut)*1
+credit_rf_pred_test<- predict(credit_rf, newdata=credit_test, type = "prob")[,2]
+credit_rf_class_test<- (credit_rf_pred_test>optimal_pcut)*1
 table(credit_test$default.payment.next.month, credit_rf_class_test, dnn = c("True", "Pred"))
 ```
 
 ```{r}
 ## out-of-sample
 pcut <- 1/6
-credit_rf_pred.test <- predict(credit_rf, newdata=credit_test, type = "prob")[,2]
-credit_rf_class_test <- (credit_rf_pred.test>pcut)*1
+credit_rf_pred_test <- predict(credit_rf, newdata=credit_test, type = "prob")[,2]
+credit_rf_class_test <- (credit_rf_pred_test>pcut)*1
 table(credit_test$default.payment.next.month, credit_rf_class_test, dnn = c("True", "Pred"))
 ```
 

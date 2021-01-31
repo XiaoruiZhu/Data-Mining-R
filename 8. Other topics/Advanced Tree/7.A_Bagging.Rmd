@@ -21,19 +21,19 @@ In this lab, we will cover some state-of-the-art techniques in the framework of 
 library(MASS)
 data(Boston)
 index <- sample(nrow(Boston),nrow(Boston)*0.60)
-boston.train <- Boston[index,]
-boston.test <- Boston[-index,]
+boston_train <- Boston[index,]
+boston_test <- Boston[-index,]
 
 # load credit card data
-credit.data <- read.csv("data/credit_default.csv", header=T)
+credit_data <- read.csv(file = "https://xiaoruizhu.github.io/Data-Mining-R/lecture/data/credit_default.csv", header=T)
 # convert categorical variables
-credit.data$SEX<- as.factor(credit.data$SEX)
-credit.data$EDUCATION<- as.factor(credit.data$EDUCATION)
-credit.data$MARRIAGE<- as.factor(credit.data$MARRIAGE)
+credit_data$SEX<- as.factor(credit_data$SEX)
+credit_data$EDUCATION<- as.factor(credit_data$EDUCATION)
+credit_data$MARRIAGE<- as.factor(credit_data$MARRIAGE)
 # random splitting
-index <- sample(nrow(credit.data),nrow(credit.data)*0.60)
-credit.train = credit.data[index,]
-credit.test = credit.data[-index,]
+index <- sample(nrow(credit_data),nrow(credit_data)*0.60)
+credit_train = credit_data[index,]
+credit_test = credit_data[-index,]
 ```
 
 # Bagging
@@ -50,61 +50,64 @@ library(ipred)
 
 Fit tree with bagging on Boston training data, and calculate MSE on testing sample.
 ```{r}
-boston.bag<- bagging(medv~., data = boston.train, nbagg=100)
-boston.bag
+boston_bag<- bagging(formula = medv~., 
+                     data = boston_train, 
+                     nbagg=100)
+boston_bag
 ```
 
 Prediction on testing sample.
 ```{r}
-boston.bag.pred<- predict(boston.bag, newdata = boston.test)
-mean((boston.test$medv-boston.bag.pred)^2)
+boston_bag_pred<- predict(boston_bag, newdata = boston_test)
+mean((boston_test$medv-boston_bag_pred)^2)
 ```
 
 Comparing with a single tree.
 ```{r}
 library(rpart)
-boston.tree<- rpart(medv~., data = boston.train)
-boston.tree.pred<- predict(boston.tree, newdata = boston.test)
-mean((boston.test$medv-boston.tree.pred)^2)
+boston_tree<- rpart(formula = medv~., 
+                    data = boston_train)
+boston_tree_pred<- predict(boston_tree, newdata = boston_test)
+mean((boston_test$medv-boston_tree_pred)^2)
 ```
 
 How many trees are good? 
 ```{r}
 ntree<- c(1, 3, 5, seq(10, 200, 10))
-MSE.test<- rep(0, length(ntree))
+MSE_test<- rep(0, length(ntree))
 for(i in 1:length(ntree)){
-  boston.bag1<- bagging(medv~., data = boston.train, nbagg=ntree[i])
-  boston.bag.pred1<- predict(boston.bag1, newdata = boston.test)
-  MSE.test[i]<- mean((boston.test$medv-boston.bag.pred1)^2)
+  boston_bag1<- bagging(medv~., data = boston_train, nbagg=ntree[i])
+  boston_bag_pred1<- predict(boston_bag1, newdata = boston_test)
+  MSE_test[i]<- mean((boston_test$medv-boston_bag_pred1)^2)
 }
-plot(ntree, MSE.test, type = 'l', col=2, lwd=2, xaxt="n")
+plot(ntree, MSE_test, type = 'l', col=2, lwd=2, xaxt="n")
 axis(1, at = ntree, las=1)
 ```
 
 ```{r echo=FALSE, eval=FALSE}
 ntree<- c(1, 3, 5, seq(10, 200, 10))
-MSE.test<- matrix(0, length(ntree), 50)
+MSE_test<- matrix(0, length(ntree), 50)
 for(k in 1:50){
   for(i in 1:length(ntree)){
-    boston.bag1<- bagging(medv~., data = boston.train, nbagg=ntree[i])
-    boston.bag.pred1<- predict(boston.bag1, newdata = boston.test)
-    MSE.test[i,k]<- mean((boston.test$medv-boston.bag.pred1)^2)
+    boston_bag1<- bagging(medv~., data = boston_train, nbagg=ntree[i])
+    boston_bag_pred1<- predict(boston_bag1, newdata = boston_test)
+    MSE_test[i,k]<- mean((boston_test$medv-boston_bag_pred1)^2)
   }
 }
 setwd("C:\\Users\\zhuxr\\Dropbox\\Writing Books\\Data-Mining-R\\8. Other topics\\Advanced Tree\\data")
-write.csv(MSE.test, file = "Bag_MSE.csv", row.names = FALSE)
-MSE.test.ave= apply(MSE.test, 1, mean)
-plot(ntree, MSE.test.ave, ylab="MSE.test", type = 'l', col=2, lwd=2)
+write.csv(MSE_test, file = "Bag_MSE.csv", row.names = FALSE)
+MSE_test.ave= apply(MSE_test, 1, mean)
+plot(ntree, MSE_test.ave, ylab="MSE_test", type = 'l', col=2, lwd=2)
 ```
 
 By fitting the Bagging multiple times and predicting the testing sample, we can draw the following boxplot to show the variance of the prediction error at different number of trees.
 
 ```{r echo=FALSE}
 setwd("data/")
-MSE.test= read.csv("Bag_MSE.csv")
+MSE_test= read.csv("Bag_MSE.csv")
 ntree<- c(1, 3, 5, seq(10, 200, 10))
-boxplot(t(MSE.test), names=ntree, xlab="Number of Tree", ylab="Test MSE")
-lines(apply(MSE.test, 1, mean), col="red", lty=2, lwd=2)
+boxplot(t(MSE_test), names=ntree, xlab="Number of Tree", ylab="Test MSE")
+lines(apply(MSE_test, 1, mean), col="red", lty=2, lwd=2)
 ```
 
 
@@ -113,40 +116,43 @@ lines(apply(MSE.test, 1, mean), col="red", lty=2, lwd=2)
 The out-of-bag prediction is similar to LOOCV. We use full sample. In every bootstrap, the unused sample serves as testing sample, and testing error is calculated. In the end, OOB error, root mean squared error by default, is obtained 
 
 ```{r}
-boston.bag.oob<- bagging(medv~., data = boston.train, coob=T, nbagg=100)
-boston.bag.oob
+boston_bag_oob<- bagging(formula = medv~., 
+                         data = boston_train, 
+                         coob=T, 
+                         nbagg=100)
+boston_bag_oob
 ```
 
 ## Bagging for classification tree.
 
 To my best knowledge, it seems that `bagging()` won't take an argument for asymmetric loss. Therefore, the classification results might not be appropriate. 
 
-<!-- However, we can still get probabilities. Note that the predicted probabilities from `bagging()` is although the proportion of 1/0 in terminal modes, they are aggregated in the end. Hence, it is unlikely that many observations have the same predicted probability. -->
 
 ```{r}
-credit.bag<- bagging(as.factor(default.payment.next.month)~., data = credit.train, nbagg=100)
-credit.bag.pred<- predict(credit.bag, newdata = credit.train, type="prob")[,2]
-credit.bag.pred.test<- predict(credit.bag, newdata = credit.test, type="prob")[,2]
+credit_bag <- bagging(formula = as.factor(default.payment.next.month)~., 
+                      data = credit_train, 
+                      nbagg=100)
+
+credit_bag_pred <- predict(credit_bag, newdata = credit_train, type="prob")[,2]
+credit_bag_pred_test <- predict(credit_bag, newdata = credit_test, type="prob")[,2]
+
 library(ROCR)
-pred = prediction(credit.bag.pred.test, credit.test$default.payment.next.month)
-perf = performance(pred, "tpr", "fpr")
+pred <- prediction(credit_bag_pred_test, credit_test$default.payment.next.month)
+perf <- performance(pred, "tpr", "fpr")
 plot(perf, colorize=TRUE)
 unlist(slot(performance(pred, "auc"), "y.values"))
-
 ```
 
 The classification results are generated by specifying `type="class"`.
 
 ```{r}
-credit.bag.pred.test<- predict(credit.bag, newdata = credit.test, type="class")
-table(credit.test$default.payment.next.month, credit.bag.pred.test, dnn = c("True", "Pred"))
+credit_bag_pred_test <- predict(credit_bag, newdata = credit_test, type="class")
+table(credit_test$default.payment.next.month, credit_bag_pred_test, dnn = c("True", "Pred"))
 
-costMatrix <- matrix(c(0,35,1,0), nrow=2)
 credit_asy_bag<- bagging(as.factor(default.payment.next.month)~., 
-                         data = credit.train,
-                         parms=list(cost=costMatrix), nbagg=100)
-credit_asy_bag_pred<- predict(credit_asy_bag, newdata = credit.test)
-table(credit.test$default.payment.next.month, credit_asy_bag_pred, dnn = c("True", "Pred"))
+                         data = credit_train, nbagg=100)
+credit_asy_bag_pred<- predict(credit_asy_bag, newdata = credit_test)
+table(credit_test$default.payment.next.month, credit_asy_bag_pred, dnn = c("True", "Pred"))
 
 ```
 
@@ -154,60 +160,28 @@ table(credit.test$default.payment.next.month, credit_asy_bag_pred, dnn = c("True
 - Question: What will you see if you calculate the AUC of training set?
 
 ```{r , eval=FALSE}
-predtrain = prediction(credit.bag.pred, credit.train$default.payment.next.month)
-perftrain = performance(predtrain, "tpr", "fpr")
+predtrain <- prediction(credit_bag_pred, credit_train$default.payment.next.month)
+perftrain <- performance(predtrain, "tpr", "fpr")
 plot(perftrain, colorize=TRUE)
 unlist(slot(performance(predtrain, "auc"), "y.values"))
 
-credit.bag.pred.train <- predict(credit.bag, newdata = credit.train, type="class")
-table(credit.train$default.payment.next.month, credit.bag.pred.train, dnn = c("True", "Pred"))
+credit_bag_pred_train <- predict(credit_bag, newdata = credit_train, type="class")
+table(credit_train$default.payment.next.month, credit_bag_pred_train, dnn = c("True", "Pred"))
 ```
 
-<!-- ## Something is wrong. This part needs to be investigated -->
-<!-- ```{r, message=FALSE, warning=FALSE, fig.width=6, fig.height=5} -->
-<!-- library(ROCR) -->
-<!-- pred <- prediction(credit.bag.pred, credit.train$default.payment.next.month) -->
-<!-- perf <- performance(pred, "tpr", "fpr") -->
-<!-- plot(perf, colorize=TRUE) -->
-<!-- #Get the AUC -->
-<!-- unlist(slot(performance(pred, "auc"), "y.values")) -->
-<!-- ``` -->
-
-
-
-<!-- <!-- Let us choose the optimal cut-off based on our asymmetric loss. --> -->
-<!-- ```{r} -->
-<!-- costfunc = function(obs, pred.p, pcut){ -->
-<!--     weight1 = 5  # define the weight for "true=1 but pred=0" (FN) -->
-<!--     weight0 = 1    # define the weight for "true=0 but pred=1" (FP) -->
-<!--     c1 = (obs==1)&(pred.p<pcut)    # count for "true=1 but pred=0"   (FN) -->
-<!--     c0 = (obs==0)&(pred.p>=pcut)   # count for "true=0 but pred=1"   (FP) -->
-<!--     cost = mean(weight1*c1 + weight0*c0)  # misclassification with weight -->
-<!--     return(cost) # you have to return to a value when you write R functions -->
-<!-- } -->
-<!-- p.seq = seq(0.01, 1, 0.01) -->
-<!-- cost = rep(0, length(p.seq)) -->
-<!-- for(i in 1:length(p.seq)){ -->
-<!--     cost[i] = costfunc(obs = credit.train$default.payment.next.month, pred.p = credit.bag.pred, pcut = p.seq[i]) -->
-<!-- } -->
-<!-- plot(p.seq, cost) -->
-<!-- ``` -->
-
-<!-- ```{r} -->
-<!-- optimal.pcut = p.seq[which(cost==min(cost))] -->
-<!-- credit.bag.class<- (credit.bag.pred.test>optimal.pcut)*1 -->
-<!-- table(credit.test$default.payment.next.month, credit.bag.class, dnn = c("True", "Pred")) -->
-<!-- ``` -->
 
 Comparing with a single tree. For fair comparison, we assume the loss is symmetric.
 
 ```{r}
-credit.rpart <- rpart(formula = default.payment.next.month ~ ., data = credit.train, method = "class")
-credit.test.pred.tree1 <- predict(credit.rpart, credit.test, type="class")
-table(credit.test$default.payment.next.month, credit.test.pred.tree1, dnn=c("Truth","Predicted"))
-credit.test.pred.tree1 <- predict(credit.rpart, credit.test, type="prob")
+credit_rpart <- rpart(formula = default.payment.next.month ~ ., 
+                      data = credit_train, 
+                      method = "class")
 
-pred = prediction(credit.test.pred.tree1[,2], credit.test$default.payment.next.month)
+credit_test_pred_tree1 <- predict(credit_rpart, credit_test, type="class")
+table(credit_test$default.payment.next.month, credit_test_pred_tree1, dnn=c("Truth","Predicted"))
+credit_test_pred_tree1 <- predict(credit_rpart, credit_test, type="prob")
+
+pred = prediction(credit_test_pred_tree1[,2], credit_test$default.payment.next.month)
 perf = performance(pred, "tpr", "fpr")
 plot(perf, colorize=TRUE)
 unlist(slot(performance(pred, "auc"), "y.values"))

@@ -19,7 +19,7 @@ library(ROCR); library(randomForest); library(gbm); library(adabag)
 
 # **Exercise:** 
 
-## Regression problem: Boston housign data
+## Regression problem: Boston housing data
 
 Apply bagging tree on the Boston housing data
 
