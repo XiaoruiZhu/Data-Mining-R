@@ -71,7 +71,7 @@ table th:nth-of-type(3) {
 
 | Lab Notes                                             |  Video     | Exercise                         |
 |:------------------------------------------------------|:----------:|---------------------------------:|
-| [7.A Bagging trees](lecture/7.A_Bagging.html)          |            | [7.A](lecture/7.A_Exercise.html) |
+| [7.A Bagging trees](lecture/7.A_Bagging.html)          |            |                                 |
 | [7.B Random forests](lecture/7.B_RandomForests.html)  |            | [7.B](lecture/7.B_Exercise.html) |
 | [7.C Boosting trees](lecture/7.C_Boosting.html)        |            | [7.C](lecture/7.C_Exercise.html) |
 
