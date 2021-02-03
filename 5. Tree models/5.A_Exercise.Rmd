@@ -12,14 +12,13 @@ output:
 
 ```{r echo=TRUE}
 library(MASS) #this data is in MASS package
-boston.data <- data(Boston)
 sample_index <- sample(nrow(Boston),nrow(Boston)*0.90)
-boston.train <- Boston[sample_index,]
-boston.test <- Boston[-sample_index,]
+boston_train <- Boston[sample_index,]
+boston_test <- Boston[-sample_index,]
 library(rpart)
 library(rpart.plot)
-boston.rpart <- rpart(formula = medv ~ ., data = boston.train)
-prp(boston.rpart,digits = 4, extra = 1)
+boston_rpart <- rpart(formula = medv ~ ., data = boston_train)
+prp(boston_rpart,digits = 4, extra = 1)
 ```
 
 > 1. Based on the tree model above, what is the predicted median housing price (in thousand) given following information:
@@ -27,38 +26,38 @@ prp(boston.rpart,digits = 4, extra = 1)
 
 ```{r, echo=FALSE}
 library(knitr)
-kable(boston.test[10,], digits=2, row.names = F)
+kable(boston_test[10,], digits=2, row.names = F)
 ```
 
 > 2. Calculate the mean squared error (MSE) of the in-sample for this tree model;
 
 
 ```{r echo=FALSE, eval=FALSE}
-boston.train.pred.tree = predict(boston.rpart)
-boston.test.pred.tree = predict(boston.rpart,boston.test)
-MSE.tree <- mean((boston.train.pred.tree - boston.train$medv)^2)
-MSPE.tree <- mean((boston.test.pred.tree - boston.test$medv)^2)
+boston_train_pred_tree = predict(boston_rpart)
+boston_test_pred_tree = predict(boston_rpart,boston_test)
+MSE_tree <- mean((boston_train_pred_tree - boston_train$medv)^2)
+MSPE_tree <- mean((boston_test_pred_tree - boston_test$medv)^2)
 ```
 
 > 3. Compare this model's out-of-sample performance with the linear regression model with all variables in it.
 
 ```{r echo=FALSE, eval=FALSE}
-boston.reg = lm(medv~., data = boston.train)
-boston.test.pred.reg = predict(boston.reg, boston.test)
-mean((boston.test.pred.reg - boston.test$medv)^2)
+boston_reg = lm(medv~., data = boston_train)
+boston_test_pred_reg = predict(boston_reg, boston_test)
+mean((boston_test_pred_reg - boston_test$medv)^2)
 ```
 
-> 4. Compare the performance (MSE, MSPE) of regression tree with linear regression model in terms of prediction error.
+<!-- > 4. Cboston_test.pred.regompare the performance (MSE, MSPE) of regression tree with linear regression model in terms of prediction error. -->
 
 ```{r, echo=FALSE, eval=FALSE}
 boston.lm <- 
-boston.train.pred.lm <- 
-boston.test.pred.lm <- 
+boston_train.pred.lm <- 
+boston_test.pred.lm <- 
 MSE.lm <- 
 MSPE.lm <-
 ```
 
-> 5. Prune a classification tree. Start with "cp=0.001", and find a reasonable cp value, then obtain the pruned tree.
+<!-- > 5. Prune a classification tree. Start with "cp=0.001", and find a reasonable cp value, then obtain the pruned tree. -->
 
 [go to top](#header)
 

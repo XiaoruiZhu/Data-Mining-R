@@ -16,23 +16,22 @@ editor_options:
 
 # **Exercise:** 
 
-> 1. Conduct 2-fold CV to calculate the mean square error of full model, and a reduced model with indus and rm only. 
-
+> 1. For boston housing dataset, conduct 2-fold CV by `cv.glm` to calculate the mean square error of full model, and a reduced model with indus and rm only. 
 
 ```{r, echo=FALSE, message=FALSE, eval=FALSE}
 library(MASS)
 data(Boston); #this data is in MASS package
 library(boot)
 model_full <- glm(medv~., data = Boston)
-cv.glm(data = Boston, glmfit = model_full, K = 10)$delta[2]
+cv.glm(data = Boston, glmfit = model_full, K = 2)$delta[2]
 
 model_2 <- glm(medv~indus + rm, data = Boston)
 
-cv.glm(data = Boston, glmfit = model_2, K = 10)$delta[2]
+cv.glm(data = Boston, glmfit = model_2, K = 2)$delta[2]
 
 library(glmnet)
 lasso_fit  <- glmnet(x = as.matrix(Boston[, -c(which(colnames(Boston)=='medv'))]), y = Boston$medv, alpha = 1)
-#use 10-fold cross validation to pick lambda
+ # use 10-fold cross validation to pick lambda
 cv_lasso_fit = cv.glmnet(x = as.matrix(Boston[, -c(which(colnames(Boston)=='medv'))]), y = Boston$medv, alpha = 1, nfolds = 10)
 
 MSE_cost <- function(pi, r){

@@ -9,16 +9,32 @@ output:
 ---
 # **Exercise:** 
 
-> 1. Calculate the out-of-sample prediction performance;
+> 1. For the credit card default data, calculate the out-of-sample confusion matrix;
 
 ```{r, echo=FALSE, eval=FALSE}
+credit_data <- read.csv(file = "https://xiaoruizhu.github.io/Data-Mining-R/lecture/data/credit_default.csv", header=T)
+# rename
+library(dplyr); library(rpart); library(rpart.plot)
+credit_data<- rename(credit_data, default=default.payment.next.month)
+# convert categorical data to factor
+credit_data$SEX<- as.factor(credit_data$SEX)
+credit_data$EDUCATION<- as.factor(credit_data$EDUCATION)
+credit_data$MARRIAGE<- as.factor(credit_data$MARRIAGE)
+
+index <- sample(nrow(credit_data),nrow(credit_data)*0.80)
+credit_train = credit_data[index,]
+credit_test = credit_data[-index,]
+
+credit_rpart0 <- rpart(formula = default ~ ., data = credit_train, method = "class")
+
 #Predicted Class
-credit.test.pred.tree1<- 
-table()
+credit_test_pred_tree1 <- predict(credit_rpart0, newdata = credit_test, type="class")
+
+table(credit_test$default, credit_test_pred_tree1, dnn = c("True", "Pred"))
 ```
 
 
-> 2. If the cost ratio of false negative to false positive is 5 to 1, calculate the out-of-sample prediction
+> 2. If the cost ratio of false negative to false positive is 5 to 1, calculate the out-of-sample asymmetric cost. 
 
 ```{r, echo=FALSE, eval=FALSE}
 cost <- function(r, pi){
@@ -29,15 +45,14 @@ cost <- function(r, pi){
   return(mean(weight1*c1+weight0*c0))
 }
 
-cost(credit.train$Y,credit.train.pred.tree1)
-#Predicted Class
-credit.test.pred.tree1<- 
-table()
+
+cost(credit_test$default, predict(credit_rpart0, credit_test, type="class"))
+
 ```
 
-> 3. Try `type="prob"` in prediction, what can you say about these predicted probabilities?
+<!-- > 3. Try `type="prob"` in prediction, what can you say about these predicted probabilities? -->
 
-> 4. Draw the ROC curve for training sample.
+<!-- > 4. Draw the ROC curve for training sample. -->
 
 <!-- ## Cumulative Gains Chart -->
 

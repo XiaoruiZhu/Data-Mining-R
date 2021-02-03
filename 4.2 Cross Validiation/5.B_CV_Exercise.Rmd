@@ -16,6 +16,33 @@ editor_options:
 
 # **Exercise:** 
 
-> 1. Conduct 5-fold CV and LOOCV (Leave-one-out Cross Validation) to calculate the MAE.
+> 1. For boston housing dataset, conduct 5-fold CV and LOOCV (Leave-one-out Cross Validation) of the full model by `cv.glm` and calculate the mean square error.
 
 
+```{r, echo=FALSE, message=FALSE, eval=FALSE}
+library(MASS)
+data(Boston); #this data is in MASS package
+library(boot)
+model_full <- glm(medv~., data = Boston)
+cv.glm(data = Boston, glmfit = model_full, K = 5)$delta[2]
+
+model_2 <- glm(medv~indus + rm, data = Boston)
+
+# use LOOCV 
+cv.glm(data = Boston, glmfit = model_full, K = nrow(Boston))$delta[2]
+
+library(glmnet)
+lasso_fit  <- glmnet(x = as.matrix(Boston[, -c(which(colnames(Boston)=='medv'))]), y = Boston$medv, alpha = 1)
+# use 5-fold cross validation to pick lambda
+cv_lasso_fit = cv.glmnet(x = as.matrix(Boston[, -c(which(colnames(Boston)=='medv'))]), y = Boston$medv, alpha = 1, nfolds = 5)
+
+MAE_cost <- function(pi, r){
+  return(mean(abs(pi-r)))
+}
+
+pred_IS <- predict(lasso_fit, as.matrix(Boston[, -c(which(colnames(Boston)=='medv'))]), s = cv_lasso_fit$lambda.min)
+MAE_cost(pred_IS, Boston$medv)
+
+
+
+```

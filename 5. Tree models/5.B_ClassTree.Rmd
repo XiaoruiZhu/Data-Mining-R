@@ -144,15 +144,15 @@ We can compare this model's out-of-sample performance with the logistic regressi
 
 ```{r, warning=FALSE}
 #Fit logistic regression model
-credit.glm <- glm(default~., 
+credit_glm <- glm(default~., 
                   data = credit_train, 
                   family=binomial)
 #Get binary prediction
-credit_test.pred.glm <- predict(credit.glm, credit_test, type="response")
+credit_test_pred_glm <- predict(credit_glm, credit_test, type="response")
 #Calculate cost using test set
-cost(credit_test$default, credit_test.pred.glm)
+cost(credit_test$default, credit_test_pred_glm)
 #Confusion matrix
-table(credit_test$default, as.numeric(credit_test.pred.glm>1/6), dnn=c("Truth","Predicted"))
+table(credit_test$default, as.numeric(credit_test_pred_glm>1/6), dnn=c("Truth","Predicted"))
 ```
 
 **Exercise:** Comparison for in-sample performance. Which model do you think is better?
@@ -171,10 +171,10 @@ credit_rpart <- rpart(formula = default ~ .,
                       method = "class",
                       parms = list(loss=matrix(c(0,5,1,0), nrow = 2)))
 #Probability of getting 1
-credit_test.prob.rpart = predict(credit_rpart,credit_test, type="prob")
+credit_test_prob_rpart = predict(credit_rpart, credit_test, type="prob")
 ```
 
-credit_test.prob.rpart has 2 columns, the first one is prob(Y) = 0 and the second prob(Y) = 1. We only need the second column because they add to 1 for binary classification.
+credit_test_prob_rpart has 2 columns, the first one is prob(Y) = 0 and the second prob(Y) = 1. We only need the second column because they add to 1 for binary classification.
 
 To get ROC curve we use 
 ```{r, eval=FALSE}
@@ -186,7 +186,7 @@ library(ROCR)
 ```
 
 ```{r}
-pred = prediction(credit_test.prob.rpart[,2], credit_test$default)
+pred = prediction(credit_test_prob_rpart[,2], credit_test$default)
 perf = performance(pred, "tpr", "fpr")
 plot(perf, colorize=TRUE)
 ```
@@ -198,8 +198,8 @@ slot(performance(pred, "auc"), "y.values")[[1]]
 
 For a given cut-off probability, the 0/1 prediction result can be calculated similar to what you do in logistic regression
 ```{r}
-credit_test.pred.rpart = as.numeric(credit_test.prob.rpart[,2] > 1/(5+1))
-table(credit_test$default, credit_test.pred.rpart, dnn=c("Truth","Predicted"))
+credit_test_pred_rpart = as.numeric(credit_test_prob_rpart[,2] > 1/(5+1))
+table(credit_test$default, credit_test_pred_rpart, dnn=c("Truth","Predicted"))
 ```
 
 You can refer to the last section on specifying a loss matrix, rpart will automatically generate decision rules with your cost structure taken into consideration.
