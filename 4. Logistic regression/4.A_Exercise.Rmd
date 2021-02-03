@@ -16,11 +16,11 @@ editor_options:
 
 # **Exercise:** 
 
-> 1. Compare AIC and BIC of these two models.
+> 1. Compare AIC and BIC of the  full model and a reduced model with `rm`, `ptratio`, and `lstat` only.
 
 ```{r echo=FALSE, eval=FALSE}
-credit.glm0$deviance
-AIC(credit.glm0)
-BIC(credit.glm0)
+credit_glm0$deviance
+AIC(credit_glm0)
+BIC(credit_glm0)
 ```
 
