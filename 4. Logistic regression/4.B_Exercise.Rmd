@@ -17,3 +17,39 @@ editor_options:
 # **Exercise:** 
 
 > 1. Try forward and stepwise selection procedures to see if they deliver the same best model, using BIC criteria.
+
+```{r echo=FALSE, eval=FALSE}
+credit_data <- read.csv(file = "https://xiaoruizhu.github.io/Data-Mining-R/lecture/data/credit_default.csv", header=T)
+library(dplyr)
+credit_data<- rename(credit_data, default=default.payment.next.month)
+credit_data$EDUCATION<- as.factor(credit_data$EDUCATION)
+credit_data$MARRIAGE<- as.factor(credit_data$MARRIAGE)
+
+index <- sample(nrow(credit_data),nrow(credit_data)*0.80)
+credit_train = credit_data[index,]
+credit_test = credit_data[-index,]
+
+nullmodel <- glm(default~1, family=binomial, data=credit_train) 
+fullmodel <- glm(default~., family=binomial, data=credit_train) 
+
+credit_glm_back <- step(fullmodel) # backward selection (if you don't specify anything)
+# summary(credit_glm_back)
+# credit_glm_back$deviance
+# AIC(credit_glm_back)
+# BIC(credit_glm_back)
+
+model_step_f <- step(nullmodel, 
+                     scope=list(lower=nullmodel, upper=fullmodel), 
+                     direction='forward',
+                     k=log(nrow(credit_train)))
+# default ~ PAY_0 + LIMIT_BAL + PAY_5 + BILL_AMT1 + PAY_AMT2 + 
+    # AGE + PAY_2
+
+model_step_s <- step(nullmodel, 
+                     scope=list(lower=nullmodel, upper=fullmodel),
+                     direction='both',
+                     k=log(nrow(credit_train)))
+# default ~ PAY_0 + LIMIT_BAL + PAY_5 + BILL_AMT1 + PAY_AMT2 + 
+    # AGE + PAY_2
+
+```
