@@ -16,4 +16,35 @@ editor_options:
 
 # **Exercise:** 
 
-> 1. Replicate the ROC curves in training and testing data.
+> 1. Replicate the ROC curves in lab note 2.2.1.1 and 2.2.2.1.
+
+```{r echo=FALSE, eval=FALSE}
+credit_data <- read.csv(file = "https://xiaoruizhu.github.io/Data-Mining-R/lecture/data/credit_default.csv", header=T)
+library(dplyr)
+credit_data<- rename(credit_data, default=default.payment.next.month)
+credit_data$EDUCATION<- as.factor(credit_data$EDUCATION)
+credit_data$MARRIAGE<- as.factor(credit_data$MARRIAGE)
+
+index <- sample(nrow(credit_data),nrow(credit_data)*0.80)
+credit_train = credit_data[index,]
+credit_test = credit_data[-index,]
+
+credit_glm0 <- glm(default~., family=binomial, data=credit_train)
+
+pred_glm0_train <- predict(credit_glm0, type="response")
+
+library(ROCR)
+pred <- prediction(pred_glm0_train, credit_train$default)
+perf <- performance(pred, "tpr", "fpr")
+plot(perf, colorize=TRUE)
+#Get the AUC
+unlist(slot(performance(pred, "auc"), "y.values"))
+
+pred_glm0_test<- predict(credit_glm0, newdata = credit_test, type="response")
+
+pred <- prediction(pred_glm0_test, credit_test$default)
+perf <- performance(pred, "tpr", "fpr")
+plot(perf, colorize=TRUE)
+#Get the AUC
+unlist(slot(performance(pred, "auc"), "y.values"))
+```
