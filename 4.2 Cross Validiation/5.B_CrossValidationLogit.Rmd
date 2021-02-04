@@ -57,7 +57,7 @@ costfunc  <- function(obs, pred.p){
     c0 <- (obs==0)&(pred.p >= pcut)   # count for "true=0 but pred=1"   (FP)
     cost <- mean(weight1*c1 + weight0*c0)  # misclassification with weight
     return(cost) # you have to return to a value when you write R functions
-} # end of the 
+} # end 
 ```
 
 10-fold cross validation, note you should use the **full data** for cross-validation. In `cv.glm`, default cost function is the average squared error function.

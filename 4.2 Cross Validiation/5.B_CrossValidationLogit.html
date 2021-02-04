@@ -420,7 +420,7 @@ cost2 &lt;- function(r, pi, pcut){
     c0 &lt;- (obs==0)&amp;(pred.p &gt;= pcut)   # count for &quot;true=0 but pred=1&quot;   (FP)
     cost &lt;- mean(weight1*c1 + weight0*c0)  # misclassification with weight
     return(cost) # you have to return to a value when you write R functions
-} # end of the </code></pre>
+} # end </code></pre>
 <p>10-fold cross validation, note you should use the <strong>full data</strong> for cross-validation. In <code>cv.glm</code>, default cost function is the average squared error function.</p>
 <pre class="r"><code>credit_data &lt;- read.csv(file = &quot;https://xiaoruizhu.github.io/Data-Mining-R/lecture/data/credit_default.csv&quot;, header=T)
 library(dplyr)
@@ -433,7 +433,7 @@ library(boot)
 credit_glm1&lt;- glm(default~. , family=binomial, data=credit_data);  
 cv_result  &lt;- cv.glm(data=credit_data, glmfit=credit_glm1, cost=costfunc, K=10) 
 cv_result$delta[2]</code></pre>
-<pre><code>## [1] 0.6800667</code></pre>
+<pre><code>## [1] 0.6778167</code></pre>
 <p>The first component of <code>delta</code> is the raw cross-validation estimate of prediction error. The second component is the adjusted cross-validation estimate. The adjustment is designed to compensate for the bias introduced by not using leave-one-out cross-validation.</p>
 <p>Keep in mind that CV-score is averaged model error. Here, it is the cost you have defined before. You may also use F-score for cross-validation, but again, you need to define the function of F-score. (Exercise!)</p>
 <p><a href="#header">go to top</a></p>
