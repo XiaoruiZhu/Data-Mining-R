@@ -16,32 +16,32 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # **Exercise:** 
 
-## Regression problem: Boston housign data
+## Regression problem: Boston housing data
 
 > Apply Boosting Trees on the Boston housing data and draw the MSE of Boosting Trees with different numbers of trees.
 
 ```{r, eval=FALSE, echo=FALSE}
 ### Load the data
-data(Boston)
+data(Boston); library(gbm)
 index <- sample(nrow(Boston),nrow(Boston)*0.60)
 boston.train <- Boston[index,]
 boston.test <- Boston[-index,]
 
 ### Boosting for regression trees
 boston.boost<- gbm(medv~., data = boston.train, distribution = "gaussian", n.trees = 10000, shrinkage = 0.01, interaction.depth = 8)
-summary(boston.boost)
+# summary(boston.boost)
 
-par(mfrow=c(1,2))
-plot(boston.boost, i="lstat")
-plot(boston.boost, i="rm")
+# par(mfrow=c(1,2))
+# plot(boston.boost, i="lstat")
+# plot(boston.boost, i="rm")
 
 #MSPE
 boston.boost.pred.test<- predict(boston.boost, boston.test, n.trees = 10000)
-mean((boston.test$medv-boston.boost.pred.test)^2)
+# mean((boston.test$medv-boston.boost.pred.test)^2)
 
 # different numbers of tree
-ntree<- seq(100, 10000, 100)
-predmat<- predict(boston.boost, newdata = boston.test, n.trees = ntree)
+ntree <- seq(100, 10000, 100)
+predmat <- predict(boston.boost, newdata = boston.test, n.trees = ntree)
 err<- apply((predmat-boston.test$medv)^2, 2, mean)
 plot(ntree, err, type = 'l', col=2, lwd=2, xlab = "n.trees", ylab = "Test MSE")
 abline(h=min(test.err), lty=2)

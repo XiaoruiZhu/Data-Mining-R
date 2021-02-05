@@ -38,7 +38,7 @@ credit_test = credit_data[-index,]
 
 # Random Forests
 
-Random forest is an extension of Bagging, but it makes significant improvement in terms of prediction. The idea of random forests is to randomly select $m$ out of $p$ predictors as candidate variables for each split in each tree. Commonly, $m=\sqrt{p}$. The reason of doing this is that it can *decorrelates* the trees such that it reduces variance when we aggregate the trees. You may refer [Wikipedia](https://en.wikipedia.org/wiki/Random_forest) and the [tutorial](https://www.stat.berkeley.edu/~breiman/RandomForests/cc_home.htm) on the author's website.
+Random forest is an extension of Bagging, but it makes significant improvement in terms of prediction. The idea of random forests is to randomly select $m$ out of $p$ predictors as candidate variables for each split in each tree. Commonly, $m=\sqrt{p}$. The reason of doing this is that it can *decorrelates* the trees such that it reduces variance when we aggregate the trees. You may refer [Wikipedia](https://en.wikipedia.org/wiki/Random_forest) and the [tutorial](https://www.stat.berkeley.edu/~breiman/RandomForests/cc_home.htm) on the author's website. Note: The current `randomForest` package do not handle asymmetric loss.
 
 ## Random Forest for Regression
 

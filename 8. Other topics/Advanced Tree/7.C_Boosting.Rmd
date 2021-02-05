@@ -38,7 +38,7 @@ credit_test = credit_data[-index,]
 
 # Boosting
 
-Boosting builds a number of small trees, and each time, the response is the residual from last tree. It is a sequential procedure. We use `gbm` package to build boosted trees.
+Boosting builds a number of small trees, and each time, the response is the residual from last tree. It is a sequential procedure. We use `gbm` package to build boosted trees. Note: The current `gbm` package do not handle asymmetric loss.
 
 ## Boosting for regression trees
 

@@ -20,10 +20,11 @@ knitr::opts_chunk$set(echo = TRUE)
 
 Apply random forests on the Boston housing data
 
-> 1. Draw the MSE of random forests with different number of variables randomly sampled as candidates at each split.
+> 1. Draw the plot below, the MSE of random forests with different (`mtry`) number of variables randomly sampled as candidates at each split.
 
-```{r, eval=FALSE, echo=FALSE}
+```{r, eval=TRUE, echo=FALSE, message=FALSE}
 ### Load the data
+library(randomForest); library(MASS)
 data(Boston)
 index <- sample(nrow(Boston),nrow(Boston)*0.60)
 boston.train <- Boston[index,]
@@ -31,13 +32,14 @@ boston.test <- Boston[-index,]
 
 ### Random Forest
 boston.rf<- randomForest(medv~., data = boston.train, importance=TRUE)
-boston.rf
-boston.rf$importance
-plot(boston.rf$mse, type='l', col=2, lwd=2, xlab = "ntree", ylab = "OOB Error")
+# boston.rf
+# boston.rf$importance
+# plot(boston.rf$mse, type='l', col=2, lwd=2, xlab = "ntree", ylab = "OOB Error")
 
 #prediction on testing
 boston.rf.pred<- predict(boston.rf, boston.test)
-mean((boston.test$medv-boston.rf.pred)^2)
+# mean((boston.test$medv-boston.rf.pred)^2)
+
 # OOB error with mtry
 oob.err<- rep(0, 13)
 test.err<- rep(0, 13)
