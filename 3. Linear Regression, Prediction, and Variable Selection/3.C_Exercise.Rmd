@@ -36,25 +36,25 @@ X <- apply(X,2,scale)*sqrt(n)/sqrt(n-1)
 error <- error-mean(error)
 
 Y <- X %*% beta + error
-myData <- data.frame(Y, X)
-head(myData)
-myData <- myData[,-1]
-write.csv(myData, file = "HighDim.csv")
+HighDim <- data.frame(Y, X)
+head(HighDim)
+HighDim <- HighDim[,-1]
+write.csv(HighDim, file = "HighDim.csv")
 
-test_lm <- lm(Y~., data = myData)
-test_lm_null <- lm(Y ~ 1, data = myData)
+test_lm <- lm(Y~., data = HighDim)
+test_lm_null <- lm(Y ~ 1, data = HighDim)
 summary(test_lm)
-subset_result <- regsubsets(Y~.,data=myData, nbest=2, nvmax = 14)
+subset_result <- regsubsets(Y~.,data=HighDim, nbest=2, nvmax = 14)
 
 model_step_b <- step(test_lm, direction='backward')
 model_step_f <- step(test_lm_null, scope=list(lower=test_lm_null, upper=test_lm), direction='forward')
 model_step_s <- step(nullmodel, scope=list(lower=nullmodel, upper=fullmodel), direction='both')
 library(glmnet)
-lasso_fit = glmnet(x = as.matrix(myData[,-1]), y = myData[,1], alpha = 1, intercept = FALSE)
+lasso_fit = glmnet(x = as.matrix(HighDim[,-1]), y = HighDim[,1], alpha = 1, intercept = FALSE)
 summary(lasso_fit)
 coef(lasso_fit, s = 0.5)
 
-test_lm_3 <- lm(Y ~ X1+ X2+X3+0, data = myData)
+test_lm_3 <- lm(Y ~ X1+ X2+X3+0, data = HighDim)
 summary(test_lm_3)
 ```
 
