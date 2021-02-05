@@ -1,5 +1,5 @@
 ---
-title: "Neural Networks Models"
+title: "Unsupervised Learning: Clustering"
 header-includes:
    - \usepackage{float}
 output: 
@@ -16,5 +16,5 @@ editor_options:
 
 # **Exercise:** 
 
-> 1. Which R pacakge allows a neural network model with more than one hidden layer?
+> 1. Point out a few of situations when k-means would fail.
 

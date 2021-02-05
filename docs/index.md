@@ -86,7 +86,7 @@ table th:nth-of-type(3) {
 
 | Lab Notes |  Video | Exercise |
 |:----------|:-------------:|------:|
-| [9.A Neural network models](lecture/6.D_NeuralNet.html)           |            |  |
+| [9.A Neural network models](lecture/6.D_NeuralNet.html)                      |            | [9.A](lecture/6.D_Exercise.html) |
 | [9.B (Optional) Discriminant analysis](lecture/6.C_DiscriminantAnalysis.html)|            |   |
 | [9.C (Optional) Support vector machine (SVM)](lecture/6.E_SVM.html)          |            |   |
 
@@ -94,7 +94,7 @@ table th:nth-of-type(3) {
 
 | Lab Notes |  Video | Exercise |
 |:----------|:-------------:|------:|
-| [10 Clustering](lecture/10.A_Clustering.html)           |            |  |
+| [10 Clustering](lecture/10.A_Clustering.html)           |            | [10.A](lecture/10.A_Exercise.html)  |
 
 ### Unsupervised Learning: Aassociation Rules
 

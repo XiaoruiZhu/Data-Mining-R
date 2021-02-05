@@ -16,12 +16,11 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # **Exercise:** 
 
-## Regression problem: Boston housign data
+## Regression problem: Boston housing data
 
 Apply random forests on the Boston housing data
 
-> 1. Draw the MSE of random forests with different number of variables randomly sampled as candidates at each split; 
-> 2. Calculate the out of bag prediction error.
+> 1. Draw the MSE of random forests with different number of variables randomly sampled as candidates at each split.
 
 ```{r, eval=FALSE, echo=FALSE}
 ### Load the data

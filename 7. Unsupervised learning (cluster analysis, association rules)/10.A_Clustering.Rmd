@@ -19,11 +19,30 @@ editor_options:
 
 - What size should a t-shirt be? 
 
-- Everyone’s real t-shirt size is diﬀerent, but how can they figure out the XS, S, M, L and XL labels?
+- Everyone’s real t-shirt size is different, but how can they figure out the XS, S, M, L and XL labels?
 
-At the first, they don't have these lables, they only have some information about customers. Let's think about how tailer make your customer-tailored T-shirt. They may measure your neck width(collar), arm length, chest width, waistline and so on. But they don't have any lable to make as fewer as possible sizes so that they can save cost. Let's say they only want to have five moduel. So the problem is how to find these five sizes so that most of the customers can buy a comfortable one, and meanwhile, when they have the right size, the T-shirt is not too large or to small. In statistics, this problem is equivalent to find five clusters based on provided information so that the variation within clusters is small, and between clusters variation is large. 
+At the first, they don't have these labels, they only have some information about customers. Let's think about how tailor make your customer-tailored T-shirt. They may measure your neck width(collar), arm length, chest width, waistline and so on. But, for most apparel companies, they have to have as fewer as possible number of sizes so that they can save cost to cover most of their target customers. Let's say they only want to have five sizes. So the problem is how to find these five sizes so that most of the customers can buy a comfortable one, and meanwhile, when they have the right size, the T-shirt is not too large or to small. In statistics, this problem is equivalent to find five clusters based on provided information so that the variation within clusters is small, and between clusters variation is large. 
 
-Add more visual graphs to illustrate the clustering. 
+<!-- Add more visual graphs to illustrate the clustering.  -->
+
+```{r echo=FALSE, eval=FALSE}
+# https://towardsdatascience.com/using-unsupervised-learning-to-optimise-childrens-t-shirt-sizing-d919d3cbc1f6
+Tshirt <- read.csv(file = "TshirtSizing.csv", header=T)
+head(Tshirt)
+# Clean variables that have more than 2,000 NAs (zero in this case)
+cols <- apply(Tshirt, MARGIN = 2, function(x) sum(x==0))
+names(cols)[which(cols > 2000)]
+
+demographic_attributes = c('AGE IN YEARS', 'LOCATION',
+                          'BIRTH DATE', 'MEASUREMENT DATE', 'MEASUREMENT SET TP',
+                          'MEASURER NUMBER', 'COMPUTER NUMBER', 'RACE', 'GRADE LEVEL',
+                          'HANDEDNESS', 'NUMBER OF BROTHERS', 'NUMBER OF SISTERS', 'TWIN',
+                          'BIRTH ORDER', 'MOTHERS OCCUPATION', 'FATHERS OCCUPATION',
+                          'MOTHERS EDUCATION', 'FATHERS EDUCATION', 'YEARS IN COMMUNITY',
+                          'ANTHROPOMETER NO', 'CALIPER NO', 'GIRTH NO')
+
+df = df.drop(demographic_attributes, axis = 'columns')
+```
 
 [go to top](#header)
 

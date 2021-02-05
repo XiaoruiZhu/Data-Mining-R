@@ -27,13 +27,11 @@ library(glmnet)
 This tutorial helps you to review various supervised learning techniques, introduce GAM, Neural Networks models, etc.
 
 # Neural Networks Models
-Neural Networks method (in-sample and out-of-sample performance measure) is illustrated here. The package [**nnet**](http://cran.r-project.org/web/packages/nnet/nnet.pdf) is used for this purpose.
+Neural Networks method (in-sample and out-of-sample performance measure) is illustrated here. The package [**nnet**](http://cran.r-project.org/web/packages/nnet/nnet.pdf) and `neuralnet` are used for this purpose.
 
 ## Regression
 
-__Note__: 
-
-- For regression problems add lineout = TRUE when training model. In addition, the response needs to be standardized to $[0, 1]$ interval. It's important normalize the response. If not, most of the times the algorithm will not converge. I chose to use the min-max method and scale the data in the interval [0,1]. 
+For regression problems add `lineout = TRUE` when training model. In addition, the response needs to be standardized to $[0, 1]$ interval. It's important normalize the response. If not, most of the times the algorithm will not converge. I chose to use the min-max method and scale the data in the interval [0,1]. 
 
 ```{r, message=FALSE}
 library(MASS)
@@ -66,11 +64,80 @@ MSE_nn <- sum((test_r - pr_nn_org)^2)/nrow(test_Boston)
 MSE_nn
 ```
 
+## Classification on Bankruptcy dataset
+
+For classification problems with nnet you need to code the response to _factor_ first. In addition you want to add `type = "class"` for _predict()_  function.
+
+```{r echo=TRUE, message = FALSE,warning=FALSE, results='hide'}
+Bank_data <- read.csv(file = "https://xiaoruizhu.github.io/Data-Mining-R/lecture/data/bankruptcy.csv", header=T)
+# summary(Bank_data)
+library(MASS)
+maxs <- apply(Bank_data[,-c(1:3)], 2, max) 
+mins <- apply(Bank_data[,-c(1:3)], 2, min)
+Bank_data_scaled <- Bank_data
+Bank_data_scaled[,-c(1:3)] <- as.data.frame(scale(Bank_data[,-c(1:3)], center = mins, scale = maxs - mins))
+
+sample_index <- sample(nrow(Bank_data_scaled),nrow(Bank_data_scaled)*0.70)
+Bank_train <- Bank_data_scaled[sample_index,]
+Bank_test <- Bank_data_scaled[-sample_index,]
+```
+
+<kbd>![Bankruptcy Variable Description](pic/BankruptcyVarDesp.pdf){width=900px height=720px} </kbd>
+
+```{r, message=FALSE}
+library(neuralnet)
+```
+
+```{r, message = FALSE, warning=FALSE, out.width="100%", out.height="100%"}
+n <- names(Bank_train)
+f <- as.formula(paste("DLRSN ~", paste(n[-c(1:3)], collapse = " + ")))
+system.time(
+Bank_nn <- neuralnet(f, data=Bank_train, hidden=c(5), algorithm = 'rprop+', linear.output=T, likelihood = T)
+)
+plot(Bank_nn)
+```
+
+**In-sample fit performance**
+
+```{r}
+pcut_nn <- .15
+prob_nn_in <-predict(Bank_nn, Bank_train, type="response")
+pred_nn_in <- (prob_nn_in>=pcut_nn)*1
+table(Bank_train$DLRSN, pred_nn_in, dnn=c("Observed","Predicted"))
+```
+
+Likewise, misclassification rate is another thing you can check:
+
+```{r}
+mean(ifelse(Bank_train$DLRSN != pred_nn_in, 1, 0))
+```
+
+**Model AIC/BIC and mean residual deviance**
+
+```{r}
+Bank_nn$result.matrix[4:5,]
+```
+
+**Out-of-sample fit performance**
+
+```{r}
+prob_nn_out <- predict(Bank_nn, Bank_test, type="response")
+pred_nn_out <- (prob_nn_out>=pcut_nn)*1
+table(Bank_test$DLRSN, pred_nn_out, dnn=c("Observed","Predicted"))
+```
+
+The mis-classifciation rate is
+```{r}
+mean(ifelse(Bank_test$DLRSN != pred_nn_out, 1, 0))
+```
+
+[go to top](#header)
+
 <!-- ## Classification -->
 
-<!-- __Note__:  -->
+<!-- __Note__: -->
 
-<!-- - For classification problems with nnet you need to code the response to _factor_ first. In addition you want to add type = "class" for _predict()_  function.  -->
+<!-- - For classification problems with nnet you need to code the response to _factor_ first. In addition you want to add type = "class" for _predict()_  function. -->
 
 <!-- ### Credit Scoring Data -->
 
@@ -118,4 +185,4 @@ MSE_nn
 <!-- cat("Asymmetric cost (with ratio 10:1) =", creditcost(credit_test$default, pred_nnet)) -->
 <!-- ``` -->
 
-[go to top](#header)
+<!-- [go to top](#header) -->
