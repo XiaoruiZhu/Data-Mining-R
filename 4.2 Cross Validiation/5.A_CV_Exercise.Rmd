@@ -16,7 +16,7 @@ editor_options:
 
 # **Exercise:** 
 
-> 1. For boston housing dataset, conduct 2-fold CV by `cv.glm` to calculate the mean square error of full model, and a reduced model with indus and rm only. 
+> 1. For boston housing dataset, conduct 2-fold CV by `cv.glm` to calculate the mean square error of full model, and a reduced model with indus and rm only. In terms of  the CV criterion, which of the two models do you prefer?
 
 ```{r, echo=FALSE, message=FALSE, eval=FALSE}
 library(MASS)
