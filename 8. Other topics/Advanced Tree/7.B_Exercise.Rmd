@@ -51,12 +51,6 @@ matplot(cbind(test.err, oob.err), pch=15, col = c("red", "blue"), type = "b", yl
 legend("topright", legend = c("test Error", "OOB Error"), pch = 15, col = c("red", "blue"))
 ```
 
-## Classification problem: Credit default data
-
-Apply random forests on the Credit default data
-
-> 1. Draw the ROC, calculate the AUC.
-
 ```{r, eval=FALSE, echo=FALSE}
 # load credit card data
 credit.data <- read.csv("https://xiaoruizhu.github.io/Data-Mining-R/lecture/data/credit_default.csv", header=T)
