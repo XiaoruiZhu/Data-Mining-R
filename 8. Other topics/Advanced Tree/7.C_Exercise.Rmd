@@ -14,16 +14,14 @@ editor_options:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# **Exercise:** 
+# **Exercise:** Regression problem: Boston housing data
 
-## Regression problem: Boston housing data
-
-> Apply Boosting Trees on the Boston housing data and draw the MSE of Boosting Trees with different numbers of trees.
+> Apply Boosting Trees with `n.trees=10000` on the Boston housing data to calculate the MSPE. 
 
 ```{r, eval=FALSE, echo=FALSE}
 ### Load the data
 data(Boston); library(gbm)
-index <- sample(nrow(Boston),nrow(Boston)*0.60)
+index <- sample(nrow(Boston),nrow(Boston)*0.90)
 boston.train <- Boston[index,]
 boston.test <- Boston[-index,]
 
@@ -47,9 +45,9 @@ plot(ntree, err, type = 'l', col=2, lwd=2, xlab = "n.trees", ylab = "Test MSE")
 abline(h=min(test.err), lty=2)
 ```
 
-## Classification problem: Credit default data
+<!-- ## Classification problem: Credit default data -->
 
-> Apply Boosting Trees on the Credit default data and draw the ROC, calculate the AUC.
+<!-- > Apply Boosting Trees on the Credit default data and draw the ROC, calculate the AUC. -->
 
 ```{r, eval=FALSE, echo=FALSE}
 # load credit card data

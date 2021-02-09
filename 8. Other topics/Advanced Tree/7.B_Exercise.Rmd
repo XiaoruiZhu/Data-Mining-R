@@ -20,13 +20,13 @@ knitr::opts_chunk$set(echo = TRUE)
 
 Apply random forests on the Boston housing data
 
-> 1. Draw the plot below, the MSE of random forests with different (`mtry`) number of variables randomly sampled as candidates at each split.
+> 1. Draw this type of plot below, the MSE of random forests with different (`mtry`) number of variables randomly sampled as candidates at each split. (Yours might be different from this.)
 
 ```{r, eval=TRUE, echo=FALSE, message=FALSE}
 ### Load the data
 library(randomForest); library(MASS)
 data(Boston)
-index <- sample(nrow(Boston),nrow(Boston)*0.60)
+index <- sample(nrow(Boston),nrow(Boston)*0.90)
 boston.train <- Boston[index,]
 boston.test <- Boston[-index,]
 

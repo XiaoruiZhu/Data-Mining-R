@@ -16,5 +16,5 @@ editor_options:
 
 # **Exercise:** 
 
-> 1. Point out a few of situations when k-means would fail.
+> 1. In the seeds data example, which cluster you will choose?
 

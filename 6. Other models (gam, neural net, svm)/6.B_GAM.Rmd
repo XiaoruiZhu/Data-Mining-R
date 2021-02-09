@@ -176,24 +176,15 @@ credit_test = credit_data[-index,]
 
 The training dataset has 24 variables, 10800 obs. 
 
-You are already familiar with the credit scoring set. Let's define a cost function for benchmarking testing set performance. Note this is slightly different from the one we used for searching for optimal cut-off probability in logistic regression. Here the 2nd argument is the predict class instead of the predict probability (since many methods are not based on predict probability).
+You are already familiar with the credit scoring set. Let's define a cost function for benchmarking testing set performance.
 
-```{r}
-creditcost <- function(observed, predicted){
-  weight1 = 5
-  weight0 = 1
-  c1 = (observed==1)&(predicted == 0) #logical vector - true if actual 1 but predict 0
-  c0 = (observed==0)&(predicted == 1) #logical vector - true if actual 0 but predict 1
-  return(mean(weight1*c1+weight0*c0))
-}
-```
 
 ```{r echo=TRUE, message = FALSE, warning=FALSE, out.width="100%", out.height="100%"}
 ## Create a formula for a model with a large number of variables:
 gam_formula <- as.formula(paste("default~s(LIMIT_BAL)+s(AGE)+s(PAY_0)+s(BILL_AMT1)+s(PAY_AMT1)+", 
                                 paste(colnames(credit_train)[c(2:4)], collapse= "+")))
 
-credit_gam <- gam(formula = gam_formula, family=binomial,data=credit_train);
+credit_gam <- gam(formula = gam_formula, family=binomial, data=credit_train);
 summary(credit_gam)
 
 plot(credit_gam, shade=TRUE, seWithMean=TRUE, scale=0, pages = 1)
@@ -225,11 +216,11 @@ credit_gam$deviance
 ```
 
 
-### Search for optimal cut-off probability
+<!-- ### Search for optimal cut-off probability -->
 
-The following code does a grid search from pcut = 0.01 to pcut = 0.99 with the objective of minimizing overall cost in the training set. I am using an asymmetric cost function by assuming that giving out a bad loan cost 10 time as much as rejecting application from someone who can pay.
+<!-- The following code does a grid search from pcut = 0.01 to pcut = 0.99 with the objective of minimizing overall cost in the training set. I am using an asymmetric cost function by assuming that giving out a bad loan cost 10 time as much as rejecting application from someone who can pay. -->
 
-```{r echo=TRUE, message = FALSE, warning=FALSE, out.width="100%", out.height="100%"}
+```{r echo=FALSE, message = FALSE, warning=FALSE, out.width="100%", out.height="100%"}
 #define the searc grid from 0.01 to 0.20
 searchgrid = seq(0.01, 0.20, 0.01)
 #result_gam is a 99x2 matrix, the 1st col stores the cut-off p, the 2nd column stores the cost
@@ -270,6 +261,13 @@ mean(ifelse(credit_test$default != pred_gam_out, 1, 0))
 
 The cost associated with misclassification is
 ```{r}
+creditcost <- function(observed, predicted){
+  weight1 = 5
+  weight0 = 1
+  c1 = (observed==1)&(predicted == 0) #logical vector - true if actual 1 but predict 0
+  c0 = (observed==0)&(predicted == 1) #logical vector - true if actual 0 but predict 1
+  return(mean(weight1*c1+weight0*c0))
+}
 creditcost(credit_test$default, pred_gam_out)
 ```
 

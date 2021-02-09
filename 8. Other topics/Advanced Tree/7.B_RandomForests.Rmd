@@ -23,17 +23,6 @@ data(Boston)
 index <- sample(nrow(Boston),nrow(Boston)*0.9)
 boston_train <- Boston[index,]
 boston_test <- Boston[-index,]
-
-# load credit card data
-credit_data <- read.csv(file = "https://xiaoruizhu.github.io/Data-Mining-R/lecture/data/credit_default.csv", header=T)
-# convert categorical variables
-credit_data$SEX<- as.factor(credit_data$SEX)
-credit_data$EDUCATION<- as.factor(credit_data$EDUCATION)
-credit_data$MARRIAGE<- as.factor(credit_data$MARRIAGE)
-# random splitting
-index <- sample(nrow(credit_data),nrow(credit_data)*0.9)
-credit_train = credit_data[index,]
-credit_test = credit_data[-index,]
 ```
 
 # Random Forests
@@ -93,3 +82,51 @@ legend("topright", legend = c("test Error", "OOB Error"), pch = 15, col = c("red
 > Exercise: 
 >
 > Create a plot displaying the test error across `ntree=`1, ..., 500, and `mtry=` 1, ..., 13. (You can draw 13 lines in different color representing each $m$).
+
+## Random Forest for Classification
+
+We apply the random forest model to the credit card dataset:
+
+```{r}
+# load credit card data
+credit_data <- read.csv(file = "https://xiaoruizhu.github.io/Data-Mining-R/lecture/data/credit_default.csv", header=T)
+# convert categorical variables
+credit_data$SEX<- as.factor(credit_data$SEX)
+credit_data$EDUCATION<- as.factor(credit_data$EDUCATION)
+credit_data$MARRIAGE<- as.factor(credit_data$MARRIAGE)
+# random splitting
+index <- sample(nrow(credit_data),nrow(credit_data)*0.9)
+credit_train = credit_data[index,]
+credit_test = credit_data[-index,]
+
+credit_rf <- randomForest(as.factor(default.payment.next.month)~., 
+                          data = credit_train,
+                          importance=TRUE, ntree=500)
+credit_rf
+```
+
+We can again easily plot the error rate vs. ntree. However, as far as I know, `randomForest` does not support asymmetric loss either. So it always uses the overall misclassification rate as the error.
+```{r}
+plot(credit_rf, lwd=rep(2, 3))
+legend("right", legend = c("OOB Error", "FPR", "FNR"), lwd=rep(2, 3), lty = c(1,2,3), col = c("black", "red", "green"))
+```
+
+ROC curve and AUC can be obtained based on the probability prediction. 
+```{r, message=FALSE, warning=FALSE, fig.width=6, fig.height=5}
+credit_rf_pred <- predict(credit_rf, type = "prob")[,2]
+library(ROCR)
+pred <- prediction(credit_rf_pred, credit_train$default.payment.next.month)
+perf <- performance(pred, "tpr", "fpr")
+plot(perf, colorize=TRUE)
+#Get the AUC
+unlist(slot(performance(pred, "auc"), "y.values"))
+```
+
+Create the confusion matrix based on the cutoff probability from asymmetric cost (pcut=1/6).
+```{r}
+## out-of-sample
+pcut <- 1/6
+credit_rf_pred_test <- predict(credit_rf, newdata=credit_test, type = "prob")[,2]
+credit_rf_class_test <- (credit_rf_pred_test>pcut)*1
+table(credit_test$default.payment.next.month, credit_rf_class_test, dnn = c("True", "Pred"))
+```

@@ -13,6 +13,10 @@ editor_options:
 ---
 
 
+# **mcycle** motorcycle accident dataset
+
+`mcycle` is a data frame giving a series of measurements of head acceleration in a simulated motorcycle accident, used to test crash helmets. It is an univariate case. We are interested in the relationship between the times in milliseconds after impact and the acceleration. 
+
 ```{r echo=TRUE, message = FALSE, results='hide'}
 library(MASS)
 data('mcycle')
@@ -32,31 +36,35 @@ plot(Y~X, xlab="time",ylab="Acceleration", main="Scatterplot of Acceleration aga
 
 # Simple Linear Regression
 
+We can simply assume a linear relationship and run a linear model between acceleration and time. 
+
 ```{r echo=TRUE, message = FALSE, results='hide'}
 lm_mod <- lm(Y~X, data= mcycle)
 summary(lm_mod)
 ```
 
-
 **Fitted Regression Line**
+
+But after we draw the fitted linear line on the scatterplot, we can clearly tell that the linear assumption seems violated. 
 
 ```{r echo=TRUE, message = FALSE}
 plot(X, Y, xlab="Times", ylab="Acceleration", main="Simple Linear Regression Line")
 abline(lm_mod, col="blue", lwd = 1)
 ```
 
-
 # Polynomial Regression
 
-The coefficients can be easily estimated using least squares linear regression because this is just a standard linear model with predictors $x, x^2, x^3, \dots, x^d$. 
+If we assume there could be a polynomial relationship, we can try polynomial regression. The coefficients can be easily estimated using least squares linear regression because this is just a standard linear model with predictors $x, x^2, x^3, \dots, x^d$. 
 
 ## Quadratic
 
+We can conduct a quadratic regression as follows by simply adding `I(X^2)` in the formula argument:
 ```{r echo=TRUE, message = FALSE}
 quad_mod <- lm(Y~X+I(X^2), data=mcycle) 
 summary(quad_mod)
 ```
 
+It seems that the fitted line captures the curvature a little bit better than the linear regression. 
 
 ```{r echo=TRUE, message = FALSE}
 plot(X ,Y ,xlab="Times", main = "Quadratic",ylab="Acceleration",cex=.5)
@@ -64,6 +72,8 @@ lines(X,quad_mod$fitted.values, col="blue", lwd = 1)
 ```
 
 **Is this model superior to the simple linear regression model?** 
+
+In order to answer this question, we can conduct the ANOVA test to compare the fits of these two models. 
 
 ```{r echo=TRUE, message = FALSE}
 anova(lm_mod,quad_mod)
@@ -73,11 +83,11 @@ anova(lm_mod,quad_mod)
 
 ## Fifth-degree Polynomial
 
+We can also try higher order polynomial regress, for example a fifth-degree polynomial.
 ```{r echo=TRUE, message = FALSE}
 poly_mod <- lm(Y~poly(X,5,raw=T),data=mcycle) 
 summary(poly_mod)
 ```
-
 
 You can also assess the model performance.
 
@@ -90,11 +100,12 @@ You can also assess the model performance.
 #BIC(poly_mod)
 ```
 
-
 ```{r echo=TRUE, message = FALSE}
 plot(X ,Y ,xlab="Times", main = "Fifth-degree polynomial",ylab="Acceleration",cex=.5)
 lines(X,poly_mod$fitted.values, col="blue", lwd = 1)
 ```
+
+This one may be even better to capture the curvature of samples on the left hand side of scatter plot than those two model above. 
 
 [go to top](#header)
 
@@ -102,7 +113,7 @@ lines(X,poly_mod$fitted.values, col="blue", lwd = 1)
 
 ## Regression Splines
 
-In order to fit regression splines in R, we use the bs() function from the splines library. By default, "cubic splines" are produced. That is cubic polynomial with no interior knots
+In order to fit regression splines in R, we use the `bs()` function from the splines library. By default, "cubic splines" are produced. That is cubic polynomial with no interior knots
 
 ```{r echo=TRUE, message = FALSE, warning= FALSE}
 library (splines)
@@ -146,7 +157,7 @@ lines(X, conf_interval[,3], col="red", lty=2)
 
 ## Natural Cubic Splines
 
-Here the degree of freedom is pre-specified and different numbers are used to see the the best curve that fits the data.
+Here the degree of freedom is pre-specified and different numbers are used to see the best curve that fits the data.
 
 ```{r echo=TRUE, message = FALSE, warning=FALSE}
 #First: Natural Spline- pre-specified degree of freedom=4
@@ -188,6 +199,6 @@ lines(X, conf_interval[,3], col="red", lty=2)
 
 ## Smoothing/Penalized Spline
 
-We now use penalized splines where a penalty/smoothing parameter can help control the smoothness while many knots can be used and knot location does not need to be carefully selected. The s() function is part of the gam function from the mgcv package.
+We now use penalized splines where a penalty/smoothing parameter can help control the smoothness while many knots can be used and knot location does not need to be carefully selected. The `s()` function is part of the gam function from the mgcv package.
 
 [go to top](#header)

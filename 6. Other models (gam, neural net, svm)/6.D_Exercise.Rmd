@@ -16,5 +16,6 @@ editor_options:
 
 # **Exercise:** 
 
-> 1. Which R pacakge allows a neural network model with more than one hidden layer?
+> 1. Please fit a neural network model with `neuralnet` package using 2 hidden layer, `hidden=c(3,2)` and provide both in-sample and out-of-sample average sum squares. 
 
+> 2. What are the in-sample and out-of-sample average sum squares using only one layer with 5 neurons? 

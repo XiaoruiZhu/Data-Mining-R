@@ -14,6 +14,6 @@ editor_options:
 
 # **Exercise:** 
 
-> 1. In the lab notes, is the `LIMIT_BAL` variable nonlinearly associated with the `default` status? 
+> 1. For the credit scoring data with GAM example, is the `LIMIT_BAL` variable nonlinearly associated with the `default` status? 
 > 2. What about the `AGE`?
 
