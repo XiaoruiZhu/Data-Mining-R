@@ -8,7 +8,6 @@ output:
     number_sections: yes
     toc: yes
     code_folding: show
-    keep_md: yes
     fig_caption: yes
 ---
 
@@ -56,7 +55,7 @@ The arguments:
 
 ## Regression
 
-For regression problems, we use `neuralnet` and add `linear.output = TRUE` when training model. In addition, the response needs to be standardized to $[0, 1]$ interval. It's important to normalize the response. If not, most of the times the algorithm will not converge. I chose to use the min-max method and scale the data in the interval $[0,1]$.
+For regression problems, we use `neuralnet` and add `linear.output = TRUE` when training model. In addition, the response needs to be standardized to $[0, 1]$ interval. It's important to normalize the response. If not, the algorithm may not converge. I chose to use the min-max method and scale the data in the interval $[0,1]$. Other reference online: [[1](https://machinelearningmastery.com/how-to-improve-neural-network-stability-and-modeling-performance-with-data-scaling/)]
 
 ```{r, message=FALSE}
 library(MASS)
@@ -68,8 +67,6 @@ index <- sample(1:nrow(Boston),round(0.9*nrow(Boston)))
 
 train_Boston <- scaled[index,]
 test_Boston <- scaled[-index,]
-
-library(neuralnet)
 ```
 
 -   **Plot the fitted neural network model**:
@@ -92,10 +89,12 @@ pr_nn <- compute(nn, test_Boston[,1:13])
 # recover the predicted value back to the original response scale 
 pr_nn_org <- pr_nn$net.result*(max(Boston$medv)-min(Boston$medv))+min(Boston$medv)
 test_r <- (test_Boston$medv)*(max(Boston$medv)-min(Boston$medv))+min(Boston$medv)
+
 # MSE of testing set
 MSE_nn <- sum((test_r - pr_nn_org)^2)/nrow(test_Boston)
 MSE_nn
 ```
+
 
 ## Classification on Bankruptcy dataset
 
@@ -105,10 +104,10 @@ For classification problems with `neuralnet` you need to code the response to *f
 Bank_data <- read.csv(file = "https://xiaoruizhu.github.io/Data-Mining-R/lecture/data/bankruptcy.csv", header=T)
 # summary(Bank_data)
 library(MASS)
-maxs <- apply(Bank_data[,-c(1:3)], 2, max) 
-mins <- apply(Bank_data[,-c(1:3)], 2, min)
+# maxs <- apply(Bank_data[,-c(1:3)], 2, max) 
+# mins <- apply(Bank_data[,-c(1:3)], 2, min)
 Bank_data_scaled <- Bank_data
-Bank_data_scaled[,-c(1:3)] <- as.data.frame(scale(Bank_data[,-c(1:3)], center = mins, scale = maxs - mins))
+# Bank_data_scaled[,-c(1:3)] <- as.data.frame(scale(Bank_data[,-c(1:3)], center = mins, scale = maxs - mins))
 
 sample_index <- sample(nrow(Bank_data_scaled),nrow(Bank_data_scaled)*0.70)
 Bank_train <- Bank_data_scaled[sample_index,]
@@ -122,7 +121,7 @@ library(neuralnet)
 n <- names(Bank_train)
 f <- as.formula(paste("DLRSN ~", paste(n[-c(1:3)], collapse = " + ")))
 Bank_nn <- neuralnet(f, data=Bank_train, hidden=c(3), algorithm = 'rprop+', linear.output=T, likelihood = T)
-# plot(Bank_nn)
+plot(Bank_nn)
 ```
 
 ![](pic/plot_Bank_nn.png)
@@ -130,25 +129,30 @@ Bank_nn <- neuralnet(f, data=Bank_train, hidden=c(3), algorithm = 'rprop+', line
 -   **In-sample fit performance**
 
 ```{r}
-pcut_nn <- .15
+pcut_nn <- 1/36
 prob_nn_in <-predict(Bank_nn, Bank_train, type="response")
 pred_nn_in <- (prob_nn_in>=pcut_nn)*1
 table(Bank_train$DLRSN, pred_nn_in, dnn=c("Observed","Predicted"))
 ```
 
-Likewise, misclassification rate is another thing you can check:
+- **In-sample ROC Curve**
 
-```{r}
-mean(ifelse(Bank_train$DLRSN != pred_nn_in, 1, 0))
+```{r, message=FALSE, warning=FALSE, fig.width=6, fig.height=5, fig.align='center'}
+library(ROCR)
+pred <- prediction(prob_nn_in, Bank_train$DLRSN)
+perf <- performance(pred, "tpr", "fpr")
+plot(perf, colorize=TRUE)
+#Get the AUC
+unlist(slot(performance(pred, "auc"), "y.values"))
 ```
 
--   **Model AIC/BIC and mean residual deviance**
+- **Model AIC/BIC and mean residual deviance**
 
 ```{r}
 Bank_nn$result.matrix[4:5,]
 ```
 
--   **Out-of-sample fit performance**
+- **Out-of-sample fit performance**
 
 ```{r}
 prob_nn_out <- predict(Bank_nn, Bank_test, type="response")
@@ -156,11 +160,16 @@ pred_nn_out <- (prob_nn_out>=pcut_nn)*1
 table(Bank_test$DLRSN, pred_nn_out, dnn=c("Observed","Predicted"))
 ```
 
-The mis-classifciation rate is
+- **Out-of-sample ROC Curve**
 
-```{r}
-mean(ifelse(Bank_test$DLRSN != pred_nn_out, 1, 0))
+```{r, message=FALSE, warning=FALSE, fig.width=6, fig.height=5, fig.align='center'}
+pred <- prediction(prob_nn_out, Bank_test$DLRSN)
+perf <- performance(pred, "tpr", "fpr")
+plot(perf, colorize=TRUE)
+#Get the AUC
+unlist(slot(performance(pred, "auc"), "y.values"))
 ```
+
 
 [go to top](#header)
 

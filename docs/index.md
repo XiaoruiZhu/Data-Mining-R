@@ -96,7 +96,7 @@ table th:nth-of-type(3) {
 |:----------|:-------------:|------:|
 | [10 Clustering](lecture/10.A_Clustering.html)           |            | [10.A](lecture/10.A_Exercise.html)  |
 
-### Unsupervised Learning: Aassociation Rules
+### Unsupervised Learning: Association Rules
 
 | Lab Notes |  Video | Exercise |
 |:----------|:-------------:|------:|
