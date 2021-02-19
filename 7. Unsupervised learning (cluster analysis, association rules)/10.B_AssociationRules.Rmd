@@ -1,5 +1,5 @@
 ---
-title: "Unsupervised Learning: Association Rulesa"
+title: "Unsupervised Learning: Association Rules"
 output: 
   html_document: 
     theme: readable
@@ -44,7 +44,6 @@ set.
 To find the very long transactions we can use the *size()* and select very long transactions (containing more than 30 items).
 
 ```{r}
-#
 x = Groceries[size(Groceries) > 30]
 inspect(x)
 ```
@@ -57,8 +56,7 @@ itemFrequencyPlot(Groceries, support = 0.1, cex.names=0.8)
 ```
 
 
-Use *apriori()* algorithm to find all rules (the default association type for
-*apriori()*) with a minimum support of 0.3% and a confidence of 0.5.
+Use *apriori()* algorithm to find all rules (the default association type for *apriori()*) with a minimum support of 0.3% and a confidence of 0.5.
 ```{r}
 # Run the apriori algorithm
 basket_rules <- apriori(Groceries,parameter = list(sup = 0.003, conf = 0.5,target="rules"))

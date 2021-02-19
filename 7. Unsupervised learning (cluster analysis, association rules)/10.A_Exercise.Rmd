@@ -16,5 +16,5 @@ editor_options:
 
 # **Exercise:** 
 
-> 1. In the seeds data example, which cluster you will choose?
+> 1. For the Seeds data example in lab notes, how many clusters will you choose as the final model?
 

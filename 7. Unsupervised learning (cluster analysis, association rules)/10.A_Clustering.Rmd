@@ -48,8 +48,6 @@ df = df.drop(demographic_attributes, axis = 'columns')
 
 # Summary of Seeds data
 
-This tutorial illustrates the implentations of clustering and association rule mining in (R).
-
 We use the seeds data set to demonstrate cluster analysis in R. The examined group comprised kernels belonging to three different varieties of wheat: Kama, Rosa and Canadian, 70 elements each. A description of the dataset can be viewed at (https://archive.ics.uci.edu/ml/datasets/seeds)
 
 ```{r setup, include=FALSE}
@@ -270,29 +268,29 @@ plot(mclust_result)
 [go to top](#header)
 
 
-# Case Starter Code
+<!-- # Case Starter Code -->
 
-<a id="case4"></a>
+<!-- <a id="case4"></a> -->
 
-For problem 1 Iris data, simply use the Iris dataset in R. When doing cluster analysis for Iris you'll want to ignore the Species variable.
+<!-- For problem 1 Iris data, simply use the Iris dataset in R. When doing cluster analysis for Iris you'll want to ignore the Species variable. -->
 
-```{r, eval=FALSE}
-data(iris)
-```
+<!-- ```{r, eval=FALSE} -->
+<!-- data(iris) -->
+<!-- ``` -->
 
-For problem 2 Cincinnati Zoo data, use the following code to load the transaction data for association rules mining. *as()* function coerce the dataset into transaction data type for association rules mining.
+<!-- For problem 2 Cincinnati Zoo data, use the following code to load the transaction data for association rules mining. *as()* function coerce the dataset into transaction data type for association rules mining. -->
 
-```{r, eval=FALSE}
-TransFood <- read.csv('https://xiaoruizhu.github.io/Data-Mining-R/data/food_4_association.csv')
-TransFood <- TransFood[, -1]
-# Find out elements that are not equal to 0 or 1 and change them to 1.
-Others <- which(!(as.matrix(TransFood) ==1 | as.matrix(TransFood) ==0), arr.ind=T )
-TransFood[Others] <- 1
-TransFood <- as(as.matrix(TransFood), "transactions")
-```
-Load the data for clustering:
-```{r, eval=FALSE}
-Food_by_month <- read.csv('https://xiaoruizhu.github.io/Data-Mining-R/data/qry_Food_by_Month.csv')
-```
+<!-- ```{r, eval=FALSE} -->
+<!-- TransFood <- read.csv('https://xiaoruizhu.github.io/Data-Mining-R/data/food_4_association.csv') -->
+<!-- TransFood <- TransFood[, -1] -->
+<!-- # Find out elements that are not equal to 0 or 1 and change them to 1. -->
+<!-- Others <- which(!(as.matrix(TransFood) ==1 | as.matrix(TransFood) ==0), arr.ind=T ) -->
+<!-- TransFood[Others] <- 1 -->
+<!-- TransFood <- as(as.matrix(TransFood), "transactions") -->
+<!-- ``` -->
+<!-- Load the data for clustering: -->
+<!-- ```{r, eval=FALSE} -->
+<!-- Food_by_month <- read.csv('https://xiaoruizhu.github.io/Data-Mining-R/data/qry_Food_by_Month.csv') -->
+<!-- ``` -->
 
-[go to top](#header)
+<!-- [go to top](#header) -->

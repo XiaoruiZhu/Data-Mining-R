@@ -1,0 +1,30 @@
+---
+title: "Unsupervised Learning: Association Rules"
+header-includes:
+   - \usepackage{float}
+output: 
+  html_document: 
+    theme: readable
+    fig_caption: yes
+    number_sections: yes
+    toc: yes
+    code_folding: show
+    df_print: paged
+editor_options: 
+  chunk_output_type: console
+---
+
+# **Exercise:** 
+
+> 1. For the groceries dataset, use apriori() algorithm to find all rules with a minimum support of 1.1% and a confidence of 0.56. Please print them all.
+
+```{r echo=FALSE, eval=FALSE}
+library(arules)
+data("Groceries")
+
+# Run the apriori algorithm
+basket_rules <- apriori(Groceries,parameter = list(sup = 0.011, conf = 0.56,target="rules"))
+
+# Check the generated rules using inspect
+inspect(head(basket_rules))
+```
