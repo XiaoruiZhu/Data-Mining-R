@@ -94,13 +94,13 @@ table th:nth-of-type(3) {
 
 | Lab Notes |  Video | Exercise |
 |:----------|:-------------:|------:|
-| [10 Clustering](lecture/10.A_Clustering.html)           |            | [10.A](lecture/10.A_Exercise.html)  |
+| [10 Clustering](lecture/10.A_Clustering.html)           |            | [10](lecture/10.A_Exercise.html)  |
 
 ### Unsupervised Learning: Association Rules
 
 | Lab Notes |  Video | Exercise |
 |:----------|:-------------:|------:|
-| [11 Association Rules](lecture/10.B_AssociationRules.html)|            | [10.B](lecture/10.B_Exercise.html)  |
+| [11 Association Rules](lecture/10.B_AssociationRules.html)|            | [11](lecture/10.B_Exercise.html)  |
 
 ### Other Topics 1: Basic Text Mining
 
