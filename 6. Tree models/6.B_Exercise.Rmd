@@ -1,0 +1,71 @@
+---
+title: "Classification Tree Models"
+output: 
+  html_document: 
+    theme: readable
+    fig_caption: yes
+    number_sections: yes
+    toc: yes
+---
+# **Exercise:** 
+
+> 1. For the credit card default data, calculate the out-of-sample confusion matrix;
+
+```{r, echo=FALSE, eval=FALSE}
+credit_data <- read.csv(file = "https://xiaoruizhu.github.io/Data-Mining-R/lecture/data/credit_default.csv", header=T)
+# rename
+library(dplyr); library(rpart); library(rpart.plot)
+credit_data<- rename(credit_data, default=default.payment.next.month)
+# convert categorical data to factor
+credit_data$SEX<- as.factor(credit_data$SEX)
+credit_data$EDUCATION<- as.factor(credit_data$EDUCATION)
+credit_data$MARRIAGE<- as.factor(credit_data$MARRIAGE)
+
+index <- sample(nrow(credit_data),nrow(credit_data)*0.80)
+credit_train = credit_data[index,]
+credit_test = credit_data[-index,]
+
+credit_rpart0 <- rpart(formula = default ~ ., data = credit_train, method = "class")
+
+#Predicted Class
+credit_test_pred_tree1 <- predict(credit_rpart0, newdata = credit_test, type="class")
+
+table(credit_test$default, credit_test_pred_tree1, dnn = c("True", "Pred"))
+```
+
+
+> 2. If the cost ratio of false negative to false positive is 5 to 1, calculate the out-of-sample asymmetric cost. 
+
+```{r, echo=FALSE, eval=FALSE}
+cost <- function(r, pi){
+  weight1 = 5
+  weight0 = 1
+  c1 = (r==1)&(pi==0) #logical vector - true if actual 1 but predict 0
+  c0 = (r==0)&(pi==1) #logical vector - true if actual 0 but predict 1
+  return(mean(weight1*c1+weight0*c0))
+}
+
+
+cost(credit_test$default, predict(credit_rpart0, credit_test, type="class"))
+
+```
+
+<!-- > 3. Try `type="prob"` in prediction, what can you say about these predicted probabilities? -->
+
+<!-- > 4. Draw the ROC curve for training sample. -->
+
+<!-- ## Cumulative Gains Chart -->
+
+<!-- Cumulative Gains Chart is useful for certain types of binary classification problem. For example a direct marketing campaign, a cumulative gain chart answers the following question according to your model: what is the percentage of customers you need to contact in order to get the certain percentages of customers who will buy the product? -->
+
+<!-- Using the Portuguese banking direct marketing dataset as example: -->
+<!-- ```{r} -->
+<!-- bank.train = read.csv("http://homepages.uc.edu/~maifg/7040/bank_train.csv") -->
+<!-- bank.test = read.csv("http://homepages.uc.edu/~maifg/7040/bank_test.csv") -->
+<!-- bank.pred.prob = predict(rpart(y~., bank.train),bank.test) -->
+<!-- plot(performance(prediction(bank.pred.prob, bank.test$y), "tpr", "rpp")) -->
+<!-- ``` -->
+
+<!-- The above graph tells you that using the predictive model, we only need to call about 40% of the customers (the 40% customers with the highest predicted probability) to get the 80% of the subscription. -->
+
+[go to top](#header)

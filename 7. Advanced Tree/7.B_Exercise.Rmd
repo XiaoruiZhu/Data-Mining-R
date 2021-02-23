@@ -1,0 +1,101 @@
+---
+title: "Advanced Tree Models -- Random Forests"
+output: 
+  html_document: 
+    theme: readable
+    fig_caption: yes
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# **Exercise:** 
+
+## Regression problem: Boston housing data
+
+Apply random forests on the Boston housing data
+
+> 1. Draw this type of plot below, the MSE of random forests with different (`mtry`) number of variables randomly sampled as candidates at each split. (Yours might be different from this.)
+
+```{r, eval=TRUE, echo=FALSE, message=FALSE}
+### Load the data
+library(randomForest); library(MASS)
+data(Boston)
+index <- sample(nrow(Boston),nrow(Boston)*0.90)
+boston.train <- Boston[index,]
+boston.test <- Boston[-index,]
+
+### Random Forest
+boston.rf<- randomForest(medv~., data = boston.train, importance=TRUE)
+# boston.rf
+# boston.rf$importance
+# plot(boston.rf$mse, type='l', col=2, lwd=2, xlab = "ntree", ylab = "OOB Error")
+
+#prediction on testing
+boston.rf.pred<- predict(boston.rf, boston.test)
+# mean((boston.test$medv-boston.rf.pred)^2)
+
+# OOB error with mtry
+oob.err<- rep(0, 13)
+test.err<- rep(0, 13)
+for(i in 1:13){
+  fit<- randomForest(medv~., data = boston.train, mtry=i)
+  oob.err[i]<- fit$mse[500]
+  test.err[i]<- mean((boston.test$medv-predict(fit, boston.test))^2)
+  cat(i, " ")
+}
+matplot(cbind(test.err, oob.err), pch=15, col = c("red", "blue"), type = "b", ylab = "MSE", xlab = "mtry")
+legend("topright", legend = c("test Error", "OOB Error"), pch = 15, col = c("red", "blue"))
+```
+
+```{r, eval=FALSE, echo=FALSE}
+# load credit card data
+credit.data <- read.csv("https://xiaoruizhu.github.io/Data-Mining-R/lecture/data/credit_default.csv", header=T)
+# convert categorical variables
+credit.data$SEX<- as.factor(credit.data$SEX)
+credit.data$EDUCATION<- as.factor(credit.data$EDUCATION)
+credit.data$MARRIAGE<- as.factor(credit.data$MARRIAGE)
+# random splitting
+index <- sample(nrow(credit.data),nrow(credit.data)*0.60)
+credit.train = credit.data[index,]
+credit.test = credit.data[-index,]
+
+### Random Forest for Classification
+credit.rf <- randomForest(as.factor(default.payment.next.month)~., data = credit.train)
+credit.rf
+plot(credit.rf, lwd=rep(2, 3))
+legend("right", legend = c("OOB Error", "FPR", "FNR"), lwd=rep(2, 3), lty = c(1,2,3), col = c("black", "red", "green"))
+#in-sample prediction and find optimal cut-off.
+credit.rf.pred<- predict(credit.rf, type = "prob")[,2]
+costfunc = function(obs, pred.p, pcut){
+  weight1 = 5   # define the weight for "true=1 but pred=0" (FN)
+  weight0 = 1    # define the weight for "true=0 but pred=1" (FP)
+  c1 = (obs==1)&(pred.p<pcut)    # count for "true=1 but pred=0"   (FN)
+  c0 = (obs==0)&(pred.p>=pcut)   # count for "true=0 but pred=1"   (FP)
+  cost = mean(weight1*c1 + weight0*c0)  # misclassification with weight
+  return(cost) # you have to return to a value when you write R functions
+} 
+p.seq = seq(0.01, 0.5, 0.01)
+cost = rep(0, length(p.seq))  
+for(i in 1:length(p.seq)){ 
+  cost[i] = costfunc(obs = credit.train$default.payment.next.month, pred.p = credit.rf.pred, pcut = p.seq[i])  
+}
+plot(p.seq, cost)
+# ROC and AUC
+pred <- ROCR::prediction(credit.rf.pred, credit.train$default.payment.next.month)
+perf <- performance(pred, "tpr", "fpr")
+plot(perf, colorize=TRUE)
+#Get the AUC
+unlist(slot(performance(pred, "auc"), "y.values"))
+
+## out-of-sample
+optimal.pcut= p.seq[which(cost==min(cost))]
+credit.rf.pred.test<- predict(credit.rf, newdata=credit.test, type = "prob")[,2]
+credit.rf.class.test<- (credit.rf.pred.test>optimal.pcut)*1
+table(credit.test$default.payment.next.month, credit.rf.class.test, dnn = c("True", "Pred"))
+```

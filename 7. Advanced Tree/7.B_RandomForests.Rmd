@@ -1,0 +1,132 @@
+---
+title: "Advanced Tree Models -- Random Forests"
+output: 
+  html_document: 
+    theme: readable
+    fig_caption: yes
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+In this lab, we will cover some state-of-the-art techniques in the framework of tree models. We use the same datasets as in previous lab, Boston Housing data and Credit Scoring data.
+
+```{r}
+# load Boston data
+library(MASS)
+data(Boston)
+index <- sample(nrow(Boston),nrow(Boston)*0.9)
+boston_train <- Boston[index,]
+boston_test <- Boston[-index,]
+```
+
+# Random Forests
+
+Random forest is an extension of Bagging, but it makes significant improvement in terms of prediction. The idea of random forests is to randomly select $m$ out of $p$ predictors as candidate variables for each split in each tree. Commonly, $m=\sqrt{p}$. The reason of doing this is that it can *decorrelates* the trees such that it reduces variance when we aggregate the trees. You may refer [Wikipedia](https://en.wikipedia.org/wiki/Random_forest) and the [tutorial](https://www.stat.berkeley.edu/~breiman/RandomForests/cc_home.htm) on the author's website. Note: The current `randomForest` package do not handle asymmetric loss.
+
+## Random Forest for Regression
+
+We start with Boston Housing data.
+
+```{r warning=FALSE, message=FALSE}
+library(randomForest)
+boston_rf<- randomForest(medv~., data = boston_train, importance=TRUE)
+boston_rf
+
+mod_rf <- randomForest(medv~., data=boston_train, 
+                       importance=TRUE, ntree=500)
+```
+
+By default, $m=p/3$ for regression tree, and $m=\sqrt{p}$ for classification problem. You can change it by specifying `mtry=`. You can also specify number of trees by `ntree=`. The default is 500.
+The argument `importance=TRUE` allows us to see the variable imporatance.
+
+```{r}
+boston_rf$importance
+mod_rf$importance
+```
+
+The MSR is MSE of *out-of-bag* prediction (recall the OOB in bagging).  The fitted randomForest actually saves all OOB errors for each `ntree` value from 1 to 500. We can make a plot to see how the OOB error changes with different `ntree`. 
+
+```{r}
+plot(boston_rf$mse, type='l', col=2, lwd=2, xlab = "ntree", ylab = "OOB Error")
+plot(mod_rf$mse, type='l', col=2, lwd=2, xlab = "ntree", ylab = "OOB Error")
+```
+
+Prediction on the testing sample.
+```{r}
+boston_rf_pred<- predict(boston_rf, boston_test)
+mean((boston_test$medv-boston_rf_pred)^2)
+```
+
+
+As we mentioned before, the number of candidate predictors in each split is $m\approx \sqrt{p}=\sqrt{13}\approx 4$. We can also specify $m$ with argument `mtry`. Now let's see how the OOB error and testing error changes with `mtry`.
+
+```{r}
+oob_err <- rep(0, 13)
+test.err <- rep(0, 13)
+for(i in 1:13){
+  fit<- randomForest(medv~., data = boston_train, mtry=i)
+  oob_err[i]<- fit$mse[500]
+  test.err[i]<- mean((boston_test$medv-predict(fit, boston_test))^2)
+  cat(i, " ")
+}
+matplot(cbind(test.err, oob_err), pch=15, col = c("red", "blue"), type = "b", ylab = "MSE", xlab = "mtry")
+legend("topright", legend = c("test Error", "OOB Error"), pch = 15, col = c("red", "blue"))
+```
+
+> Exercise: 
+>
+> Create a plot displaying the test error across `ntree=`1, ..., 500, and `mtry=` 1, ..., 13. (You can draw 13 lines in different color representing each $m$).
+
+## Random Forest for Classification
+
+We apply the random forest model to the credit card dataset:
+
+```{r}
+# load credit card data
+credit_data <- read.csv(file = "https://xiaoruizhu.github.io/Data-Mining-R/lecture/data/credit_default.csv", header=T)
+# convert categorical variables
+credit_data$SEX<- as.factor(credit_data$SEX)
+credit_data$EDUCATION<- as.factor(credit_data$EDUCATION)
+credit_data$MARRIAGE<- as.factor(credit_data$MARRIAGE)
+# random splitting
+index <- sample(nrow(credit_data),nrow(credit_data)*0.9)
+credit_train = credit_data[index,]
+credit_test = credit_data[-index,]
+
+credit_rf <- randomForest(as.factor(default.payment.next.month)~., 
+                          data = credit_train,
+                          importance=TRUE, ntree=500)
+credit_rf
+```
+
+We can again easily plot the error rate vs. ntree. However, as far as I know, `randomForest` does not support asymmetric loss either. So it always uses the overall misclassification rate as the error.
+```{r}
+plot(credit_rf, lwd=rep(2, 3))
+legend("right", legend = c("OOB Error", "FPR", "FNR"), lwd=rep(2, 3), lty = c(1,2,3), col = c("black", "red", "green"))
+```
+
+ROC curve and AUC can be obtained based on the probability prediction. 
+```{r, message=FALSE, warning=FALSE, fig.width=6, fig.height=5}
+credit_rf_pred <- predict(credit_rf, type = "prob")[,2]
+library(ROCR)
+pred <- prediction(credit_rf_pred, credit_train$default.payment.next.month)
+perf <- performance(pred, "tpr", "fpr")
+plot(perf, colorize=TRUE)
+#Get the AUC
+unlist(slot(performance(pred, "auc"), "y.values"))
+```
+
+Create the confusion matrix based on the cutoff probability from asymmetric cost (pcut=1/6).
+```{r}
+## out-of-sample
+pcut <- 1/6
+credit_rf_pred_test <- predict(credit_rf, newdata=credit_test, type = "prob")[,2]
+credit_rf_class_test <- (credit_rf_pred_test>pcut)*1
+table(credit_test$default.payment.next.month, credit_rf_class_test, dnn = c("True", "Pred"))
+```

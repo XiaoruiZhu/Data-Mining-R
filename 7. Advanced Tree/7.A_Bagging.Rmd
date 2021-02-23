@@ -1,0 +1,126 @@
+---
+title: "Advanced Tree Models -- Bagging Tree"
+output: 
+  html_document: 
+    theme: readable
+    fig_caption: yes
+    number_sections: yes
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+In this lab, we will cover some state-of-the-art techniques in the framework of tree models. We use the same datasets as in previous lab, Boston Housing data and Credit Scoring data.
+
+```{r}
+# load Boston data
+library(MASS)
+data(Boston)
+index <- sample(nrow(Boston),nrow(Boston)*0.60)
+boston_train <- Boston[index,]
+boston_test <- Boston[-index,]
+
+# load credit card data
+credit_data <- read.csv(file = "https://xiaoruizhu.github.io/Data-Mining-R/lecture/data/credit_default.csv", header=T)
+# convert categorical variables
+credit_data$SEX<- as.factor(credit_data$SEX)
+credit_data$EDUCATION<- as.factor(credit_data$EDUCATION)
+credit_data$MARRIAGE<- as.factor(credit_data$MARRIAGE)
+# random splitting
+index <- sample(nrow(credit_data),nrow(credit_data)*0.60)
+credit_train = credit_data[index,]
+credit_test = credit_data[-index,]
+```
+
+# Bagging
+
+*Bagging* stands for Bootstrap and Aggregating. It employs the idea of bootstrap but the purpose is not to study bias and standard errors of estimates. Instead, the goal of Bagging is to improve prediction accuracy. It fits a tree for each bootsrap sample, and then aggregate the predicted values from all these different trees. For more details, you may look at [Wikepedia](https://en.wikipedia.org/wiki/Bootstrap_aggregating), or you can find the original paper [Leo Breiman (1996)](https://link.springer.com/content/pdf/10.1007/BF00058655.pdf).
+
+
+An available R package, `ipred`, provides functions to perform Bagging. You need to install this package if you didn't do it before.
+```{r, warning=FALSE}
+library(ipred)
+```
+
+## Bagging for regression tree.
+
+Fit tree with bagging on Boston training data, and calculate MSE on testing sample.
+```{r}
+boston_bag<- bagging(formula = medv~., 
+                     data = boston_train, 
+                     nbagg=100)
+boston_bag
+```
+
+Prediction on testing sample.
+```{r}
+boston_bag_pred<- predict(boston_bag, newdata = boston_test)
+mean((boston_test$medv-boston_bag_pred)^2)
+```
+
+Comparing with a single tree.
+```{r}
+library(rpart)
+boston_tree<- rpart(formula = medv~., 
+                    data = boston_train)
+boston_tree_pred<- predict(boston_tree, newdata = boston_test)
+mean((boston_test$medv-boston_tree_pred)^2)
+```
+
+How many trees are good? 
+```{r}
+ntree<- c(1, 3, 5, seq(10, 200, 10))
+MSE_test<- rep(0, length(ntree))
+for(i in 1:length(ntree)){
+  boston_bag1<- bagging(medv~., data = boston_train, nbagg=ntree[i])
+  boston_bag_pred1<- predict(boston_bag1, newdata = boston_test)
+  MSE_test[i]<- mean((boston_test$medv-boston_bag_pred1)^2)
+}
+plot(ntree, MSE_test, type = 'l', col=2, lwd=2, xaxt="n")
+axis(1, at = ntree, las=1)
+```
+
+```{r echo=FALSE, eval=FALSE}
+ntree<- c(1, 3, 5, seq(10, 200, 10))
+MSE_test<- matrix(0, length(ntree), 50)
+for(k in 1:50){
+  for(i in 1:length(ntree)){
+    boston_bag1<- bagging(medv~., data = boston_train, nbagg=ntree[i])
+    boston_bag_pred1<- predict(boston_bag1, newdata = boston_test)
+    MSE_test[i,k]<- mean((boston_test$medv-boston_bag_pred1)^2)
+  }
+}
+setwd("C:\\Users\\zhuxr\\Dropbox\\Writing Books\\Data-Mining-R\\8. Other topics\\Advanced Tree\\data")
+write.csv(MSE_test, file = "Bag_MSE.csv", row.names = FALSE)
+MSE_test.ave= apply(MSE_test, 1, mean)
+plot(ntree, MSE_test.ave, ylab="MSE_test", type = 'l', col=2, lwd=2)
+```
+
+By fitting the Bagging multiple times and predicting the testing sample, we can draw the following boxplot to show the variance of the prediction error at different number of trees.
+
+```{r echo=FALSE}
+setwd("data/")
+MSE_test= read.csv("Bag_MSE.csv")
+ntree<- c(1, 3, 5, seq(10, 200, 10))
+boxplot(t(MSE_test), names=ntree, xlab="Number of Tree", ylab="Test MSE")
+lines(apply(MSE_test, 1, mean), col="red", lty=2, lwd=2)
+```
+
+
+## Out-of-bag (OOB) prediction
+
+The out-of-bag prediction is similar to LOOCV. We use full sample. In every bootstrap, the unused sample serves as testing sample, and testing error is calculated. In the end, OOB error, root mean squared error by default, is obtained 
+
+```{r}
+boston_bag_oob<- bagging(formula = medv~., 
+                         data = boston_train, 
+                         coob=T, 
+                         nbagg=100)
+boston_bag_oob
+```
+
+

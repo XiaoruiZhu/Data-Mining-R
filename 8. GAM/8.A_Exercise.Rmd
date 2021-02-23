@@ -1,0 +1,18 @@
+---
+title: "Nonparametric Smoothing: Moving Beyond Linearity"
+output: 
+  html_document: 
+    theme: readable
+    fig_caption: yes
+    number_sections: yes
+    toc: yes
+    code_folding: show
+    df_print: paged
+editor_options: 
+  chunk_output_type: console
+---
+
+<!-- # **Exercise:**  -->
+
+<!-- > 1. Conduct 2-fold CV to calculate the mean square error of LASSO selected model, full model, and a reduced model with indus and rm only.  -->
+

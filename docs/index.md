@@ -64,8 +64,8 @@ table th:nth-of-type(3) {
 
 | Lab Notes |  Video | Exercise |
 |:----------|:-------------:|------:|
-| [6.A Regression Trees](lecture/5.A_RegTree.html)       |            | [6.A](lecture/5.A_Exercise.html)  |
-| [6.B Classification Trees](lecture/5.B_ClassTree.html) |            | [6.B](lecture/5.B_Exercise.html) |
+| [6.A Regression Trees](lecture/6.A_RegTree.html)       |            | [6.A](lecture/6.A_Exercise.html)  |
+| [6.B Classification Trees](lecture/6.B_ClassTree.html) |            | [6.B](lecture/6.B_Exercise.html) |
 
 ### Advanced Tree Models: Bagging, Random Forests, and Boosting Tree
 
@@ -79,16 +79,16 @@ table th:nth-of-type(3) {
 
 | Lab Notes |  Video | Exercise |
 |:----------|:-------------:|------:|
-| [8.A Univariate Nonparametric Smoothing](lecture/6.A_BeyondLinearity.html)   |            |  |
-| [8.B Generalized additive model (GAM)](lecture/6.B_GAM.html)                 |            | [8.B](lecture/6.B_Exercise.html) |
+| [8.A Univariate Nonparametric Smoothing](lecture/8.A_BeyondLinearity.html)   |            |  |
+| [8.B Generalized additive model (GAM)](lecture/8.B_GAM.html)                 |            | [8.B](lecture/8.B_Exercise.html) |
 
 ### Neural Network, LDA, and SVM 
 
 | Lab Notes |  Video | Exercise |
 |:----------|:-------------:|------:|
-| [9.A Neural network models](lecture/6.D_NeuralNet.html)                      |            | [9.A](lecture/6.D_Exercise.html) |
-| [9.B (Optional) Discriminant analysis](lecture/6.C_DiscriminantAnalysis.html)|            |   |
-| [9.C (Optional) Support vector machine (SVM)](lecture/6.E_SVM.html)          |            |   |
+| [9.A Neural network models](lecture/9.A_NeuralNet.html)                      |            | [9.A](lecture/9.A_Exercise.html) |
+| [9.B (Optional) Discriminant analysis](lecture/9.B_DiscriminantAnalysis.html)|            |   |
+| [9.C (Optional) Support vector machine (SVM)](lecture/9.C_SVM.html)          |            |   |
 
 ### Unsupervised Learning: Clustering
 
@@ -100,7 +100,7 @@ table th:nth-of-type(3) {
 
 | Lab Notes |  Video | Exercise |
 |:----------|:-------------:|------:|
-| [11 Association Rules](lecture/10.B_AssociationRules.html)|            | [11](lecture/10.B_Exercise.html)  |
+| [11 Association Rules](lecture/11_AssociationRules.html)|            | [11](lecture/11_Exercise.html)  |
 
 ### Other Topics 1: Basic Text Mining
 

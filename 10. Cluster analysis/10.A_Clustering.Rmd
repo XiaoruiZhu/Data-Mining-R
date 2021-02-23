@@ -1,0 +1,296 @@
+---
+title: "Unsupervised Learning: Clustering"
+output: 
+  html_document: 
+    theme: readable
+    fig_caption: yes
+    number_sections: yes
+    toc: yes
+    code_folding: show
+    df_print: paged
+editor_options: 
+  chunk_output_type: console
+---
+
+
+# Simple Example beforehand: T-shirts' Size
+
+- How do the clothing companies decide the size of their T-shirt? 
+
+- What size should a t-shirt be? 
+
+- Everyone’s real t-shirt size is different, but how can they figure out the XS, S, M, L and XL labels?
+
+At the first, they don't have these labels, they only have some information about customers. Let's think about how tailor make your customer-tailored T-shirt. They may measure your neck width(collar), arm length, chest width, waistline and so on. But, for most apparel companies, they have to have as fewer as possible number of sizes so that they can save cost to cover most of their target customers. Let's say they only want to have five sizes. So the problem is how to find these five sizes so that most of the customers can buy a comfortable one, and meanwhile, when they have the right size, the T-shirt is not too large or to small. In statistics, this problem is equivalent to find five clusters based on provided information so that the variation within clusters is small, and between clusters variation is large. 
+
+<!-- Add more visual graphs to illustrate the clustering.  -->
+
+```{r echo=FALSE, eval=FALSE}
+# https://towardsdatascience.com/using-unsupervised-learning-to-optimise-childrens-t-shirt-sizing-d919d3cbc1f6
+Tshirt <- read.csv(file = "TshirtSizing.csv", header=T)
+head(Tshirt)
+# Clean variables that have more than 2,000 NAs (zero in this case)
+cols <- apply(Tshirt, MARGIN = 2, function(x) sum(x==0))
+names(cols)[which(cols > 2000)]
+
+demographic_attributes = c('AGE IN YEARS', 'LOCATION',
+                          'BIRTH DATE', 'MEASUREMENT DATE', 'MEASUREMENT SET TP',
+                          'MEASURER NUMBER', 'COMPUTER NUMBER', 'RACE', 'GRADE LEVEL',
+                          'HANDEDNESS', 'NUMBER OF BROTHERS', 'NUMBER OF SISTERS', 'TWIN',
+                          'BIRTH ORDER', 'MOTHERS OCCUPATION', 'FATHERS OCCUPATION',
+                          'MOTHERS EDUCATION', 'FATHERS EDUCATION', 'YEARS IN COMMUNITY',
+                          'ANTHROPOMETER NO', 'CALIPER NO', 'GIRTH NO')
+
+df = df.drop(demographic_attributes, axis = 'columns')
+```
+
+[go to top](#header)
+
+# Summary of Seeds data
+
+We use the seeds data set to demonstrate cluster analysis in R. The examined group comprised kernels belonging to three different varieties of wheat: Kama, Rosa and Canadian, 70 elements each. A description of the dataset can be viewed at (https://archive.ics.uci.edu/ml/datasets/seeds)
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE, message = FALSE, error = FALSE)
+```
+
+```{r}
+seed = read.table('http://archive.ics.uci.edu/ml/machine-learning-databases/00236/seeds_dataset.txt', header=F)
+seed = seed[,1:7]
+colnames(seed) = c("area", "perimeter","campactness", "length", "width", "asymmetry", "groovelength")
+```
+
+Scale data to have zero mean and unit variance for each column
+```{r}
+seed <- scale(seed) 
+```
+
+[go to top](#header)
+
+# K-means
+
+The basic idea of k-means clustering is to define clusters then minimize the total intra-cluster variation (known as total within-cluster variation). The standard algorithm is the Hartigan-Wong algorithm (1979), which defines the total within-cluster variation as the **sum of squared distances Euclidean distances** between items and the corresponding centroid: $$W(C_k) = \sum_{x_i \in C_k}(x_i - \mu_k)^2,$$ where: 
+
+- $x_i$ is a data point belonging to the cluster $C_k$
+- $\mu_i$ is the mean value of the points assigned to the cluster $C_k$
+
+For clustering, one can rely on all kinds of distance measures and it is critical point. The distance measures will show how similar two elements (x, y) are and it will highly influence the results of the clustering analysis. The classical methods for distance measures are Euclidean and Manhattan distances, which are defined as follow:
+
+**Euclidean distance:**
+
+$d_{euc}(x,y) = \sqrt{\sum^n_{i=1}(x_i - y_i)^2} \tag{1}$
+
+**Manhattan distance:**
+
+$d_{man}(x,y) = \sum^n_{i=1}|(x_i - y_i)| \tag{2}$
+
+**Pearson correlation distance:**
+
+$d_{cor}(x, y) = 1 - \frac{\sum^n_{i=1}(x_i-\bar x)(y_i - \bar y)}{\sqrt{\sum^n_{i=1}(x_i-\bar x)^2\sum^n_{i=1}(y_i - \bar y)^2}} \tag{3}$ 
+
+
+In order to use k-means method for clustering and plot results, we can use `kmeans` function in R. It will group the data into a specified number of clusters (centers = 5). As mentioned before, the algorithm randomly k objects as the initial cluster centers to start the iteration, the final results may vary based on different initial centers. The `nstart` option of this function can allow the algorithm to attempt multiple initial configurations and reports on the best one. I recommended to set nstart for this function, which could give stable result. 
+
+```{r}
+library(factoextra)
+distance <- get_dist(seed)
+fviz_dist(distance, gradient = list(low = "#00AFBB", mid = "white", high = "#FC4E07"))
+# K-Means Cluster Analysis
+fit <- kmeans(seed, 2) #2 cluster solution
+#Display number of clusters in each cluster
+table(fit$cluster)
+#Plot cluster in kmeans
+```
+
+```{r}
+fit
+fviz_cluster(fit, data = seed)
+```
+
+
+- `cluster`: A vector of integers (from 1:k) indicating the cluster to which each point is allocated.
+- `centers`: A matrix of cluster centres.
+- `totss`: 	The total sum of squares.
+- `withinss`: Vector of within-cluster sum of squares, one component per cluster.
+- `tot.withinss`: Total within-cluster sum of squares, i.e. sum(withinss).
+- `betweenss`: The between-cluster sum of squares, i.e. totss-tot.withinss.
+- `size`: The number of points in each cluster.
+- `iter`: The number of (outer) iterations.
+- `ifault`: integer: indicator of a possible algorithm problem – for experts.
+
+We want to view the result so We can use `fviz_cluster`. It is function can provide a nice graph of the clusters. Usually, we have more than two dimensions (variables) `fviz_cluster` will perform principal component analysis (PCA) and plot the data points according to the first two principal components that explain the majority of the variance.
+
+```{r}
+fviz_cluster(fit, data = seed)
+```
+
+```{r}
+k3 <- kmeans(seed, centers = 3, nstart = 25)
+k4 <- kmeans(seed, centers = 4, nstart = 25)
+k5 <- kmeans(seed, centers = 5, nstart = 25)
+
+# plots to compare
+p1 <- fviz_cluster(fit, geom = "point", data = seed) + ggtitle("k = 2")
+p2 <- fviz_cluster(k3, geom = "point",  data = seed) + ggtitle("k = 3")
+p3 <- fviz_cluster(k4, geom = "point",  data = seed) + ggtitle("k = 4")
+p4 <- fviz_cluster(k5, geom = "point",  data = seed) + ggtitle("k = 5")
+
+library(gridExtra)
+grid.arrange(p1, p2, p3, p4, nrow = 2)
+```
+
+```{r, eval=FALSE}
+install.packages("fpc")
+```
+
+```{r, message=FALSE, warning=FALSE}
+library(fpc)
+plotcluster(seed, fit$cluster)
+```
+
+```{r, eval=FALSE}
+#See exactly which item are in 1st group
+seed[fit$cluster==1,]
+```
+```{r}
+#get cluster means for scaled data
+aggregate(seed,by=list(fit$cluster),FUN=mean)
+#or alternatively, use the output of kmeans
+fit$centers
+```
+
+## Determine number of clusters
+Here a simple within group sum of squares method is used. 
+
+```{r}
+# Determine number of clusters
+wss <- (nrow(seed)-1)*sum(apply(seed,2,var))
+for (i in 2:12) wss[i] <- sum(kmeans(seed,
+                                     centers=i)$withinss)
+plot(1:12, wss, type="b", xlab="Number of Clusters",ylab="Within groups sum of squares")
+```
+
+Prediction strength for estimating number of clusters. The prediction strength is defined according to Tibshirani and Walther (2005), who recommend to choose as optimal number of cluster the largest number of clusters that leads to a prediction strength above 0.8 or 0.9.
+
+```{r}
+prediction.strength(seed, Gmin=2, Gmax=15, M=10,cutoff=0.8)
+```
+
+fpc package has cluster.stat() function that can calcuate other cluster validity measures such as [Average Silhouette Coefficient](http://en.wikipedia.org/wiki/Silhouette_(clustering)) (between -1 and 1, the higher the better), or [Dunn index](http://en.wikipedia.org/wiki/Dunn_index) (betwen 0 and infinity, the higher the better):
+
+```{r}
+d = dist(seed, method = "euclidean")
+result = matrix(nrow = 14, ncol = 3)
+for (i in 2:15){
+  cluster_result = kmeans(seed, i)
+  clusterstat=cluster.stats(d, cluster_result$cluster)
+  result[i-1,1]=i
+  result[i-1,2]=clusterstat$avg.silwidth
+  result[i-1,3]=clusterstat$dunn   
+}
+plot(result[,c(1,2)], type="l", ylab = 'silhouette width', xlab = 'number of clusters')
+plot(result[,c(1,3)], type="l", ylab = 'dunn index', xlab = 'number of clusters')
+
+```
+
+The package `NbClust` provides 30 indexes for determining the optimal number of clusters in a data set.
+
+For more sophiscated methods, see for example [blog](http://blog.echen.me/2011/03/19/counting-clusters/), or [course notes](http://www.bx.psu.edu/old/courses/bx-fall04/How_Many_Clusters.pdf).
+
+[This article on Cross Validated](http://stats.stackexchange.com/a/133694/8622) provides a great illustration of the situations when k-means would fail.
+
+[go to top](#header)
+
+# Hierarchical clustering
+
+```{r}
+#Wards Method or Hierarchical clustering
+#Calculate the distance matrix
+seed.dist=dist(seed)
+#Obtain clusters using the Wards method
+seed.hclust=hclust(seed.dist, method="ward")
+plot(seed.hclust)
+#Cut dendrogram at the 3 clusters level and obtain cluster membership
+seed.3clust = cutree(seed.hclust,k=3)
+```
+
+```{r, eval=FALSE}
+#See exactly which item are in third group
+seed[seed.3clust==3,]
+```
+
+```{r, eval=FALSE}
+#get cluster means for raw data
+#Centroid Plot against 1st 2 discriminant functions
+#Load the fpc library needed for plotcluster function
+library(fpc)
+#plotcluster(ZooFood, fit$cluster)
+plotcluster(seed, seed.3clust)
+```
+
+[go to top](#header)
+
+# (Optional) Model-Based Cluster Analysis
+A newer clustering appraoch, model-based cluster, treats the clustering problem as maximizing a Normal mixture model. Generating an observation in this model consists of first picking a centroid (mean of a multivariate normal distribution) at random and then adding some noise (variances). If the noise is normally distributed, this procedure will result in clusters of spherical shape. Model-based clustering assumes that the data were generated by a model and tries to recover the original model from the data. The model that we recover from the data then defines clusters and an assignment of documents to clusters. It can be thought as a generalization of  $K$-means. 
+
+The model "recovering" process is done via Expectation-Maximization(EM) algorithm. It is an iterative approach to maximize the likelihood of a statistical model when the model contains unobserved variables.
+
+One obvious advantage of the approach is that we can treat the question "How Many Clusters?" as a model selection problem.
+
+For detailed description of the method and the package, see [1](http://www.stat.washington.edu/raftery/Research/mbc.html) and [2](http://www.stat.washington.edu/mclust/)
+
+
+```{r, eval = FALSE}
+install.packages('mclust')
+```
+
+```{r, warning = FALSE}
+library(mclust)
+```
+
+
+```{r, warning = FALSE}
+mclust_result = Mclust(seed)
+
+```
+
+```{r, warning = FALSE}
+summary(mclust_result)
+```
+
+The BIC used in the package is the negative of the 'usual' BIC when we discussed regression models. Therefore we are trying to maximize the BIC here.
+
+```{r, warning = FALSE}
+plot(mclust_result)
+```
+
+
+[go to top](#header)
+
+
+<!-- # Case Starter Code -->
+
+<!-- <a id="case4"></a> -->
+
+<!-- For problem 1 Iris data, simply use the Iris dataset in R. When doing cluster analysis for Iris you'll want to ignore the Species variable. -->
+
+<!-- ```{r, eval=FALSE} -->
+<!-- data(iris) -->
+<!-- ``` -->
+
+<!-- For problem 2 Cincinnati Zoo data, use the following code to load the transaction data for association rules mining. *as()* function coerce the dataset into transaction data type for association rules mining. -->
+
+<!-- ```{r, eval=FALSE} -->
+<!-- TransFood <- read.csv('https://xiaoruizhu.github.io/Data-Mining-R/data/food_4_association.csv') -->
+<!-- TransFood <- TransFood[, -1] -->
+<!-- # Find out elements that are not equal to 0 or 1 and change them to 1. -->
+<!-- Others <- which(!(as.matrix(TransFood) ==1 | as.matrix(TransFood) ==0), arr.ind=T ) -->
+<!-- TransFood[Others] <- 1 -->
+<!-- TransFood <- as(as.matrix(TransFood), "transactions") -->
+<!-- ``` -->
+<!-- Load the data for clustering: -->
+<!-- ```{r, eval=FALSE} -->
+<!-- Food_by_month <- read.csv('https://xiaoruizhu.github.io/Data-Mining-R/data/qry_Food_by_Month.csv') -->
+<!-- ``` -->
+
+<!-- [go to top](#header) -->
