@@ -1,0 +1,137 @@
+---
+title: "ranger class.weights example"
+output: html_notebook
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(
+  echo    = TRUE,
+  error   = FALSE,
+  warning = FALSE,
+  message = FALSE,
+  fig.width = 9,
+  fig.height =6
+)
+
+RND_SEED <- 13218578
+```
+
+```{r load_pkgs}
+
+suppressMessages(
+  suppressWarnings(
+    suppressPackageStartupMessages(
+      {
+        library(tidyverse)
+        library(magrittr)
+        library(caret)
+        library(ranger)
+        library(data.table)
+      }
+    )
+  )
+)
+select <- dplyr::select
+```
+
+```{r creditdata}
+credit.data <- fread("C:/Users/dalto/OneDrive/MS_BANA_Course_Work/BANA704X/Data-Mining-R/8. Other topics/Advanced Tree/data/credit_default.csv")
+# convert categorical variables
+credit.data <- rename(credit.data, default=default.payment.next.month)
+credit.data$default <- as.factor(credit.data$default)
+credit.data$SEX <- as.factor(credit.data$SEX)
+credit.data$EDUCATION <- as.factor(credit.data$EDUCATION)
+credit.data$MARRIAGE <- as.factor(credit.data$MARRIAGE)
+
+set.seed(RND_SEED)
+trainIndex <- createDataPartition(credit.data$default, p = 0.7, list = FALSE, times = 1)
+credit.train <- credit.data[trainIndex, ]
+credit.test <- credit.data[-trainIndex, ]
+
+n_features <- length(setdiff(names(credit.train), "default"))
+```
+
+## ranger with no cost sensitive learning
+
+```{r no_cost_sensitive_learning}
+
+mod_01 <- ranger(
+  formula = default ~ .,
+  data = credit.train,
+  num.trees = n_features * 10,
+  mtry = floor(sqrt(n_features)),
+  write.forest = TRUE,
+  min.node.size = 1,
+  max.depth = 0,
+  respect.unordered.factors = "order",
+  seed = RND_SEED,
+  importance = "impurity",
+  oob.error = TRUE,
+  verbose = TRUE,
+  num.threads = 12
+)
+```
+
+## ranger with cost sensitive learning
+
+class.weights: Weights for the outcome classes (in order of the factor levels) in the splitting rule (cost sensitive learning). Classification and probability prediction only. For classification the weights are also applied in the majority vote in terminal nodes.
+    
+```{r cost_sensitive_learning}
+
+mod_02 <- ranger(
+  formula = default ~ .,
+  data = credit.train,
+  num.trees = n_features * 10,
+  mtry = floor(sqrt(n_features)),
+  write.forest = TRUE,
+  min.node.size = 1,
+  max.depth = 0,
+  respect.unordered.factors = "order",
+  seed = RND_SEED,
+  importance = "impurity",
+  oob.error = TRUE,
+  verbose = TRUE,
+  num.threads = 12,
+  class.weights = c(1, 5)
+)
+```
+
+## predictions
+
+```{r model_predictions}
+mod_01_pred <- predict(
+  mod_01,
+  data = credit.test,
+  type = "response",
+  num.threads = 12
+)
+
+mod_02_pred <- predict(
+  mod_02,
+  data = credit.test,
+  type = "response",
+  num.threads = 12
+)
+```
+
+```{r mod_01_confusion}
+mod_01_confusion <- table(
+  credit.test$default, mod_01_pred$predictions, dnn = c("True", "Pred")
+)
+mod_01_confusion
+
+```
+
+```{r mod_02_confusion}
+mod_02_confusion <- table(
+  credit.test$default, mod_02_pred$predictions, dnn = c("True", "Pred")
+)
+mod_02_confusion
+```
+
+
+
+
+
+

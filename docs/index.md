@@ -94,7 +94,7 @@ table th:nth-of-type(3) {
 
 | Lab Notes |  Video | Exercise |
 |:----------|:-------------:|------:|
-| [10 Clustering](lecture/10.A_Clustering.html)           |            | [10](lecture/10.A_Exercise.html)  |
+| [10 Clustering](lecture/10_Clustering.html)           |            | [10](lecture/10_Exercise.html)  |
 
 ### Unsupervised Learning: Association Rules
 
