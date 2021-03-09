@@ -299,7 +299,7 @@ for(i in 1:length(searchgrid))
 
 ### Out-of-sample fit performance
 ```{r}
-pcut <- 1/5
+pcut <- 1/6
 prob_gam_out <- predict(credit_gam, credit_test,type="response")
 pred_gam_out <- (prob_gam_out>=pcut)*1
 table(credit_test$default, pred_gam_out,dnn=c("Observed","Predicted"))

@@ -509,17 +509,17 @@ unlist(slot(performance(pred, &quot;auc&quot;), &quot;y.values&quot;))</code></p
 </div>
 <div id="out-of-sample-fit-performance" class="section level3" number="1.3.2">
 <h3 number="1.3.2"><span class="header-section-number">1.3.2</span> Out-of-sample fit performance</h3>
-<pre class="r"><code>pcut &lt;- 1/5
+<pre class="r"><code>pcut &lt;- 1/6
 prob_gam_out &lt;- predict(credit_gam, credit_test,type=&quot;response&quot;)
 pred_gam_out &lt;- (prob_gam_out&gt;=pcut)*1
 table(credit_test$default, pred_gam_out,dnn=c(&quot;Observed&quot;,&quot;Predicted&quot;))</code></pre>
 <pre><code>##         Predicted
 ## Observed   0   1
-##        0 779 184
-##        1  88 149</code></pre>
+##        0 633 330
+##        1  56 181</code></pre>
 <p>The asymmetric cost is</p>
 <pre class="r"><code>creditcost(credit_test$default, pred_gam_out)</code></pre>
-<pre><code>## [1] 0.52</code></pre>
+<pre><code>## [1] 0.5083333</code></pre>
 <p><strong>ROC Curve:</strong></p>
 <pre class="r"><code>pred &lt;- prediction(predictions = c(prob_gam_out), labels = credit_test$default)
 perf &lt;- performance(pred, &quot;tpr&quot;, &quot;fpr&quot;)
