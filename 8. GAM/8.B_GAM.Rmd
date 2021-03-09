@@ -111,17 +111,36 @@ plot(Bank_gam, pages=1)
 
 **In-sample fit performance**
 
+The in-sample confusion matrix:
 ```{r}
-pcut_gam <- .15
+pcut_gam <- 1/36
 prob_gam_in <-predict(Bank_gam, Bank_train, type="response")
 pred_gam_in <- (prob_gam_in>=pcut_gam)*1
 table(Bank_train$DLRSN, pred_gam_in, dnn=c("Observed","Predicted"))
 ```
 
-Likewise, misclassification rate is another thing you can check:
+The in-sample asymmetric cost is another thing you can check:
 
 ```{r}
-mean(ifelse(Bank_train$DLRSN != pred_gam_in, 1, 0))
+bankcost <- function(r, pi){
+  weight1 = 35
+  weight0 = 1
+  pcut <- weight0/(weight0+weight1)
+  c1 = (r==1)&(pi<pcut) #logical vector - true if actual 1 but predict 0
+  c0 = (r==0)&(pi>pcut) #logical vector - true if actual 0 but predict 1
+  return(mean(weight1*c1+weight0*c0))
+}
+bankcost(Bank_train$DLRSN, pred_gam_in)
+```
+
+**ROC Curve:**
+```{r, message=FALSE, warning=FALSE, fig.width=6, fig.height=5, fig.align='center'}
+library(ROCR)
+pred <- prediction(c(prob_gam_in), Bank_train$DLRSN)
+perf <- performance(pred, "tpr", "fpr")
+plot(perf, colorize=TRUE)
+#Get the AUC
+unlist(slot(performance(pred, "auc"), "y.values"))
 ```
 
 
@@ -137,21 +156,33 @@ Bank_gam$dev/Bank_gam$df.residual
 
 **Out-of-sample fit performance**
 
+The out-of-sample confusion matrix:
 ```{r}
 prob_gam_out <- predict(Bank_gam, Bank_test, type="response")
 pred_gam_out <- (prob_gam_out>=pcut_gam)*1
 table(Bank_test$DLRSN, pred_gam_out, dnn=c("Observed","Predicted"))
 ```
 
-The mis-classifciation rate is
+**The asymmetric cost is:**
 ```{r}
-mean(ifelse(Bank_test$DLRSN != pred_gam_out, 1, 0))
+bankcost(Bank_test$DLRSN, pred_gam_out)
+```
+
+**ROC Curve:**
+```{r, message=FALSE, warning=FALSE, fig.width=6, fig.height=5, fig.align='center'}
+pred <- prediction(c(prob_gam_out), Bank_test$DLRSN)
+perf <- performance(pred, "tpr", "fpr")
+plot(perf, colorize=TRUE)
+#Get the AUC
+unlist(slot(performance(pred, "auc"), "y.values"))
 ```
 
 [go to top](#header)
 
 
-## GAM on Credit Scoring Data
+## GAM on Credit Card Default Data
+
+The Credit Card Default Data has 10800 observations and 23 predictive variables. The details of the data can be found at http://archive.ics.uci.edu/ml/datasets/default+of+credit+card+clients. Think about what kind of factors could affect people to fail to pay their credit balance.
 
 ```{r , message=FALSE}
 credit_data <- read.csv(file = "https://xiaoruizhu.github.io/Data-Mining-R/lecture/data/credit_default.csv", header=T)
@@ -160,10 +191,9 @@ credit_data <- read.csv(file = "https://xiaoruizhu.github.io/Data-Mining-R/lectu
 library(dplyr)
 credit_data<- rename(credit_data, default=default.payment.next.month)
 # convert categorical data to factor
-credit_data$SEX<- as.factor(credit_data$SEX)
-credit_data$EDUCATION<- as.factor(credit_data$EDUCATION)
-credit_data$MARRIAGE<- as.factor(credit_data$MARRIAGE)
-
+credit_data$SEX <- as.factor(credit_data$SEX)
+credit_data$EDUCATION <- as.factor(credit_data$EDUCATION)
+credit_data$MARRIAGE <- as.factor(credit_data$MARRIAGE)
 ```
 
 Now split the data 90/10 as training/testing datasets:
@@ -174,53 +204,72 @@ credit_train = credit_data[index,]
 credit_test = credit_data[-index,]
 ```
 
-The training dataset has 24 variables, 10800 obs. 
-
-You are already familiar with the credit scoring set. Let's define a cost function for benchmarking testing set performance.
-
+Some of these predictors are categorical variables and they will enter the `gam()` model as partially linear terms. We only add flexible `s()` function to those continuous predictor variables such as LIMIT_BAL, AGE etc. Here we will demonstrate using five continuous variables as smooth terms and three categorical variables SEX, EDUCATION, and MARRIAGE as partially linear terms to save the space of summary output.
 
 ```{r echo=TRUE, message = FALSE, warning=FALSE, out.width="100%", out.height="100%"}
 ## Create a formula for a model with a large number of variables:
-gam_formula <- as.formula(paste("default~s(LIMIT_BAL)+s(AGE)+s(PAY_0)+s(BILL_AMT1)+s(PAY_AMT1)+", 
-                                paste(colnames(credit_train)[c(2:4)], collapse= "+")))
+gam_formula <- as.formula("default~s(LIMIT_BAL)+s(AGE)+s(PAY_0)+s(BILL_AMT1)+s(PAY_AMT1)+SEX+EDUCATION+MARRIAGE")
 
 credit_gam <- gam(formula = gam_formula, family=binomial, data=credit_train);
 summary(credit_gam)
 
 plot(credit_gam, shade=TRUE, seWithMean=TRUE, scale=0, pages = 1)
+```
+
+The function `vis.gam()` can visualize the nonlinear relationship between two variables and the linear predictor in a 3D space as follows: 
+```{r echo=TRUE, message = FALSE, warning=FALSE, out.width="100%", out.height="100%"}
 # vis.gam(credit_gam)
 vis.gam(credit_gam, view=c("LIMIT_BAL","AGE"), theta= 140) # different view 
 ```
 
 ### In-sample fit performance
-In order to see the in-sample fit performance, you may look into the confusion matrix by using commands as following. 
+
+In order to see the in-sample fit performance, you may look into the confusion matrix by using commands as following. We assume the cut-off probability as 1/6. 
 
 ```{r}
-pcut_gam <- .15
+pcut_gam <- 1/6
 prob_gam_in <-predict(credit_gam,credit_train,type="response")
 pred_gam_in <- (prob_gam_in>=pcut_gam)*1
 table(credit_train$default, pred_gam_in,dnn=c("Observed","Predicted"))
 ```
 
-Likewise, misclassification rate is another thing you can check:
-
+The asymmetric cost with 5:1 cost ratio is: 
 ```{r}
-mean(ifelse(credit_train$default != pred_gam_in, 1, 0))
+creditcost <- function(r, pi){
+  weight1 = 5
+  weight0 = 1
+  pcut <- weight0/(weight0+weight1)
+  c1 = (r==1)&(pi<pcut) #logical vector - true if actual 1 but predict 0
+  c0 = (r==0)&(pi>pcut) #logical vector - true if actual 0 but predict 1
+  return(mean(weight1*c1+weight0*c0))
+}
+creditcost(credit_train$default, pred_gam_in)
 ```
+
 
 Training model AIC, BIC, and mean residual deviance:
 ```{r}
 AIC(credit_gam)
 BIC(credit_gam)
-credit_gam$deviance
+# credit_gam$deviance
 ```
 
+**ROC Curve:**
+
+```{r, message=FALSE, warning=FALSE, fig.width=6, fig.height=5, fig.align='center'}
+library(ROCR)
+pred <- prediction(predictions = c(prob_gam_in), labels = credit_train$default)
+perf <- performance(pred, "tpr", "fpr")
+plot(perf, colorize=TRUE)
+#Get the AUC
+unlist(slot(performance(pred, "auc"), "y.values"))
+```
 
 <!-- ### Search for optimal cut-off probability -->
 
 <!-- The following code does a grid search from pcut = 0.01 to pcut = 0.99 with the objective of minimizing overall cost in the training set. I am using an asymmetric cost function by assuming that giving out a bad loan cost 10 time as much as rejecting application from someone who can pay. -->
 
-```{r echo=FALSE, message = FALSE, warning=FALSE, out.width="100%", out.height="100%"}
+```{r eval=FALSE, echo=FALSE, message = FALSE, warning=FALSE, out.width="100%", out.height="100%"}
 #define the searc grid from 0.01 to 0.20
 searchgrid = seq(0.01, 0.20, 0.01)
 #result_gam is a 99x2 matrix, the 1st col stores the cut-off p, the 2nd column stores the cost
@@ -240,35 +289,35 @@ for(i in 1:length(searchgrid))
   #assign the cost to the 2nd col
   result_gam[i,2] <- cost1(credit_train$default, predict(credit_gam,type="response"))
 }
-plot(result_gam, ylab="Cost in Training Set")
-index_min <- which.min(result_gam[,2])#find the index of minimum value
-result_gam[index_min,2] #min cost
-result_gam[index_min,1] #optimal cutoff probability
+# plot(result_gam, ylab="Cost in Training Set")
+# index_min <- which.min(result_gam[,2])#find the index of minimum value
+# result_gam[index_min,2] #min cost
+# result_gam[index_min,1] #optimal cutoff probability
+# pcut <-  result_gam[index_min,1]
+
 ```
 
 ### Out-of-sample fit performance
 ```{r}
-pcut <-  result_gam[index_min,1] 
+pcut <- 1/5
 prob_gam_out <- predict(credit_gam, credit_test,type="response")
 pred_gam_out <- (prob_gam_out>=pcut)*1
 table(credit_test$default, pred_gam_out,dnn=c("Observed","Predicted"))
 ```
 
-The mis-classifciation rate is
+The asymmetric cost is
 ```{r}
-mean(ifelse(credit_test$default != pred_gam_out, 1, 0))
+creditcost(credit_test$default, pred_gam_out)
 ```
 
-The cost associated with misclassification is
-```{r}
-creditcost <- function(observed, predicted){
-  weight1 = 5
-  weight0 = 1
-  c1 = (observed==1)&(predicted == 0) #logical vector - true if actual 1 but predict 0
-  c0 = (observed==0)&(predicted == 1) #logical vector - true if actual 0 but predict 1
-  return(mean(weight1*c1+weight0*c0))
-}
-creditcost(credit_test$default, pred_gam_out)
+**ROC Curve:**
+
+```{r, message=FALSE, warning=FALSE, fig.width=6, fig.height=5, fig.align='center'}
+pred <- prediction(predictions = c(prob_gam_out), labels = credit_test$default)
+perf <- performance(pred, "tpr", "fpr")
+plot(perf, colorize=TRUE)
+#Get the AUC
+unlist(slot(performance(pred, "auc"), "y.values"))
 ```
 
 [go to top](#header)
@@ -299,62 +348,6 @@ summary(s_gam)
 
 #plot the model
 plot(s_gam, residuals = TRUE, pch = 1)
-```
-
-[go to top](#header)
-
-## GAM on "Wage" dataset
-
-This dataset contains Wage and other data for a group of 3,000 male workers in the Mid-Atlantic region.
-First we conduct EDA and fit a multiple linear regression of wage on age, year, and education.
-
-```{r echo=TRUE, message = FALSE}
-require(ISLR)
-attach(Wage)
-# ?Wage
-dim(Wage)
-
-s_Wage <- Wage[c("age","year","education","wage")]
-str(s_Wage)
-summary(s_Wage)
-```
-
-```{r echo=TRUE, message = FALSE, warning=FALSE, out.width="100%", out.height="100%"}
-library(ggplot2)
-ggplot(data = Wage, mapping = aes(x = age, y = wage)) + 
-    geom_point()
-
-ggplot(data = Wage, mapping = aes(x = year, y = wage)) + 
-    geom_point()
-
-#categorical variable
-ggplot(Wage, aes(x = education, y = wage)) +
-    geom_boxplot()
-```
-
-```{r echo=TRUE, message = FALSE, results='hide'}
-#multiple linear regression model
-mul_model <- lm(wage~age+year+education, data=Wage)
-summary(mul_model)
-```
-
-
-We then fit a GAM where 'age' and 'year' enter the model nonlinearly, whereas variable 'education' enters linearly.
-
-```{r echo=TRUE, message = FALSE, warning=FALSE, out.width="100%", out.height="100%"}
-gam_mod <- gam(wage~s(age, k=6)+s(year, k=6)+education ,data = Wage)
-summary(gam_mod)
-
-plot(gam_mod, se=TRUE ,col="blue")
-```
-
-
-**Basis dimension choice for smooths**
-
-*gam.check* runs a simple simulation based check on the basis dimensions, which can help to flag up terms for which k is too low. Grossly too small k will also be visible from partial residuals available with plot.gam.
-
-```{r echo=TRUE, message = FALSE, warning=FALSE, out.width="100%", out.height="100%"}
-gam.check(gam_mod)
 ```
 
 [go to top](#header)
