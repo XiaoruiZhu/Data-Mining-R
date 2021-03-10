@@ -325,6 +325,8 @@ unlist(slot(performance(pred, "auc"), "y.values"))
 
 ## GAM using the "Motorcycle" dataset
 
+Finally, we can also apply `gam()` for a univariate smoothing on the motorcycle data.
+
 ```{r echo=TRUE, message = FALSE, results='hide'}
 library(MASS)
 data('mcycle')
