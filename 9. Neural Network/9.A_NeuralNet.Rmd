@@ -78,6 +78,7 @@ f <- as.formula("medv ~ .")
 nn <- neuralnet(f,data=train_Boston, hidden=c(5,3), linear.output=T)
 plot(nn)
 ```
+![](pic/plot_nn.png)
 
 In practices, the normalization and standardization for predictors and response variable are recommended before training a neural network model. Otherwise, your neural network model may not be able to converge as the following case:
 ```{r, eval=FALSE, message=FALSE}
@@ -149,6 +150,8 @@ f <- as.formula("DLRSN ~ R1 + R2 + R3 + R4 + R5 + R6 + R7 + R8 + R9 + R10")
 Bank_nn <- neuralnet(f, data=Bank_train, hidden=c(3), algorithm = 'rprop+', linear.output=F, likelihood = T)
 plot(Bank_nn)
 ```
+
+![](pic/plot_Bank_nn.png)
 
 -   **In-sample fit performance**
 
