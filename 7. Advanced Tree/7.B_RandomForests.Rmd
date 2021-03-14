@@ -64,7 +64,7 @@ mean((boston_test$medv-boston_rf_pred)^2)
 ```
 
 
-As we mentioned before, the number of candidate predictors in each split is $m\approx \sqrt{p}=\sqrt{13}\approx 4$. We can also specify $m$ with argument `mtry`. Now let's see how the OOB error and testing error changes with `mtry`.
+As we mentioned before, the number of candidate predictors in each split is $m=p/3\approx 4$. We can also specify $m$ with argument `mtry`. Now let's see how the OOB error and testing error changes with `mtry`.
 
 ```{r}
 oob_err <- rep(0, 13)
