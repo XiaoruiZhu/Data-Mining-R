@@ -36,7 +36,7 @@ The arguments:
 -   hidden: a vector of integers specifying the number of hidden neurons (vertices) in each layer.
 -   rep: the number of repetitions for the neural network's training.
 -   startweights: a vector containing starting values for the weights. The weights will not be randomly initialized.
--   linear.output: TRUE for continuous response FALSE for categorical response
+-   linear.output: TRUE for continuous response FALSE for categorical response.
 
 2.  `nnet` package
 
@@ -69,8 +69,12 @@ test_Boston <- Boston[-index,]
 
 ```{r, fig.width=7}
 library(neuralnet)
-n <- names(train_Boston)
-f <- as.formula(paste("medv ~", paste(n[!n %in% "medv"], collapse = " + ")))
+f <- as.formula("medv ~ crim + zn + indus + chas + nox + rm + age + dis + rad + tax + ptratio + black + lstat")
+
+# Or you can do the following way that is general and will ease your pain to manually update formula:
+# resp_name <- names(train_Boston)
+# f <- as.formula(paste("medv ~", paste(resp_name[!resp_name %in% "medv"], collapse = " + ")))
+
 nn <- neuralnet(f,data=train_Boston, hidden=c(5,3), linear.output=T)
 plot(nn)
 ```
@@ -102,7 +106,7 @@ pr_nn_try <- compute(nn_try, test_Boston[,1:13])
 pr_nn_org <- pr_nn_try$net.result*(max(Boston$medv)-min(Boston$medv))+min(Boston$medv)
 test_r <- (test_Boston$medv)*(max(Boston$medv)-min(Boston$medv))+min(Boston$medv)
 
-# MSE of testing set
+# MSPE of testing set
 MSPE_nn <- sum((test_r - pr_nn_org)^2)/nrow(test_Boston)
 MSPE_nn
 ```
@@ -112,7 +116,7 @@ MSPE_nn
 ```{r}
 pr_nn <- compute(nn, test_Boston[,1:13])
 
-# MSE of testing set
+# MSPE of testing set
 MSPE_nn <- sum((pr_nn$net.result - test_Boston$medv)^2)/nrow(test_Boston)
 MSPE_nn
 ```
@@ -140,13 +144,11 @@ Bank_test <- Bank_data_scaled[-sample_index,]
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE, out.height="100%", out.width="100%"}
 library(neuralnet)
-n <- names(Bank_train)
-f <- as.formula(paste("DLRSN ~", paste(n[-c(1:3)], collapse = " + ")))
-Bank_nn <- neuralnet(f, data=Bank_train, hidden=c(3), algorithm = 'rprop+', linear.output=T, likelihood = T)
+f <- as.formula("DLRSN ~ R1 + R2 + R3 + R4 + R5 + R6 + R7 + R8 + R9 + R10")
+
+Bank_nn <- neuralnet(f, data=Bank_train, hidden=c(3), algorithm = 'rprop+', linear.output=F, likelihood = T)
 plot(Bank_nn)
 ```
-
-![](pic/plot_Bank_nn.png)
 
 -   **In-sample fit performance**
 
