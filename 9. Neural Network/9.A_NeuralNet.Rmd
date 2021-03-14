@@ -125,7 +125,7 @@ MSPE_nn
 
 ## Classification on Bankruptcy dataset
 
-For this classification problem, we add `linear.output = FALSE` when training model. 
+For classification problems, we use `neuralnet` and add `linear.output = FALSE` when training model. A common practice is again to scale/standardize predictor variables.
 
 ```{r echo=TRUE, message = FALSE,warning=FALSE, results='hide'}
 Bank_data_scaled <- Bank_data <- 
