@@ -69,7 +69,7 @@ test_Boston <- Boston[-index,]
 
 ```{r, fig.width=7}
 library(neuralnet)
-f <- as.formula("medv ~ crim + zn + indus + chas + nox + rm + age + dis + rad + tax + ptratio + black + lstat")
+f <- as.formula("medv ~ .")
 
 # Or you can do the following way that is general and will ease your pain to manually update formula:
 # resp_name <- names(train_Boston)
@@ -124,16 +124,16 @@ MSPE_nn
 
 ## Classification on Bankruptcy dataset
 
-For classification problems with `neuralnet` you need to code the response to *factor* first. In addition you want to add `type = "class"` for *predict()* function.
+For this classification problem, we add `linear.output = FALSE` when training model. 
 
 ```{r echo=TRUE, message = FALSE,warning=FALSE, results='hide'}
-Bank_data <- read.csv(file = "https://xiaoruizhu.github.io/Data-Mining-R/lecture/data/bankruptcy.csv", header=T)
+Bank_data_scaled <- Bank_data <- 
+  read.csv(file = "https://xiaoruizhu.github.io/Data-Mining-R/lecture/data/bankruptcy.csv", header=T)
 # summary(Bank_data)
 library(MASS)
-# maxs <- apply(Bank_data[,-c(1:3)], 2, max) 
-# mins <- apply(Bank_data[,-c(1:3)], 2, min)
-Bank_data_scaled <- Bank_data
-# Bank_data_scaled[,-c(1:3)] <- as.data.frame(scale(Bank_data[,-c(1:3)], center = mins, scale = maxs - mins))
+maxs <- apply(Bank_data[,-c(1:3)], 2, max)
+mins <- apply(Bank_data[,-c(1:3)], 2, min)
+Bank_data_scaled[,-c(1:3)] <- as.data.frame(scale(Bank_data[,-c(1:3)], center = mins, scale = maxs - mins))
 
 sample_index <- sample(nrow(Bank_data_scaled),nrow(Bank_data_scaled)*0.70)
 Bank_train <- Bank_data_scaled[sample_index,]
@@ -145,7 +145,7 @@ Bank_test <- Bank_data_scaled[-sample_index,]
 ```{r echo=TRUE, message=FALSE, warning=FALSE, out.height="100%", out.width="100%"}
 library(neuralnet)
 f <- as.formula("DLRSN ~ R1 + R2 + R3 + R4 + R5 + R6 + R7 + R8 + R9 + R10")
-
+# You may need to specific the formula rather than 
 Bank_nn <- neuralnet(f, data=Bank_train, hidden=c(3), algorithm = 'rprop+', linear.output=F, likelihood = T)
 plot(Bank_nn)
 ```
@@ -154,7 +154,7 @@ plot(Bank_nn)
 
 ```{r}
 pcut_nn <- 1/36
-prob_nn_in <-predict(Bank_nn, Bank_train, type="response")
+prob_nn_in <- predict(Bank_nn, Bank_train, type="response")
 pred_nn_in <- (prob_nn_in>=pcut_nn)*1
 table(Bank_train$DLRSN, pred_nn_in, dnn=c("Observed","Predicted"))
 ```
