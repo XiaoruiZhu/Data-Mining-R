@@ -142,13 +142,7 @@ plot(basket_rules, method="grouped")
 
 <a id="case4"></a>
 
-For problem 1 Iris data, simply use the Iris dataset in R. When doing cluster analysis for Iris you'll want to ignore the Species variable.
-
-```{r, eval=FALSE}
-data(iris)
-```
-
-For problem 2 Cincinnati Zoo data, use the following code to load the transaction data for association rules mining. *as()* function coerce the dataset into transaction data type for association rules mining.
+For Cincinnati Zoo data, use the following code to load the transaction data for association rules mining. `as()` function coerce the dataset into transaction data type for association rules mining.
 
 ```{r, eval=FALSE}
 TransFood <- read.csv('https://xiaoruizhu.github.io/Data-Mining-R/data/food_4_association.csv')
@@ -158,6 +152,7 @@ Others <- which(!(as.matrix(TransFood) ==1 | as.matrix(TransFood) ==0), arr.ind=
 TransFood[Others] <- 1
 TransFood <- as(as.matrix(TransFood), "transactions")
 ```
+
 Load the data for clustering:
 ```{r, eval=FALSE}
 Food_by_month <- read.csv('https://xiaoruizhu.github.io/Data-Mining-R/data/qry_Food_by_Month.csv')
