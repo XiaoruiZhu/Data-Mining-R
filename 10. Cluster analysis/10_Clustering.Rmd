@@ -21,7 +21,7 @@ editor_options:
 
 - Everyone’s real t-shirt size is different, but how can they figure out the XS, S, M, L and XL labels?
 
-At the first, they don't have these labels, they only have some information about customers. Let's think about how tailor make your customer-tailored T-shirt. They may measure your neck width(collar), arm length, chest width, waistline and so on. But, for most apparel companies, they have to have as fewer as possible number of sizes so that they can save cost to cover most of their target customers. Let's say they only want to have five sizes. So the problem is how to find these five sizes so that most of the customers can buy a comfortable one, and meanwhile, when they have the right size, the T-shirt is not too large or to small. In statistics, this problem is equivalent to find five clusters based on provided information so that the variation within clusters is small, and between clusters variation is large. 
+At the first, they don't have these labels, they only have some information about customers. Let's think about how tailor make your customer-tailored T-shirt. They may measure your neck width(collar), arm length, chest width, waistline and so on. But, for most apparel companies, they have to have as few as possible number of sizes so that they can save cost to cover most of their target customers. Let's say they only want to have five sizes. So the problem is how to find these five sizes so that most of the customers can buy a comfortable one, and meanwhile, when they have the right size, the T-shirt is not too large or to small. In statistics, this problem is equivalent to finding five clusters based on provided information so that the variation within clusters is small, and between clusters variation is large. 
 
 <!-- Add more visual graphs to illustrate the clustering.  -->
 
@@ -55,12 +55,12 @@ knitr::opts_chunk$set(echo = TRUE, eval = TRUE, message = FALSE, error = FALSE)
 ```
 
 ```{r}
-seed = read.table('http://archive.ics.uci.edu/ml/machine-learning-databases/00236/seeds_dataset.txt', header=F)
-seed = seed[,1:7]
-colnames(seed) = c("area", "perimeter","campactness", "length", "width", "asymmetry", "groovelength")
+seed <- read.table('http://archive.ics.uci.edu/ml/machine-learning-databases/00236/seeds_dataset.txt', header=F)
+seed <- seed[,1:7]
+colnames(seed) <- c("area", "perimeter","campactness", "length", "width", "asymmetry", "groovelength")
 ```
 
-Scale data to have zero mean and unit variance for each column
+Scale data to have zero mean and unit variance for each column:
 ```{r}
 seed <- scale(seed) 
 ```
@@ -74,43 +74,48 @@ The basic idea of k-means clustering is to define clusters then minimize the tot
 - $x_i$ is a data point belonging to the cluster $C_k$
 - $\mu_i$ is the mean value of the points assigned to the cluster $C_k$
 
-For clustering, one can rely on all kinds of distance measures and it is critical point. The distance measures will show how similar two elements (x, y) are and it will highly influence the results of the clustering analysis. The classical methods for distance measures are Euclidean and Manhattan distances, which are defined as follow:
+For clustering, one can rely on all kinds of distance measures and it is critical point. The distance measures will show how similar two elements $(x, z)$ are and it will highly influence the results of the clustering analysis. The classical methods for distance measures are Euclidean and Manhattan distances, which are defined as follow:
 
 **Euclidean distance:**
 
-$d_{euc}(x,y) = \sqrt{\sum^n_{i=1}(x_i - y_i)^2} \tag{1}$
+$d_{euc}(x,z) = \sqrt{\sum^n_{i=1}(x_i - y_i)^2} \tag{1}$
 
 **Manhattan distance:**
 
-$d_{man}(x,y) = \sum^n_{i=1}|(x_i - y_i)| \tag{2}$
+$d_{man}(x,z) = \sum^n_{i=1}|(x_i - y_i)| \tag{2}$
 
 **Pearson correlation distance:**
 
-$d_{cor}(x, y) = 1 - \frac{\sum^n_{i=1}(x_i-\bar x)(y_i - \bar y)}{\sqrt{\sum^n_{i=1}(x_i-\bar x)^2\sum^n_{i=1}(y_i - \bar y)^2}} \tag{3}$ 
+$d_{cor}(x, z) = 1 - \frac{\sum^n_{i=1}(x_i-\bar x)(z_i - \bar z)}{\sqrt{\sum^n_{i=1}(x_i-\bar x)^2\sum^n_{i=1}(z_i - \bar z)^2}} \tag{3}$ 
 
-
-In order to use k-means method for clustering and plot results, we can use `kmeans` function in R. It will group the data into a specified number of clusters (centers = 5). As mentioned before, the algorithm randomly k objects as the initial cluster centers to start the iteration, the final results may vary based on different initial centers. The `nstart` option of this function can allow the algorithm to attempt multiple initial configurations and reports on the best one. I recommended to set nstart for this function, which could give stable result. 
+Before conducting K-means clustering, we can calculate the pairwise distances between any two rows (observations) to roughly check whether there are some observations close to each other. Specifically, we can use `get_dist` to calculate the pairwise distances (the default is the Euclidean distance). Then the `fviz_dist` will visualize a distance matrix generated from `get_dist`. 
 
 ```{r}
 library(factoextra)
 distance <- get_dist(seed)
 fviz_dist(distance, gradient = list(low = "#00AFBB", mid = "white", high = "#FC4E07"))
-# K-Means Cluster Analysis
-fit <- kmeans(seed, 2) #2 cluster solution
-#Display number of clusters in each cluster
-table(fit$cluster)
-#Plot cluster in kmeans
 ```
+
+From the distance plot above, we can see there are some observations are very close to each other. For example, those observations in the bottom left rectangle may be quite similar to each other and can be grouped into one cluster. 
+
+In order to use k-means method for clustering and plot results, we can use `kmeans` function in R. It will group the data into a specified number of clusters, say $k$ (it is the `centers` argument of `kmeans`). As mentioned before, the algorithm randomly select $k$ objects as the initial cluster centers to start the iteration, the final results may vary based on different initial centers. The `nstart` option of this function can allow the algorithm to attempt multiple initial configurations and reports on the best one. I recommended to set a large value of `nstart` for this function, which could give stable result. 
+
+
 
 ```{r}
+# K-Means Cluster Analysis
+fit <- kmeans(seed, centers = 2, nstart = 25) # 2 clusters solution with 25 different initial configurations
+# Display number of observations in each cluster
+table(fit$cluster)
+# The kmeans object that has a lot of components 
 fit
-fviz_cluster(fit, data = seed)
 ```
 
+`kmeans` returns an object of class "`kmeans`" which has a `print` and a `fitted` method. It is a list with at least the following components:
 
 - `cluster`: A vector of integers (from 1:k) indicating the cluster to which each point is allocated.
-- `centers`: A matrix of cluster centres.
-- `totss`: 	The total sum of squares.
+- `centers`: A matrix of cluster centers.
+- `totss`: The total sum of squares.
 - `withinss`: Vector of within-cluster sum of squares, one component per cluster.
 - `tot.withinss`: Total within-cluster sum of squares, i.e. sum(withinss).
 - `betweenss`: The between-cluster sum of squares, i.e. totss-tot.withinss.
@@ -118,11 +123,17 @@ fviz_cluster(fit, data = seed)
 - `iter`: The number of (outer) iterations.
 - `ifault`: integer: indicator of a possible algorithm problem – for experts.
 
-We want to view the result so We can use `fviz_cluster`. It is function can provide a nice graph of the clusters. Usually, we have more than two dimensions (variables) `fviz_cluster` will perform principal component analysis (PCA) and plot the data points according to the first two principal components that explain the majority of the variance.
+## Visualization of kmeans clusters
+
+### `fviz_cluster` in `factoextra` pacakge
+
+We can use `fviz_cluster` to view the result by providing a nice graph of the clusters. Usually, we have more than two dimensions (variables), `fviz_cluster` will perform a principal component analysis (PCA) and plot the data points according to the first two principal components that explain the majority of the variance.
 
 ```{r}
 fviz_cluster(fit, data = seed)
 ```
+
+We can also visualize k-means results with more than 2 clusters. 
 
 ```{r}
 k3 <- kmeans(seed, centers = 3, nstart = 25)
@@ -139,6 +150,9 @@ library(gridExtra)
 grid.arrange(p1, p2, p3, p4, nrow = 2)
 ```
 
+### `plotcluster` in `fpc` pacakge
+
+There is another package can visualize the clustering results, `fpc`. The `plotcluster` function in it can 
 ```{r, eval=FALSE}
 install.packages("fpc")
 ```
@@ -149,17 +163,19 @@ plotcluster(seed, fit$cluster)
 ```
 
 ```{r, eval=FALSE}
-#See exactly which item are in 1st group
+# See exactly which items are in 1st group (Not run)
 seed[fit$cluster==1,]
 ```
+
 ```{r}
-#get cluster means for scaled data
+# get cluster means for scaled data
 aggregate(seed,by=list(fit$cluster),FUN=mean)
-#or alternatively, use the output of kmeans
+# or alternatively, use the output of kmeans
 fit$centers
 ```
 
 ## Determine number of clusters
+
 Here a simple within group sum of squares method is used. 
 
 ```{r}
@@ -170,13 +186,13 @@ for (i in 2:12) wss[i] <- sum(kmeans(seed,
 plot(1:12, wss, type="b", xlab="Number of Clusters",ylab="Within groups sum of squares")
 ```
 
-Prediction strength for estimating number of clusters. The prediction strength is defined according to Tibshirani and Walther (2005), who recommend to choose as optimal number of cluster the largest number of clusters that leads to a prediction strength above 0.8 or 0.9.
+The prediction strength is defined according to Tibshirani and Walther (2005), who recommend to choose an optimal number of cluster as the largest number of clusters that leads to a prediction strength above 0.8 or 0.9.
 
 ```{r}
 prediction.strength(seed, Gmin=2, Gmax=15, M=10,cutoff=0.8)
 ```
 
-fpc package has cluster.stat() function that can calcuate other cluster validity measures such as [Average Silhouette Coefficient](http://en.wikipedia.org/wiki/Silhouette_(clustering)) (between -1 and 1, the higher the better), or [Dunn index](http://en.wikipedia.org/wiki/Dunn_index) (betwen 0 and infinity, the higher the better):
+`fpc` package has `cluster.stat()` function that can calculate other cluster validity measures such as [Average Silhouette Coefficient](http://en.wikipedia.org/wiki/Silhouette_(clustering)) (between -1 and 1, the higher the better), or [Dunn index](http://en.wikipedia.org/wiki/Dunn_index) (between 0 and infinity, the higher the better):
 
 ```{r}
 d = dist(seed, method = "euclidean")
