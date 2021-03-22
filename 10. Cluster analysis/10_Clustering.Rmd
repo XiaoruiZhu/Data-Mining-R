@@ -48,7 +48,7 @@ df = df.drop(demographic_attributes, axis = 'columns')
 
 # Summary of Seeds data
 
-We use the seeds data set to demonstrate cluster analysis in R. The examined group comprised kernels belonging to three different varieties of wheat: Kama, Rosa and Canadian, 70 elements each. A description of the dataset can be viewed at (https://archive.ics.uci.edu/ml/datasets/seeds). Seven geometric values of wheat kernels were measured.  Assume we only have the information of the seven (7) measures (x) and our task is to cluster or group the 210 seeds (so we remove the V8)
+We use the seeds data set to demonstrate cluster analysis in R. The examined group comprised kernels belonging to three different varieties of wheat: Kama, Rosa and Canadian, 70 elements each. A description of the dataset can be viewed at (https://archive.ics.uci.edu/ml/datasets/seeds). Seven geometric values of wheat kernels were measured.  Assume we only have the information of the seven (7) measures (x) and our task is to cluster or group the 210 seeds (so we remove the V8).
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, eval = TRUE, message = FALSE, error = FALSE)
