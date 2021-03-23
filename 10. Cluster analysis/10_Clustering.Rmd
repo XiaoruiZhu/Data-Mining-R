@@ -215,7 +215,7 @@ plot(result[,c(1,3)], type="l", ylab = 'dunn index', xlab = 'number of clusters'
 
 By looking at Dunn index in the above plot, $k=3$ will be number of clusters. 
 
-Remark: The package `NbClust` provides 30 indexes for determining the optimal number of clusters in a data set. For more sophiscated methods, see for example [blog](http://blog.echen.me/2011/03/19/counting-clusters/), or [course notes](http://www.bx.psu.edu/old/courses/bx-fall04/How_Many_Clusters.pdf).
+Remark: The package `NbClust` provides 30 indexes for determining the optimal number of clusters in a data set. For more sophisticated methods, see for example [blog](http://blog.echen.me/2011/03/19/counting-clusters/), or [course notes](http://www.bx.psu.edu/old/courses/bx-fall04/How_Many_Clusters.pdf).
 
 Remark: [This article on Cross Validated](http://stats.stackexchange.com/a/133694/8622) provides a great illustration of the situations when k-means would fail.
 
