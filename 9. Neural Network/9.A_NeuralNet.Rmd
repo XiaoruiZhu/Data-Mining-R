@@ -80,37 +80,7 @@ plot(nn)
 ```
 ![](pic/plot_nn.png)
 
-In practices, the normalization and standardization for predictors and response variable are recommended before training a neural network model. Otherwise, your neural network model may not be able to converge as the following case:
-```{r, eval=FALSE, message=FALSE}
-nn <- neuralnet(f, data=train_Boston, hidden=c(5), linear.output=T)
-# Algorithm did not converge in 1 of 1 repetition(s) within the stepmax.
-```
 
-To illustrate, I chose to use the min-max method and scale the data in the interval $[0,1]$. Other reference online: [[1](https://machinelearningmastery.com/how-to-improve-neural-network-stability-and-modeling-performance-with-data-scaling/)]
-```{r, eval=FALSE, message=FALSE}
-# This is an illustration chunk, I do not run it.
-maxs <- apply(Boston, 2, max) 
-mins <- apply(Boston, 2, min)
-
-scaled <- as.data.frame(scale(Boston, center = mins, scale = maxs - mins))
-index <- sample(1:nrow(Boston),round(0.9*nrow(Boston)))
-
-train_Boston <- scaled[index,]
-test_Boston <- scaled[-index,]
-n <- names(train_Boston)
-f <- as.formula(paste("medv ~", paste(n[!n %in% "medv"], collapse = " + ")))
-nn_try <- neuralnet(f,data=train_Boston, hidden=c(5,3), linear.output=T)
-
-pr_nn_try <- compute(nn_try, test_Boston[,1:13])
-
-# recover the predicted value back to the original response scale 
-pr_nn_org <- pr_nn_try$net.result*(max(Boston$medv)-min(Boston$medv))+min(Boston$medv)
-test_r <- (test_Boston$medv)*(max(Boston$medv)-min(Boston$medv))+min(Boston$medv)
-
-# MSPE of testing set
-MSPE_nn <- sum((test_r - pr_nn_org)^2)/nrow(test_Boston)
-MSPE_nn
-```
 
 -   **Calculate the MSE of the above neural network model**:
 
@@ -281,3 +251,37 @@ unlist(slot(performance(pred, "auc"), "y.values"))
 <!-- ``` -->
 
 <!-- [go to top](#header) -->
+
+## Some remarks
+
+In practices, the normalization and standardization for predictors and response variable are recommended before training a neural network model. Otherwise, your neural network model may not be able to converge as the following case:
+```{r, eval=FALSE, message=FALSE}
+nn <- neuralnet(f, data=train_Boston, hidden=c(5), linear.output=T)
+# Algorithm did not converge in 1 of 1 repetition(s) within the stepmax.
+```
+
+To illustrate, I chose to use the min-max method and scale the data in the interval $[0,1]$. Other reference online: [[1](https://machinelearningmastery.com/how-to-improve-neural-network-stability-and-modeling-performance-with-data-scaling/)]
+```{r, eval=FALSE, message=FALSE}
+# This is an illustration chunk, I do not run it.
+maxs <- apply(Boston, 2, max) 
+mins <- apply(Boston, 2, min)
+
+scaled <- as.data.frame(scale(Boston, center = mins, scale = maxs - mins))
+index <- sample(1:nrow(Boston),round(0.9*nrow(Boston)))
+
+train_Boston <- scaled[index,]
+test_Boston <- scaled[-index,]
+n <- names(train_Boston)
+f <- as.formula(paste("medv ~", paste(n[!n %in% "medv"], collapse = " + ")))
+nn_try <- neuralnet(f,data=train_Boston, hidden=c(5,3), linear.output=T)
+
+pr_nn_try <- compute(nn_try, test_Boston[,1:13])
+
+# recover the predicted value back to the original response scale 
+pr_nn_org <- pr_nn_try$net.result*(max(Boston$medv)-min(Boston$medv))+min(Boston$medv)
+test_r <- (test_Boston$medv)*(max(Boston$medv)-min(Boston$medv))+min(Boston$medv)
+
+# MSPE of testing set
+MSPE_nn <- sum((test_r - pr_nn_org)^2)/nrow(test_Boston)
+MSPE_nn
+```
