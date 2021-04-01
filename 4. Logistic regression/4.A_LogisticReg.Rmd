@@ -139,17 +139,18 @@ table(credit_train$default, (pred_resp > 0.2)*1, dnn=c("Truth","Predicted"))
 table(credit_train$default, (pred_resp > 0.0001)*1, dnn=c("Truth","Predicted"))
 ```
 
-# Summary
+# Starter code for German credit scoring
 
-## Things to remember
+Refer to http://archive.ics.uci.edu/ml/datasets/Statlog+(German+Credit+Data)) for variable description. Notice that "It is worse to class a customer as good when they are bad (weight = 5), than it is to class a customer as bad when they are good (weight = 1)." Define your cost function accordingly!
 
-* Know how to use glm() to build logistic regression;
+```{r, eval=FALSE}
+install.packages('caret')
+```
 
-## Guide for Assignment
-
-* EDA
-
-* Train logistic model
+```{r, message=FALSE}
+library(caret) #this package contains the german data with its numeric format
+data(GermanCredit)
+```
 
 [go to top](#header)
 
