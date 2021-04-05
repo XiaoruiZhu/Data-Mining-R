@@ -18,7 +18,7 @@ editor_options:
 
 Association Rules is a popular and well researched method for discovering interesting relations between itemsets in large databases. We start from defining a few ways to measure association. 
 
-1. **Support**: The support, $\text{supp}(X)$, measures how popular an *itemset* ($X$) is. It is calculated the proportion of transactions in the data set which contain the itemset. 
+1. **Support**: The support, $\text{supp}(X)$, measures how popular an *itemset* ($X$) is. It is calculated as the proportion of transactions in the data set which contain the itemset. 
     
     - We use Table 1[^1] below to show that the support of {apple} is 4 out of 8, or 50%. Itemsets can also contain multiple items. For instance, the support of {apple, beer, rice} is 2 out of 8, or 25%. The support of {apple, beer} is 3 out of 8. 
 
