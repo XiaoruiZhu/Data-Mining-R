@@ -132,9 +132,9 @@ Now inspect the subset rules
 inspect(yogurt.rhs)
 ```
 
-Now find the subset rules that has Meat in the left hand side.
+Now find the subset rules that has Meat in the left hand side. Here we require **lift** measure exceeds 2.
 ```{r}
-meat_lhs <- subset(basket_rules, subset = lhs %in% "meat" & lift>3.5)
+meat_lhs <- subset(basket_rules, subset = lhs %in% "meat" & lift>2)
 ```
 Now inspect the subset rules
 ```{r}
