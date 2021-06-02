@@ -163,11 +163,3 @@ pred_lasso_train <- predict(credit_lasso, newx=credit_train_X, s=credit_lasso_cv
 pred_lasso_test <- predict(credit_lasso, newx=credit_test_X, s=credit_lasso_cv$lambda.1se, type = "response")
 ```
 
-#### Exercise:
-
-* Get ROC curve and AUC for both training and testing sample
-
-* Using training sample, find the optimal cut-off by grid search method with asymmetric cost (weights ratio = 5:1)
-
-* Calculate MR, FPR, FNR, the asymmetric cost for both taining and testing sample.
-
