@@ -178,7 +178,7 @@ plot(basket_rules, method="grouped")
 
 <a id="case4"></a>
 
-For Cincinnati Zoo data, use the following code to load the transaction data for association rules mining. `as()` function coerce the dataset into transaction data type for association rules mining. In the zoo data, the support for the rules is relatively low, with a maximum support of no more than 3%. 
+For Cincinnati Zoo data, use the following code to load the transaction data for association rules mining. `as()` function coerce the dataset into transaction data type for association rules mining. In the zoo data, the support for the rules is relatively low, with a minimum support of no more than 3%. 
 
 
 ```{r, eval=FALSE}
