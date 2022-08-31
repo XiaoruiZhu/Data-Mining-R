@@ -27,7 +27,104 @@ library(glmnet)
 
 ```{r}
 credit.data <- read.csv("data/credit0.csv", header=T)
+credit.data <- readxl::read_xls("data/default_of_credit_card_clients.xls", col_names = TRUE)
+
+colnames(credit.data) <- credit.data[1,]
+credit.data <- credit.data[-1,]
+
+library(tidyverse)
+credit2 <- credit.data %>%
+  mutate(Default = as.factor(`default payment next month`),
+         SEX = as.factor(SEX),
+         EDUCATION = as.factor(EDUCATION),
+         MARRIAGE = as.factor(MARRIAGE),
+         AGE = as.numeric(AGE), 
+         PAY_0 = scale(as.numeric(PAY_0)), 
+         PAY_2 = scale(as.numeric(PAY_2)), 
+         PAY_3 = scale(as.numeric(PAY_3)), 
+         PAY_4 = scale(as.numeric(PAY_4)), 
+         PAY_5 = scale(as.numeric(PAY_5)),
+         PAY_6 = scale(as.numeric(PAY_6)), 
+         BILL_AMT1 = scale(as.numeric(BILL_AMT1)), 
+         BILL_AMT2 = scale(as.numeric(BILL_AMT2)), 
+         BILL_AMT3 = scale(as.numeric(BILL_AMT3)), 
+         BILL_AMT4 = scale(as.numeric(BILL_AMT4)), 
+         BILL_AMT5 = scale(as.numeric(BILL_AMT5)), 
+         BILL_AMT6 = scale(as.numeric(BILL_AMT6)), 
+         PAY_AMT1 = scale(as.numeric(PAY_AMT1)), 
+         PAY_AMT2 = scale(as.numeric(PAY_AMT2)), 
+         PAY_AMT3 = scale(as.numeric(PAY_AMT3)), 
+         PAY_AMT4 = scale(as.numeric(PAY_AMT4)), 
+         PAY_AMT5 = scale(as.numeric(PAY_AMT5)), 
+         PAY_AMT6 = scale(as.numeric(PAY_AMT6))
+         ) %>%
+  select(-LIMIT_BAL, -ID, -`default payment next month`) %>%
+  filter(MARRIAGE != 0 & EDUCATION %in% c(0,) )
+
+colnames(credit2)
+summary(credit2)
+dim(credit2)
 ```
+
+
+Now split the data 90/10 as training/testing datasets:
+```{r}
+id_train <- sample(nrow(credit2),nrow(credit2)*0.90)
+credit.train <- credit2[id_train,]
+credit.test <- credit2[-id_train,]
+```
+
+
+```{r, message=FALSE}
+library(nnet)
+```
+
+```{r}
+credit.nnet <- nnet(Default~., data=credit.train, size=10, maxit=500)
+plot.nnet(credit.nnet)
+```
+
+```{r}
+prob.nnet= predict(credit.nnet, credit.test)
+summary(prob.nnet)
+
+pred.nnet = as.numeric(prob.nnet > 0.5)
+table(credit.test$Default,pred.nnet, dnn=c("Observed","Predicted"))
+mean(ifelse(credit.test$Default != pred.nnet, 1, 0))
+creditcost(credit.test$Default, pred.nnet)
+```
+
+```{r}
+library(neuralnet)
+# You may need to specific the formula rather than 
+Default_nn <- neuralnet(Default~., data=credit.train, 
+                        # hidden=c(3),
+                        algorithm = 'rprop+', 
+                        linear.output=F, likelihood = T)
+
+Default_nn <- neuralnet(Default~., data=credit.train, 
+                        # hidden=c(3),
+                        algorithm = 'rprop+', 
+                        linear.output=F, likelihood = T)
+
+plot(Bank_nn)
+
+credit3 <- credit2 %>%
+  mutate(SEX = as.numeric(SEX),
+         Default = as.numeric(Default),
+         EDUCATION = as.numeric(EDUCATION),
+         MARRIAGE = as.numeric(MARRIAGE))
+
+Default_nn3 <- neuralnet(Default~., data=credit.train, 
+                        hidden=c(3),
+                        algorithm = 'rprop+', 
+                        linear.output=F, likelihood = T)
+
+```
+
+
+
+
 
 We remove X9 and id from the data since we will not be using them for prediction.
 ```{r}
